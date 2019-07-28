@@ -1,4 +1,4 @@
-package com.example.socialapp.Screens.MainScreen
+package com.example.socialapp.Screens.Main
 
 
 import android.os.Bundle
@@ -16,9 +16,9 @@ class MainFragment : Fragment() {
 
     private lateinit var binding: FragmentMainScreenBinding
 
-    lateinit var tabLayout: TabLayout
-    lateinit var viewPager: ViewPager
-    lateinit var pagerAdapter: MainScreenPagerAdapter
+    private lateinit var tabLayout: TabLayout
+    private lateinit var viewPager: ViewPager
+    private lateinit var pagerAdapter: MainScreenPagerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
