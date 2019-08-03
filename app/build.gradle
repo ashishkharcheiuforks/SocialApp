@@ -48,4 +48,16 @@ dependencies {
 
     // Firebase Authentication
     implementation 'com.google.firebase:firebase-auth:18.1.0'
+
+    // ViewModel and LiveData
+    implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
+
+    // Firebase rule to add Google Services plugin
+    implementation 'com.google.firebase:firebase-core:17.0.1'
+
+    // Firestore
+    implementation 'com.google.firebase:firebase-firestore:20.2.0'
 }
+
+// Google Play services Gradle plugin
+apply plugin: 'com.google.gms.google-services'
