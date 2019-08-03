@@ -10,4 +10,18 @@
             android:name="com.example.socialapp.Screens.Main.MainFragment"
             android:label="MainFragment"
             tools:layout="@layout/fragment_main_screen"/>
+
+    <fragment
+            android:id="@+id/loginFragment"
+            android:name="com.example.socialapp.Screens.Login.LoginFragment"
+            android:label="LoginFragment"
+            tools:layout="@layout/fragment_login"/>
+
+    <fragment
+            android:id="@+id/registerFragment"
+            android:label="RegisterFragment"
+            android:name="com.example.socialapp.Screens.Register.RegisterFragment"
+            tools:layout="@layout/fragment_register"
+    />
+
 </navigation>
