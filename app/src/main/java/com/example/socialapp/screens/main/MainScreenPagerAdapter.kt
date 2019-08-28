@@ -1,13 +1,13 @@
-package com.example.socialapp.Screens.Main
+package com.example.socialapp.screens.main
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.example.socialapp.Screens.Main.Groups.GroupsFragment
-import com.example.socialapp.Screens.Main.Home.HomeFragment
-import com.example.socialapp.Screens.Main.Invites.InvitesFragment
-import com.example.socialapp.Screens.Main.Menu.MenuFragment
-import com.example.socialapp.Screens.Main.Notifications.NotificationsFragment
+import com.example.socialapp.screens.main.groups.GroupsFragment
+import com.example.socialapp.screens.main.home.HomeFragment
+import com.example.socialapp.screens.main.invites.InvitesFragment
+import com.example.socialapp.screens.main.menu.MenuFragment
+import com.example.socialapp.screens.main.notifications.NotificationsFragment
 
 class MainScreenPagerAdapter(fm: FragmentManager, private val numOfTabs: Int) : FragmentPagerAdapter(fm) {
 

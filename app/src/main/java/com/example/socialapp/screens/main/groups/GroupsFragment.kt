@@ -1,4 +1,4 @@
-package com.example.socialapp.Screens.Register
+package com.example.socialapp.screens.main.groups
 
 
 import android.os.Bundle
@@ -6,20 +6,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.socialapp.databinding.FragmentRegisterBinding
+import com.example.socialapp.databinding.FragmentGroupsBinding
 
 
-class RegisterFragment : Fragment() {
+class GroupsFragment : Fragment() {
 
-    private lateinit var binding: FragmentRegisterBinding
+    private lateinit var binding: FragmentGroupsBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentRegisterBinding.inflate(inflater, container, false)
+        binding = FragmentGroupsBinding.inflate(inflater, container, false)
         return binding.root
     }
+
 
 }

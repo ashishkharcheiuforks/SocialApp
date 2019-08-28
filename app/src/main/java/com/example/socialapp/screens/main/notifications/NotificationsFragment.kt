@@ -1,4 +1,4 @@
-package com.example.socialapp.Screens.Main.Notifications
+package com.example.socialapp.screens.main.notifications
 
 
 import android.os.Bundle

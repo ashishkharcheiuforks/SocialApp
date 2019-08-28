@@ -17,6 +17,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -26,6 +27,7 @@ android {
     }
 
     dataBinding {
+        //noinspection DataBindingWithoutKapt
         enabled = true
     }
 
@@ -57,6 +59,8 @@ dependencies {
 
     // Firestore
     implementation 'com.google.firebase:firebase-firestore:20.2.0'
+
+    implementation 'androidx.multidex:multidex:2.0.1'
 }
 
 // Google Play services Gradle plugin

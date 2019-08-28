@@ -1,4 +1,4 @@
-package com.example.socialapp.Screens.Login
+package com.example.socialapp.screens.main.invites
 
 
 import android.os.Bundle
@@ -6,20 +6,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.socialapp.databinding.FragmentLoginBinding
+import com.example.socialapp.databinding.FragmentInvitesBinding
 
 
-class LoginFragment : Fragment() {
+class InvitesFragment : Fragment() {
 
-    private lateinit var binding: FragmentLoginBinding
+    private lateinit var binding: FragmentInvitesBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentLoginBinding.inflate(inflater, container, false)
+        binding = FragmentInvitesBinding.inflate(inflater, container, false)
         return binding.root
     }
+
 
 }

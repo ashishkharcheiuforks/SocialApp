@@ -1,4 +1,4 @@
-package com.example.socialapp.Screens.Main
+package com.example.socialapp.screens.main
 
 
 import android.os.Bundle
