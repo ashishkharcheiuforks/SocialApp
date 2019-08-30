@@ -38,4 +38,9 @@
             android:name="com.example.socialapp.screens.main.MainFragment"
             android:label="MainFragment"
             tools:layout="@layout/fragment_main_screen" />
+    <action
+            android:id="@+id/action_global_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/main_nav_graph"
+            app:popUpToInclusive="true" />
 </navigation>

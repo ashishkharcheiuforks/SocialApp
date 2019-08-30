@@ -3,6 +3,8 @@ package com.example.socialapp
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.fragment.NavHostFragment
 import com.example.socialapp.databinding.ActivityMainBinding
@@ -17,6 +19,26 @@ class MainActivity : AppCompatActivity(), ViewModelStoreOwner {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
+        val viewmodel = ViewModelProviders.of(this).get(MainActivityViewModel::class.java)
+
+        //If user becomes unauthenticated and the current screen is not login or register screen
+        // then login screen is being launched and back stack is being cleared
+
+        viewmodel.authLiveData.observe(this, Observer { authState ->
+            if (authState == null) {
+
+                val navHost =
+                    supportFragmentManager.findFragmentById(R.id.nav_fragment) as NavHostFragment
+                val navController = navHost.navController
+
+                if (navController.currentDestination?.id != R.id.loginFragment
+                    || navController.currentDestination?.id != R.id.registerFragment
+                ) {
+                    navController.navigate(R.id.action_global_loginFragment)
+                }
+            }
+        })
 
         auth = FirebaseAuth.getInstance()
 
