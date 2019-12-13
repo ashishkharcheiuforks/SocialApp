@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+                name="post"
+                type="com.example.socialapp.model.Post" />
+
+        <variable
+                name="user"
+                type="com.example.socialapp.model.User" />
+
+    </data>
+
+
+    <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/solid_white"
+            app:cardElevation="1dp"
+            app:cardPreventCornerOverlap="false">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <ImageView
+                    android:id="@+id/image_post_item_user_profile_picture"
+                    imageResourceUri="@{user.profilePictureUri}"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:srcCompat="@drawable/profilepic" />
+
+            <TextView
+                    android:id="@+id/text_post_item_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="@{@string/name_nickname(user.firstName, user.nickname)}"
+                    app:layout_constraintStart_toEndOf="@+id/image_post_item_user_profile_picture"
+                    app:layout_constraintTop_toTopOf="@+id/image_post_item_user_profile_picture"
+                    tools:text="Mike 'Zornerv'" />
+
+            <TextView
+                    android:id="@+id/text_post_date"
+                    dateToFullDateText="@{post.postDateCreated}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="32dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="11/07/2019 21:37" />
+
+            <LinearLayout
+                    android:id="@+id/linearLayout_post_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/image_post_item_user_profile_picture">
+
+                <TextView
+                        android:id="@+id/text_post_item_post_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:text="@{post.postContent}"
+                        tools:text='"At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est' />
+
+                <ImageView
+                        android:id="@+id/post_item_post_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="190sp"
+                        android:maxHeight="190sp"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        android:layout_marginTop="8dp"
+                        android:adjustViewBounds="true"
+                        android:background="#000000"
+                        android:scaleType="fitCenter"
+                        tools:src="@drawable/profilepic" />
+            </LinearLayout>
+
+            <TextView
+                    android:id="@+id/text_post_item_likes_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="@{@string/likes_number(post.postLikesNumber)}"
+                    app:layout_constraintBottom_toBottomOf="@+id/button_post_item_like"
+                    app:layout_constraintStart_toEndOf="@+id/button_post_item_like"
+                    app:layout_constraintTop_toTopOf="@+id/button_post_item_like"
+                    tools:text="0 Likes" />
+
+            <ImageButton
+                    android:id="@+id/button_post_item_like"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:contentDescription="Like button"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/linearLayout_post_content"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout_post_content"
+                    tools:src="@drawable/ic_favorite_border_black_24dp" />
+
+            <Button
+                    android:id="@+id/button_post__item_comment"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:backgroundTint="@color/solid_white"
+                    android:text="Comments"
+                    android:textColor="#FF000000"
+                    app:layout_constraintBottom_toBottomOf="@+id/button_post_item_like"
+                    app:layout_constraintEnd_toEndOf="@+id/linearLayout_post_content"
+                    app:layout_constraintTop_toTopOf="@+id/button_post_item_like" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+
+</layout>

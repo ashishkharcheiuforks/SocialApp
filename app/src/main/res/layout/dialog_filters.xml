@@ -1,0 +1,144 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+            android:id="@+id/filters_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+        <TextView
+                style="@style/AppTheme.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Filter" />
+
+        <!-- Game -->
+        <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            <ImageView
+                    android:id="@+id/icon_game"
+                    style="@style/AppTheme.FilterIcon"
+                    android:layout_centerVertical="true"
+                    android:tint="@color/greySecondary"
+                    app:srcCompat="@drawable/ic_videogame_asset_black_24dp" />
+
+            <Spinner
+                    android:id="@+id/spinner_game"
+                    style="@style/AppTheme.FilterSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/icon_game"
+                    android:entries="@array/games" />
+
+        </RelativeLayout>
+
+        <!-- Language -->
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <ImageView
+                    android:id="@+id/icon_language"
+                    style="@style/AppTheme.FilterIcon"
+                    android:layout_centerVertical="true"
+                    android:tint="@color/greySecondary"
+                    app:srcCompat="@drawable/ic_language_black_24dp" />
+
+            <Spinner
+                    android:id="@+id/spinner_language"
+                    style="@style/AppTheme.FilterSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/icon_language"
+                    android:entries="@array/languages" />
+
+        </RelativeLayout>
+
+        <!-- Price -->
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <ImageView
+                    android:id="@+id/icon_price"
+                    style="@style/AppTheme.FilterIcon"
+                    android:layout_centerVertical="true"
+                    android:tint="@color/greySecondary"
+                    app:srcCompat="@drawable/ic_add_black_24dp" />
+
+            <Spinner
+                    android:id="@+id/spinner_price"
+                    style="@style/AppTheme.FilterSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/icon_price"
+                    android:entries="@array/games" />
+
+        </RelativeLayout>
+
+        <!-- Sort by -->
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <ImageView
+                    android:id="@+id/icon_sort"
+                    style="@style/AppTheme.FilterIcon"
+                    android:layout_centerVertical="true"
+                    android:tint="@color/greySecondary"
+                    app:srcCompat="@drawable/ic_image_black_24dp" />
+
+            <Spinner
+                    android:id="@+id/spinner_sort"
+                    style="@style/AppTheme.FilterSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/icon_sort"
+                    android:entries="@array/games" />
+        </RelativeLayout>
+
+        <!-- Cancel and apply buttons -->
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+
+            <Button
+                    android:id="@+id/button_cancel"
+                    style="@style/Base.Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancel"
+                    android:textColor="@color/light_gray"
+                    android:theme="@style/ThemeOverlay.FilterButton" />
+
+            <View
+                    android:layout_width="16dp"
+                    android:layout_height="0dp" />
+
+            <Button
+                    android:id="@+id/button_apply"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Apply"
+                    android:theme="@style/ThemeOverlay.FilterButton" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

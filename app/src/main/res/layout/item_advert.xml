@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="12dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+            <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/profilepic" />
+
+            <TextView
+                    android:id="@+id/tv_user_display_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/app_name"
+                    android:textColor="@color/solid_black"
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Mike 'Zornerv'  -  11/07/2018" />
+
+            <TextView
+                    android:id="@+id/tv_game_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="TextView"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_user_display_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_user_display_name"
+                    tools:text="Counter-Strike: Global Offensive" />
+
+            <TextView
+                    android:id="@+id/tv_players_number_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="Looking for:"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_game_title"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_game_title" />
+
+            <TextView
+                    android:id="@+id/tv_players_number_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/tv_players_number_label"
+                    app:layout_constraintStart_toEndOf="@+id/tv_players_number_label"
+                    tools:text="4 players" />
+
+            <TextView
+                    android:id="@+id/tv_preferable_age_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Preferable age:"
+                    android:textColor="@color/solid_black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_players_number_label"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_players_number_label" />
+
+            <TextView
+                    android:id="@+id/tv_preferable_age_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="TextView"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/tv_preferable_age_label"
+                    app:layout_constraintStart_toEndOf="@+id/tv_preferable_age_label"
+                    tools:text="16-25 years old" />
+
+            <TextView
+                    android:id="@+id/tv_communication_language_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Communication:"
+                    android:textColor="@color/solid_black"
+                    app:layout_constraintStart_toStartOf="@+id/tv_preferable_age_label"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_preferable_age_label" />
+
+            <TextView
+                    android:id="@+id/tv_communication_language_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/tv_communication_language_label"
+                    app:layout_constraintStart_toEndOf="@+id/tv_communication_language_label"
+                    tools:text="English" />
+
+            <Button
+                    android:id="@+id/btn_respond"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="respond"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                    android:id="@+id/tv_show_more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="Show more..."
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/tv_communication_language_label"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_communication_language_label" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

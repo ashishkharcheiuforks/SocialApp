@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+                name="user"
+                type="com.example.socialapp.User" />
+
+        <variable
+                name="userProfileViewmodel"
+                type="com.example.socialapp.screens.userprofile.UserProfileViewmodel" />
+    </data>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context=".screens.userprofile.UserProfileFragment">
+
+        <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:theme="@style/ToolbarTheme"
+                app:title="Profile Page"
+                app:titleTextColor="#FFFFFF"
+                tools:background="@color/colorPrimaryDark" />
+
+        <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true">
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/constraintLayout2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/user_profile_header_bg"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="24dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                                android:id="@+id/profile_profile_picture"
+                                imageResourceUri="@{user.profilePictureUri}"
+                                android:layout_width="130dp"
+                                android:layout_height="130dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:src="@drawable/profilepic" />
+
+                        <TextView
+                                android:id="@+id/profile_user_age"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                                android:textColor="@android:color/white"
+                                android:textSize="16sp"
+                                app:layout_constraintEnd_toEndOf="@+id/profile_user_nickname"
+                                app:layout_constraintStart_toStartOf="@+id/profile_user_nickname"
+                                app:layout_constraintTop_toBottomOf="@+id/profile_user_nickname"
+                                tools:text="13 Years Old" />
+
+                        <TextView
+                                android:id="@+id/profile_user_nickname"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="16dp"
+                                android:text="@{@string/name_nickname(user.firstName, user.nickname)}"
+                                android:textAlignment="center"
+                                android:textAllCaps="false"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                                android:textColor="@android:color/white"
+                                android:textSize="24sp"
+                                android:textStyle="normal|bold"
+                                app:layout_constraintEnd_toEndOf="@+id/profile_profile_picture"
+                                app:layout_constraintStart_toStartOf="@+id/profile_profile_picture"
+                                app:layout_constraintTop_toBottomOf="@+id/profile_profile_picture"
+                                tools:text="Mike 'Zornerv'" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <Button
+                            android:id="@+id/btn_friendship_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="24dp"
+                            android:text='@{userProfileViewmodel.friendshipButtonText ?? "error"}'
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@+id/constraintLayout2"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+                            tools:text="Friends"
+                            tools:visibility="visible" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+
+    </LinearLayout>
+</layout>
