@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.socialapp.databinding.DialogDeleteFromFriendsBottomSheetBinding
+import com.example.socialapp.databinding.DialogDeleteFromFriendsBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import timber.log.Timber
 
@@ -14,7 +14,7 @@ import timber.log.Timber
 class DeleteFromFriendsDialog :
     BottomSheetDialogFragment() {
 
-    private lateinit var binding: DialogDeleteFromFriendsBottomSheetBinding
+    private lateinit var binding: DialogDeleteFromFriendsBinding
     private lateinit var listener: ModalBottomSheetListener
 
     override fun onAttach(context: Context) {
@@ -35,7 +35,7 @@ class DeleteFromFriendsDialog :
     ): View? {
         // Inflate the layout for this fragment
         binding =
-            DialogDeleteFromFriendsBottomSheetBinding.inflate(inflater, container, false)
+            DialogDeleteFromFriendsBinding.inflate(inflater, container, false)
         return binding.root
 
     }

@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.socialapp.databinding.DialogCancelFriendInviteBottomSheetBinding
+import com.example.socialapp.databinding.DialogCancelFriendInviteBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import timber.log.Timber
 
@@ -14,7 +14,7 @@ import timber.log.Timber
 class CancelSentInviteDialog :
     BottomSheetDialogFragment() {
 
-    private lateinit var binding: DialogCancelFriendInviteBottomSheetBinding
+    private lateinit var binding: DialogCancelFriendInviteBinding
     private lateinit var listener: ModalBottomSheetListener
 
     override fun onAttach(context: Context) {
@@ -35,7 +35,7 @@ class CancelSentInviteDialog :
     ): View? {
         // Inflate the layout for this fragment
         binding =
-            DialogCancelFriendInviteBottomSheetBinding.inflate(inflater, container, false)
+            DialogCancelFriendInviteBinding.inflate(inflater, container, false)
         return binding.root
 
     }
