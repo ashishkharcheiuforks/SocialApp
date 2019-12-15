@@ -17,6 +17,8 @@ class CreatePostViewModel : ViewModel() {
     // State of 'publish' button being enabled
     val publishButtonEnabled = MediatorLiveData<Boolean>()
 
+    private val repo = FirestoreRepository()
+
     init {
         Timber.i("Init called")
 
@@ -54,7 +56,6 @@ class CreatePostViewModel : ViewModel() {
     // Uploads new post to the Firestore database
     fun addPost() {
         Timber.i("addPost() called")
-        FirestoreRepository()
-            .addPost(postContent.value, postImage.value)
+        repo.addPost(postContent.value, postImage.value)
     }
 }

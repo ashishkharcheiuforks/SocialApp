@@ -26,17 +26,11 @@ import timber.log.Timber
 class FirestoreRepository {
 
     private val auth = FirebaseAuth.getInstance()
-
     private val db = FirebaseFirestore.getInstance()
-
     private val storage = FirebaseStorage.getInstance()
-
     private val storageReference = storage.reference
-
     private val algolia = AlgoliaRepository()
 
-    // While using coroutines and await() instead of Successful listener now There is a need to handle async task failures
-    // https://kotlinlang.org/docs/reference/coroutines/composing-suspending-functions.html
 
     fun insertUserDataOnRegistration(
         firstName: String,
@@ -51,27 +45,20 @@ class FirestoreRepository {
             "dateOfBirth" to dateOfBirth,
             "profilePictureUrl" to defaultProfilePictureUrl
         )
-
-        val userDocRef = db.collection("users").document(auth.uid!!)
-
+        val userDocRef = db.document("users/${auth.uid}")
         return userDocRef.set(userProfileInfo)
     }
 
     fun getUserLiveData(userId: String): LiveData<User> {
-        return UserLiveData(
-            db
-                .collection("users")
-                .document(userId)
-        )
+        val userDocRef = db.document("users/${userId}")
+        return UserLiveData(userDocRef)
     }
 
     // Updates reference link to the user profile picture in firestore database
     fun updateProfilePictureUrl(url: String) {
-        val data = hashMapOf<String, Any>(
-            "profilePictureUrl" to url
-        )
-        db.collection("users").document(auth.currentUser!!.uid)
-            .update(data)
+        val userDocRef = db.document("users/${auth.uid}")
+        val data = hashMapOf<String, Any>("profilePictureUrl" to url)
+        userDocRef.update(data)
     }
 
     // Updates user profile with provided non-null values
@@ -81,7 +68,7 @@ class FirestoreRepository {
         dateOfBirth: Timestamp?,
         profilePictureUri: Uri?
     ): Task<Void> {
-        val userDocRef = db.collection("users").document(auth.uid!!)
+        val userDocRef = db.document("users/${auth.uid}")
 
         // Data set with fields to update in user document
         val data = mutableMapOf<String, Any>()
@@ -116,45 +103,29 @@ class FirestoreRepository {
     /**    Accepting friend request    **/
 
     fun acceptFriendRequest(uid: String): Task<Void> {
-
         val data = mapOf<String, Any>("status" to FriendshipStatus.ACCEPTED.status)
-
-        val myFriends = db.collection("users")
-            .document(auth.uid.toString())
-            .collection("friends")
-            .document(uid)
-
-        return myFriends.update(data)
+        val friendDocRef = db.document("users/${auth.uid}/friends/$uid")
+        return friendDocRef.update(data)
     }
 
     /**    Cancel pending friend request    **/
 
     fun deleteFriendRequest(uid: String): Task<Void> {
-
-        val myFriends = db.collection("users")
-            .document(auth.uid.toString())
-            .collection("friends")
-            .document(uid)
-
-        return myFriends.delete()
+        val friendDocRef = db.document("users/${auth.uid}/friends/$uid")
+        return friendDocRef.delete()
     }
 
     /**    Snapshot for real-time friendship status    **/
 
     fun getFriendshipStatus(uid: String): DocumentSnapshotLiveData {
-        val docRef =
-            FirebaseFirestore.getInstance().collection("users")
-                .document(auth.uid.toString())
-                .collection("friends")
-                .document(uid)
-        return DocumentSnapshotLiveData(docRef)
+        val friendDocRef = db.document("users/${auth.uid}/friends/$uid")
+        return DocumentSnapshotLiveData(friendDocRef)
     }
 
     fun fetchInvitesLiveData(): QuerySnapshotLiveData {
-        val query =
-            db.collection("users").document(auth.uid.toString())
-                .collection("friends")
-                .whereEqualTo("status", FriendshipStatus.INVITATION_RECEIVED.status)
+        val friendsCollectionRef = db.collection("users/${auth.uid}/friends")
+        val status = FriendshipStatus.INVITATION_RECEIVED.status
+        val query = friendsCollectionRef.whereEqualTo("status", status)
         return QuerySnapshotLiveData(query)
     }
 
@@ -182,9 +153,7 @@ class FirestoreRepository {
         data["commentsNumber"] = 0
 
         // If post text content exists add it to the document
-        postContent?.let {
-            data.put("postContent", it)
-        }
+        postContent?.let { data.put("postContent", it) }
 
         // If image was passed to add to the document
         // it will be uploaded
@@ -195,7 +164,7 @@ class FirestoreRepository {
             uploadPictureAndReturnUrl(it, postImagesReference).addOnCompleteListener { task ->
                 if (task.isSuccessful)
                     Timber.d("Uploaded and returned new picture url: ${task.result}")
-                    updatePostImageUrl(newPostId, task.result!!)
+                updatePostImageUrl(newPostId, task.result!!)
             }
         }
 
@@ -224,12 +193,9 @@ class FirestoreRepository {
     }
 
     fun updatePostImageUrl(postId: String, imageUrl: Uri) {
-        db
-            .collection("posts")
-            .document(postId)
-            .update(mapOf("postImage" to imageUrl))
+        val postDocRef = db.document("posts/$postId")
+        postDocRef.update(mapOf("postImage" to imageUrl))
     }
-
 
     suspend fun getUserTimeline(
         userUid: String,
@@ -237,29 +203,18 @@ class FirestoreRepository {
         loadBefore: String? = null,
         loadAfter: String? = null
     ): List<Post> {
-        var query = db.collection("users").document(userUid).collection("timeline")
+        val timelineCollRef = db.collection("users/$userUid/timeline")
+        var query = timelineCollRef
             .orderBy("dateCreated", Query.Direction.DESCENDING)
             .limit(pageSize.toLong())
 
         loadBefore?.let {
-            val item =
-                db.collection("users")
-                    .document(userUid)
-                    .collection("timeline")
-                    .document(it)
-                    .get()
-                    .await()
-
+            val item = timelineCollRef.document(it).get().await()
             query = query.endBefore(item)
         }
 
         loadAfter?.let {
-            val item = db.collection("users")
-                .document(userUid)
-                .collection("timeline")
-                .document(it)
-                .get()
-                .await()
+            val item = timelineCollRef.document(it).get().await()
             query = query.startAfter(item)
         }
 
@@ -268,35 +223,24 @@ class FirestoreRepository {
         }
     }
 
-    suspend fun getUserFriends(
+    suspend fun getFriends(
         userUid: String,
         pageSize: Int,
         loadBefore: String? = null,
         loadAfter: String? = null
     ): List<User> {
-        var query = db.collection("users").document(userUid).collection("friends")
+        val friendsCollectionRef = db.collection("users").document(userUid).collection("friends")
+        var query = friendsCollectionRef
             .whereEqualTo("status", FriendshipStatus.ACCEPTED.status)
             .limit(pageSize.toLong())
 
         loadBefore?.let {
-            val item =
-                db.collection("users")
-                    .document(userUid)
-                    .collection("friends")
-                    .document(it)
-                    .get()
-                    .await()
-
+            val item = friendsCollectionRef.document(it).get().await()
             query = query.endBefore(item)
         }
 
         loadAfter?.let {
-            val item = db.collection("users")
-                .document(userUid)
-                .collection("friends")
-                .document(it)
-                .get()
-                .await()
+            val item = friendsCollectionRef.document(it).get().await()
             query = query.startAfter(item)
         }
 
@@ -312,27 +256,20 @@ class FirestoreRepository {
         loadAfter: String? = null
     ): List<Post> {
         val user = getUser(userUid)
-        var query = db.collection("posts")
+        val postsCollRef = db.collection("posts")
+
+        var query = postsCollRef
             .whereEqualTo("createdByUserUid", userUid)
             .orderBy("dateCreated", Query.Direction.DESCENDING)
             .limit(pageSize.toLong())
 
-
         loadBefore?.let {
-            val item =
-                db.collection("posts")
-                    .document(it)
-                    .get()
-                    .await()
-
+            val item = postsCollRef.document(it).get().await()
             query = query.endBefore(item)
         }
 
         loadAfter?.let {
-            val item = db.collection("posts")
-                .document(it)
-                .get()
-                .await()
+            val item = postsCollRef.document(it).get().await()
             query = query.startAfter(item)
         }
 
@@ -356,32 +293,18 @@ class FirestoreRepository {
         loadBefore: String? = null,
         loadAfter: String? = null
     ): List<Comment> {
-        var query = db.collection("posts")
-            .document(postId)
-            .collection("comments")
+        val commentsCollRef = db.collection("posts/${postId}/comments")
+        var query = commentsCollRef
             .orderBy("dateCreated", Query.Direction.DESCENDING)
             .limit(pageSize.toLong())
 
-
         loadBefore?.let {
-            val item =
-                db.collection("posts")
-                    .document(postId)
-                    .collection("posts")
-                    .document(it)
-                    .get()
-                    .await()
-
+            val item = commentsCollRef.document(it).get().await()
             query = query.endBefore(item)
         }
 
         loadAfter?.let {
-            val item = db.collection("posts")
-                .document(postId)
-                .collection("posts")
-                .document(it)
-                .get()
-                .await()
+            val item = commentsCollRef.document(it).get().await()
             query = query.startAfter(item)
         }
 
@@ -402,43 +325,32 @@ class FirestoreRepository {
         loadAfter: String? = null
     ): List<Advertisement> {
         Timber.d(filters.toString())
-        var query =
-            db.collection("advertisements")
-                .orderBy("dateCreated", Query.Direction.DESCENDING)
-                .limit(pageSize.toLong())
-                .also {
-                    filters.game?.let { game ->
-                        Timber.d("game filter inside repo set")
-                        it.whereEqualTo("game", game)
-                    }
-                    filters.communicationLanguage?.let { language ->
-                        Timber.d("language filter inside repo set")
-                        it.whereEqualTo(
-                            "communicationLanguage",
-                            language
-                        )
-                        filters.playersNumber?.let { playersNum ->
-                            Timber.d("players number filter inside repo set")
-                            it.whereEqualTo("playersNumber", playersNum)
-                        }
-                    }
+        val advertsCollRef = db.collection("advertisements")
+        var query = advertsCollRef
+            .orderBy("dateCreated", Query.Direction.DESCENDING)
+            .limit(pageSize.toLong())
+            .also {
+                if (filters.game != null) {
+                    Timber.d("game filter inside repo set")
+                    it.whereEqualTo("game", filters.game)
                 }
+                if (filters.communicationLanguage != null) {
+                    Timber.d("language filter inside repo set")
+                    it.whereEqualTo("communicationLanguage", filters.communicationLanguage)
+                }
+                if (filters.playersNumber != null) {
+                    Timber.d("players number filter inside repo set")
+                    it.whereEqualTo("playersNumber", filters.playersNumber)
+                }
+            }
 
         loadBefore?.let {
-            val item =
-                db.collection("advertisements")
-                    .document(it)
-                    .get()
-                    .await()
-
+            val item = advertsCollRef.document(it).get().await()
             query = query.endBefore(item)
         }
 
         loadAfter?.let {
-            val item = db.collection("advertisements")
-                .document(it)
-                .get()
-                .await()
+            val item = advertsCollRef.document(it).get().await()
             query = query.startAfter(item)
         }
 
@@ -461,7 +373,7 @@ class FirestoreRepository {
 
     suspend fun getPost(postId: String, userId: String): Post {
         val user = getUser(userId)
-        val postDocumentSnapshot = db.collection("posts").document(postId).get().await()
+        val postDocumentSnapshot = db.document("posts/$postId").get().await()
 
         return Post(
             postId = postId,
@@ -476,7 +388,7 @@ class FirestoreRepository {
     }
 
     suspend fun getUser(userId: String): User {
-        val userDocumentSnapshot = db.collection("users").document(userId).get().await()
+        val userDocumentSnapshot = db.document("users/${userId}").get().await()
 
         return User(
             uid = userDocumentSnapshot.id,
@@ -488,13 +400,10 @@ class FirestoreRepository {
         )
     }
 
-    private fun getPostLikeStatus(postId: String): Observable<Boolean> =
-        Observable.create<Boolean> { emitter ->
-            db
-                .collection("posts")
-                .document(postId)
-                .collection("likes")
-                .document(auth.uid.toString())
+    private fun getPostLikeStatus(postId: String): Observable<Boolean> {
+        val likeDocRef = db.document("posts/$postId/likes/${auth.uid}")
+        return Observable.create<Boolean> { emitter ->
+            likeDocRef
                 .addSnapshotListener { documentSnapshot, firestoreException ->
                     Timber.i("Post id: $postId")
                     if (firestoreException != null) {
@@ -505,17 +414,13 @@ class FirestoreRepository {
                             )!!
                         ) {
                             emitter.onNext(true)
-                            Timber.i("Like status: ${documentSnapshot.getBoolean("exists")} cache: ${documentSnapshot.metadata.isFromCache}")
                         } else {
                             emitter.onNext(false)
-                            if (documentSnapshot != null) {
-                                Timber.i("Like null| cache: ${documentSnapshot.metadata.isFromCache}")
-                            }
-
                         }
                     }
                 }
         }
+    }
 
     fun addNewAdvertisement(advertisement: Advertisement): Task<Void> {
         val data = hashMapOf<String, Any>()
@@ -530,31 +435,26 @@ class FirestoreRepository {
     }
 
     fun likeThePost(postId: String): Task<Void> {
-        val postLikesCollectionRef =
-            db.collection("posts/$postId/likes").document(auth.uid!!)
+        val postLikesCollectionRef = db.document("posts/$postId/likes/${auth.uid}")
         val data = mapOf("exists" to true)
         return postLikesCollectionRef.set(data)
     }
 
     fun unlikeThePost(postId: String): Task<Void> {
-        val postLikesCollectionRef =
-            db.collection("posts/$postId/likes").document(auth.uid!!)
+        val postLikesCollectionRef = db.document("posts/$postId/likes/${auth.uid}")
         return postLikesCollectionRef.delete()
     }
 
     suspend fun changeUserProfilePicture(uri: Uri) = withContext(Dispatchers.IO) {
-        val userProfileStorageRef =
-            storageReference.child("users/${auth.uid}/")
+        val userProfileStorageRef = storageReference.child("users/${auth.uid}/")
 
         val filename = "profile_picture"
 
-        val urlToUpdate =
-            uploadPhotoAndReturnUrl(uri, userProfileStorageRef, filename)
-
+        val urlToUpdate = uploadPhotoAndReturnUrl(uri, userProfileStorageRef, filename)
+        // Update profile picture url in algolia
         algolia.updateProfilePictureUrl(urlToUpdate)
 
         updateProfilePictureUrl(urlToUpdate)
-
     }
 
     // Uploads picture to the given location in cloud storage and return
@@ -563,26 +463,22 @@ class FirestoreRepository {
         storageRef: StorageReference,
         name: String
     ): String {
-        val fileRef =
-            storageRef.child(name)
-
+        val fileRef = storageRef.child(name)
         fileRef.putFile(uri).await()
-
         // Return url
         return fileRef.downloadUrl.await().toString()
     }
 
     fun uploadNewComment(postId: String, postContent: String) {
-        val commentsCollectionRef = db
-            .collection("posts").document(postId)
-            .collection("comments")
+        val commentsCollectionRef = db.collection("posts/$postId/comments")
         val data = HashMap<String, Any>()
 
         data["content"] = postContent
         data["dateCreated"] = FieldValue.serverTimestamp()
         data["createdByUserId"] = auth.uid!!
 
-        commentsCollectionRef.document().set(data)
+//        commentsCollectionRef.document().set(data)
+        commentsCollectionRef.add(data)
     }
 
 }

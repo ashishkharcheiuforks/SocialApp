@@ -11,7 +11,6 @@ import timber.log.Timber
 class AuthenticatedNestedGraphViewModel : ViewModel() {
 
     private val auth = FirebaseAuth.getInstance()
-
     private val repo = FirestoreRepository()
 
     val user: LiveData<User> = repo.getUserLiveData(auth.uid!!)

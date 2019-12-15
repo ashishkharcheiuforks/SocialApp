@@ -98,8 +98,6 @@ class LoginFragment : Fragment() {
             .show()
     }
 
-    // Extension functions for hiding keyboard
-    // TODO("DEV"): Move declarations to the global level inside the app
     fun Fragment.hideKeyboard() {
         view?.let { activity?.hideKeyboard(it) }
     }

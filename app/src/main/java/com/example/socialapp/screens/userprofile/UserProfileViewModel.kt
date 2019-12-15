@@ -21,18 +21,16 @@ class UserProfileViewModel(private val uid: String) : ViewModel() {
     private val viewModelJob = SupervisorJob()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
+    private val repo = FirestoreRepository()
+
     init {
         Timber.i("init called")
     }
 
     val user =
-        UserLiveData(
-            FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(uid)
-        )
+        repo.getUserLiveData(uid)
 
-    val friendshipStatus = getFriendshipStatus(uid)
+    val friendshipStatus = repo.getFriendshipStatus(uid)
 
 
     private val config = PagedList.Config.Builder()
@@ -51,9 +49,6 @@ class UserProfileViewModel(private val uid: String) : ViewModel() {
 
     fun refreshPosts() = posts.value?.dataSource?.invalidate()
 
-    private fun getFriendshipStatus(uid: String): DocumentSnapshotLiveData {
-        return FirestoreRepository().getFriendshipStatus(uid)
-    }
 
     override fun onCleared() {
         Timber.i("onCleared() called")
@@ -61,23 +56,23 @@ class UserProfileViewModel(private val uid: String) : ViewModel() {
     }
 
     fun likeThePost(postId: String): Task<Void> {
-        return FirestoreRepository().likeThePost(postId)
+        return repo.likeThePost(postId)
     }
 
     fun unlikeThePost(postId: String): Task<Void>{
-        return FirestoreRepository().unlikeThePost(postId)
+        return repo.unlikeThePost(postId)
     }
 
     fun inviteToFriends(): Task<Void> {
-        return FirestoreRepository().inviteToFriends(uid)
+        return repo.inviteToFriends(uid)
     }
 
     fun acceptFriendRequest(): Task<Void> {
-        return FirestoreRepository().acceptFriendRequest(uid)
+        return repo.acceptFriendRequest(uid)
     }
 
     fun cancelFriendRequest(): Task<Void> {
-        return FirestoreRepository().deleteFriendRequest(uid)
+        return repo.deleteFriendRequest(uid)
     }
 
 }

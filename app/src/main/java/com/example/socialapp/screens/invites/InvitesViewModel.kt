@@ -7,12 +7,14 @@ import timber.log.Timber
 
 class InvitesViewModel : ViewModel() {
 
+    private val repo = FirestoreRepository()
+
     init {
         Timber.i("init called")
     }
 
     fun fetchInvitesLiveData(): QuerySnapshotLiveData {
-        return FirestoreRepository().fetchInvitesLiveData()
+        return repo.fetchInvitesLiveData()
     }
 
     override fun onCleared() {
@@ -22,11 +24,11 @@ class InvitesViewModel : ViewModel() {
 
     fun acceptFriendRequest(uid: String) {
         Timber.d("acceptFriendRequest in viewmodel triggered for uid: $uid")
-        FirestoreRepository().acceptFriendRequest(uid)
+        repo.acceptFriendRequest(uid)
     }
 
     fun deleteFriendRequest(uid: String) {
         Timber.d("deleteFriendRequest in viewmodel triggered for uid: $uid")
-        FirestoreRepository().deleteFriendRequest(uid)
+        repo.deleteFriendRequest(uid)
     }
 }

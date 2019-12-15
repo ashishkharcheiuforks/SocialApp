@@ -68,9 +68,8 @@ class LoginViewModel : ViewModel() {
     }
 
     private fun isEmailValid(): Boolean {
-        return !TextUtils.isEmpty(email.value?.trim()) && android.util.Patterns.EMAIL_ADDRESS.matcher(
-            email.value!!
-        ).matches()
+        return !TextUtils.isEmpty(email.value?.trim())
+                && android.util.Patterns.EMAIL_ADDRESS.matcher(email.value!!).matches()
     }
 
 

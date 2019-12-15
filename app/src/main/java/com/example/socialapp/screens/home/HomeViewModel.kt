@@ -18,10 +18,12 @@ class HomeViewModel : ViewModel() {
     private val viewModelJob = SupervisorJob()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
+    private val auth = FirebaseAuth.getInstance()
+    private val repo = FirestoreRepository()
+
     init {
         Timber.i("Init called")
     }
-
 
     // Configuration on loading paged list of posts
     private val config = PagedList.Config.Builder()
@@ -32,14 +34,11 @@ class HomeViewModel : ViewModel() {
 
     // Data source for loading paged posts
     private val dataSource =
-        TimelinePostsDataSource.Factory(uiScope, FirebaseAuth.getInstance().uid!!)
+        TimelinePostsDataSource.Factory(uiScope, auth.uid!!)
 
     // PagedList of posts as LiveData
     val posts: LiveData<PagedList<Post>> =
-        LivePagedListBuilder<String, Post>(
-            dataSource,
-            config
-        ).build()
+        LivePagedListBuilder<String, Post>(dataSource, config).build()
 
     // Reloads the posts
     fun refreshPosts() {
@@ -47,13 +46,12 @@ class HomeViewModel : ViewModel() {
     }
 
     fun likeThePost(postId: String): Task<Void> {
-        return FirestoreRepository().likeThePost(postId)
+        return repo.likeThePost(postId)
     }
 
     fun unlikeThePost(postId: String): Task<Void> {
-        return FirestoreRepository().unlikeThePost(postId)
+        return repo.unlikeThePost(postId)
     }
-
 
     override fun onCleared() {
         super.onCleared()

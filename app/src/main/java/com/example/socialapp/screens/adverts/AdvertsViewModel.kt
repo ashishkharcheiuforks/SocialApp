@@ -19,6 +19,8 @@ class AdvertsViewModel : ViewModel() {
     private val viewModelJob = SupervisorJob()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
+    private val repo = FirestoreRepository()
+
     val filters = MutableLiveData<Filters>()
 
     init {
@@ -57,7 +59,7 @@ class AdvertsViewModel : ViewModel() {
     }
 
     fun createNewAdvert(advert: Advertisement): Task<Void> {
-        return FirestoreRepository().addNewAdvertisement(advert)
+        return repo.addNewAdvertisement(advert)
     }
 
     override fun onCleared() {

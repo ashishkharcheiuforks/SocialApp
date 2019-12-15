@@ -17,11 +17,13 @@ class CommentsViewModel(private val postId: String) : ViewModel() {
     private val viewModelJob = SupervisorJob()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    val newPostContent = MutableLiveData<String>("")
+    private val repo = FirestoreRepository()
 
     init {
         Timber.i("init called")
     }
+
+    val newPostContent = MutableLiveData<String>("")
 
     private val config = PagedList.Config.Builder()
         .setEnablePlaceholders(false)
@@ -41,7 +43,7 @@ class CommentsViewModel(private val postId: String) : ViewModel() {
     fun addNewComment(){
         // TODO(): Add proper validation for the add comment button
         if(newPostContent.value!!.trim().isNotEmpty() ){
-           FirestoreRepository().uploadNewComment(postId, newPostContent.value!!)
+           repo.uploadNewComment(postId, newPostContent.value!!)
         }
     }
 

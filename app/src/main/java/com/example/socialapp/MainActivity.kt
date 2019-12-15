@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity(), ViewModelStoreOwner {
 
     private lateinit var binding: ActivityMainBinding
 
-    private val auth by lazy { FirebaseAuth.getInstance() }
+    private val auth = FirebaseAuth.getInstance()
 
     private val viewModel: MainActivityViewModel by viewModels()
 
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), ViewModelStoreOwner {
         val navInflater = navController.navInflater
         val graph = navInflater.inflate(R.navigation.main_nav_graph)
 
-        if (isUserSignedin(auth)) {
+        if (isUserSignedin()) {
             graph.startDestination = R.id.authenticated_graph
         } else {
             graph.startDestination = R.id.loginFragment
@@ -63,6 +63,6 @@ class MainActivity : AppCompatActivity(), ViewModelStoreOwner {
         supportFragmentManager.beginTransaction().setPrimaryNavigationFragment(navHost).commit()
     }
 
-    private fun isUserSignedin(auth: FirebaseAuth): Boolean = auth.currentUser?.uid != null
+    private fun isUserSignedin(): Boolean = auth.currentUser?.uid != null
 
 }

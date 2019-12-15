@@ -23,6 +23,7 @@ class EditProfileViewModel : ViewModel() {
     val dateOfBirth: LiveData<Timestamp>
         get() = _dateOfBirth
 
+    private val repo = FirestoreRepository()
 
 
     init {
@@ -41,7 +42,7 @@ class EditProfileViewModel : ViewModel() {
         firstName: String,
         nickname: String
     ) {
-        FirestoreRepository().updateUserProfileInfo(
+        repo.updateUserProfileInfo(
             firstName,
             nickname,
             _dateOfBirth.value,

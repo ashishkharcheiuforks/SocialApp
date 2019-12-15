@@ -45,22 +45,6 @@ class SearchUserFragment : Fragment(), SearchUserAdapter.SearchUserItemListener 
             adapter.notifyDataSetChanged()
         })
 
-        //TODO(DEV): Use two-way databinding for edittext input and observe that input observable in fragment
-
-        binding.etSearch.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(editable: Editable?) {
-                if (editable.toString().trim().length > 2)
-                    viewModel.searchForUser(editable.toString())
-            }
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-        })
-
-
     }
 
     override fun onSearchUserItemClick(userUid: String) {

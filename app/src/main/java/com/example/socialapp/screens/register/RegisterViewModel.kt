@@ -23,7 +23,7 @@ class RegisterViewModel : ViewModel() {
 
     private val auth = FirebaseAuth.getInstance()
 
-    private val firestoreRepository = FirestoreRepository()
+    private val repo = FirestoreRepository()
 
     // Event triggered after successful register
     private val _isRegisterSuccessful = SingleLiveEvent<Boolean>()
@@ -127,7 +127,7 @@ class RegisterViewModel : ViewModel() {
                     // Insert newly registered user data to firestore database
                     // and if succeeded add this data to Algolia for additional indexing
                     // that is needed for functional search users screen
-                    firestoreRepository.insertUserDataOnRegistration(
+                    repo.insertUserDataOnRegistration(
                         firstName.value!!,
                         nickname.value!!,
                         dateOfBirth.value!!

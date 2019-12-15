@@ -35,8 +35,9 @@
                         android:textColor="#FFFFFF"
                         android:textColorHint="@color/light_gray"
                         android:drawableEnd="@drawable/ic_search_black_24dp"
-                        android:layout_marginRight="16dp"
-                        android:hint="Search..."
+                        android:layout_marginEnd="16dp"
+                        android:hint="@string/hint_search"
+                        android:backgroundTint="@color/solid_white"
                         android:text="@={viewmodel.searchPhrase}"
                         android:inputType="textPersonName" />
 

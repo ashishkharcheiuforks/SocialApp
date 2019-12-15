@@ -149,7 +149,6 @@ class EditProfileFragment : Fragment() {
      *   onDestroy() if it is currently showed in order to eliminate activity window leak
      */
     private fun showDatePickerDialog() {
-
         val c = Calendar.getInstance()
         val year = c.get(Calendar.YEAR)
         val month = c.get(Calendar.MONTH)
@@ -168,7 +167,7 @@ class EditProfileFragment : Fragment() {
                 editProfileViewModel.setDate(timestamp)
             }, year, month, dayOfMonth
         )
-        dpd.datePicker.maxDate = Calendar.getInstance().timeInMillis
+        dpd.datePicker.maxDate = c.timeInMillis
         dpd.show()
     }
 

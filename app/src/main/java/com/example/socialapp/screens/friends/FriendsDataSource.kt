@@ -21,14 +21,14 @@ class FriendsDataSource(private val scope: CoroutineScope, private val userUid: 
         callback: LoadInitialCallback<User>
     ) {
         scope.launch {
-            val items = FirestoreRepository().getUserFriends(userUid, params.requestedLoadSize)
+            val items = FirestoreRepository().getFriends(userUid, params.requestedLoadSize)
             callback.onResult(items)
         }
     }
 
     override fun loadAfter(params: LoadParams<String>, callback: LoadCallback<User>) {
         scope.launch {
-            val items = FirestoreRepository().getUserFriends(
+            val items = FirestoreRepository().getFriends(
                 userUid,
                 params.requestedLoadSize,
                 loadAfter = params.key
@@ -39,7 +39,7 @@ class FriendsDataSource(private val scope: CoroutineScope, private val userUid: 
 
     override fun loadBefore(params: LoadParams<String>, callback: LoadCallback<User>) {
         scope.launch {
-            val items = FirestoreRepository().getUserFriends(
+            val items = FirestoreRepository().getFriends(
                 userUid,
                 params.requestedLoadSize,
                 loadBefore = params.key

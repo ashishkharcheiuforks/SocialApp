@@ -10,42 +10,33 @@ import kotlinx.coroutines.launch
 class TimelinePostsDataSource(private val scope: CoroutineScope, private val userUid: String) :
     ItemKeyedDataSource<String, Post>() {
 
+    private val repo = FirestoreRepository()
+
     class Factory(private val scope: CoroutineScope, private val userUid: String) :
         DataSource.Factory<String, Post>() {
-        override fun create(): DataSource<String, Post> =
-            TimelinePostsDataSource(scope, userUid)
+        override fun create(): DataSource<String, Post> = TimelinePostsDataSource(scope, userUid)
     }
-
 
     override fun loadInitial(
         params: LoadInitialParams<String>,
         callback: LoadInitialCallback<Post>
     ) {
         scope.launch {
-            val items = FirestoreRepository()
-                .getUserTimeline(userUid, params.requestedLoadSize)
+            val items = repo.getUserTimeline(userUid, params.requestedLoadSize)
             callback.onResult(items)
         }
     }
 
     override fun loadAfter(params: LoadParams<String>, callback: LoadCallback<Post>) {
         scope.launch {
-            val items = FirestoreRepository().getUserTimeline(
-                userUid,
-                params.requestedLoadSize,
-                loadAfter = params.key
-            )
+            val items = repo.getUserTimeline(userUid, params.requestedLoadSize, loadAfter = params.key)
             callback.onResult(items)
         }
     }
 
     override fun loadBefore(params: LoadParams<String>, callback: LoadCallback<Post>) {
         scope.launch {
-            val items = FirestoreRepository().getUserTimeline(
-                userUid,
-                params.requestedLoadSize,
-                loadBefore = params.key
-            )
+            val items = repo.getUserTimeline(userUid, params.requestedLoadSize, loadBefore = params.key)
             callback.onResult(items)
         }
     }

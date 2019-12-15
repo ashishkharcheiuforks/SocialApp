@@ -17,6 +17,8 @@ class FriendsViewModel : ViewModel() {
         Timber.i("init called")
     }
 
+    private val auth = FirebaseAuth.getInstance()
+
     private val viewModelJob = SupervisorJob()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
@@ -28,7 +30,7 @@ class FriendsViewModel : ViewModel() {
         .build()
 
     // Data source for loading paged posts
-    private val dataSource = FriendsDataSource.Factory(uiScope, FirebaseAuth.getInstance().uid!!)
+    private val dataSource = FriendsDataSource.Factory(uiScope, auth.uid!!)
 
     // PagedList of posts as LiveData
     val friends: LiveData<PagedList<User>> =
