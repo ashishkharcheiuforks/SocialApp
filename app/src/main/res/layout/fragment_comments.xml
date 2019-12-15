@@ -60,12 +60,12 @@
 
             <ImageView
                     android:id="@+id/auth_user_profile_pic"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    imageResourceUri="@{user.profilePictureUri}"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    imageResourceUri="@{user.profilePictureUri}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -80,6 +80,7 @@
                     android:ems="10"
                     android:inputType="textPersonName"
                     android:text="@={viewModel.newPostContent}"
+                    app:layout_constraintBottom_toBottomOf="@+id/auth_user_profile_pic"
                     app:layout_constraintEnd_toStartOf="@+id/btn_add_new_comment"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/auth_user_profile_pic"
@@ -87,15 +88,13 @@
 
             <ImageView
                     android:id="@+id/btn_add_new_comment"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="8dp"
                     android:src="@drawable/ic_send_black_24dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/et_new_post_content"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="@+id/et_new_post_content" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

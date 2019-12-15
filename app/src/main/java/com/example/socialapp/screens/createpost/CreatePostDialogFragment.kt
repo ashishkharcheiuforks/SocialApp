@@ -1,70 +1,117 @@
 package com.example.socialapp.screens.createpost
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
 import com.example.socialapp.AuthenticatedNestedGraphViewModel
 import com.example.socialapp.R
-import com.example.socialapp.databinding.FragmentCreatePostBinding
+import com.example.socialapp.databinding.DialogCreatePostBinding
+import timber.log.Timber
 
-class CreatePostFragment : Fragment(), Toolbar.OnMenuItemClickListener {
+//class CreatePostDialogFragment : DialogFragment(), Toolbar.OnMenuItemClickListener {
+class CreatePostDialogFragment : DialogFragment() {
 
-    private lateinit var binding: FragmentCreatePostBinding
+    private lateinit var binding: DialogCreatePostBinding
 
     private val viewModel: CreatePostViewModel by viewModels()
 
     private val authenticatedNestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(
-        R.id.authenticated_nested_graph
+        R.id.authenticated_graph
     )
+
+    private val REQUEST_PICK_IMAGE = 71
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NORMAL, R.style.AppTheme_FullScreenDialog)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentCreatePostBinding.inflate(inflater, container, false)
+        binding = DialogCreatePostBinding.inflate(inflater, container, false)
+        binding.toolbar.navigationIcon!!.setTint(Color.WHITE)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupToolbar()
-
         binding.lifecycleOwner = this
         binding.viewmodel = viewModel
+
+        setupToolbar()
+
+        viewModel.postImage.observe(this@CreatePostDialogFragment, Observer {
+            if (viewModel.postImage.value != null) {
+                binding.ivLoadedPicture.setImageURI(viewModel.postImage.value)
+                binding.ivLoadedPicture.visibility = View.VISIBLE
+            } else {
+                binding.ivLoadedPicture.visibility = View.GONE
+            }
+        })
+
+        binding.btnAddPicture.setOnClickListener {
+            openGallery()
+        }
 
         authenticatedNestedGraphViewModel.user.observe(viewLifecycleOwner, Observer {
             binding.user = it
         })
 
-        viewModel.publishButtonEnabled.observe(this, Observer {
-            binding.toolbar.menu.getItem(0).isEnabled = it
-        })
+
+    }
+
+    private fun openGallery() {
+        Intent().also {
+            it.type = "image/*"
+            it.action = Intent.ACTION_GET_CONTENT
+            startActivityForResult(Intent.createChooser(it, "Select Picture"), REQUEST_PICK_IMAGE)
+        }
     }
 
 
-    override fun onMenuItemClick(item: MenuItem?): Boolean {
-        return if (item?.itemId == R.id.action_publish_new_post) {
-            viewModel.addPost()
-            true
-        } else false
+    override fun onStart() {
+        super.onStart()
+        val dialog = dialog
+        dialog?.let {
+            val width = ViewGroup.LayoutParams.MATCH_PARENT
+            val height = ViewGroup.LayoutParams.MATCH_PARENT
+            dialog.window!!.setLayout(width, height)
+            dialog.window!!.setWindowAnimations(R.style.AppTheme_Slide)
+        }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Timber.d("resultcode: $resultCode, requestCode: $requestCode")
+        if (requestCode == REQUEST_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
+            //Check if picture was successfully given back from the gallery
+            if (data == null || data.data == null) {
+                return
+            }
+            val pictureUri = data.data
+            viewModel.postImage.value = pictureUri!!
+        }
+    }
+
 
     private fun setupToolbar() {
-        val navController = findNavController()
-        val appBarConfiguration = AppBarConfiguration(navController.graph)
-        binding.toolbar.setupWithNavController(navController, appBarConfiguration)
-        binding.toolbar.inflateMenu(R.menu.menu_create_new_post)
-        binding.toolbar.setOnMenuItemClickListener(this)
+        binding.toolbar.setNavigationOnClickListener { dismiss() }
+        binding.btnAddNewPost.setOnClickListener {
+            viewModel.addPost()
+            dismiss()
+        }
     }
+
 }

@@ -1,8 +1,8 @@
-package com.example.socialapp.screens.main.invites
+package com.example.socialapp.screens.invites
 
 import androidx.lifecycle.ViewModel
 import com.example.socialapp.FirestoreRepository
-import com.example.socialapp.QuerySnapshotLiveData
+import com.example.socialapp.livedata.QuerySnapshotLiveData
 import timber.log.Timber
 
 class InvitesViewModel : ViewModel() {

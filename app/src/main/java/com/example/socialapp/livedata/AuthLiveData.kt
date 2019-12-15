@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import timber.log.Timber
 
-class FirebaseAuthLiveData(private val auth: FirebaseAuth) : LiveData<FirebaseUser?>(),
+class AuthLiveData(private val auth: FirebaseAuth) : LiveData<FirebaseUser?>(),
     FirebaseAuth.AuthStateListener {
     private var lastUid: String? = null
 

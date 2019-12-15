@@ -6,7 +6,7 @@ import com.example.socialapp.model.User
 import com.google.firebase.firestore.*
 import timber.log.Timber
 
-class UserInfoLiveData(
+class UserLiveData(
     private val docRef: DocumentReference
 ) : LiveData<User>(), EventListener<DocumentSnapshot> {
 

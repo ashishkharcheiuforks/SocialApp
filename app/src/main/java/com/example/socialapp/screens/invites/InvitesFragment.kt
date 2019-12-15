@@ -1,4 +1,4 @@
-package com.example.socialapp.screens.main.invites
+package com.example.socialapp.screens.invites
 
 
 import android.net.Uri
@@ -14,7 +14,6 @@ import com.example.socialapp.adapter.InvitesAdapter
 import com.example.socialapp.databinding.FragmentInvitesBinding
 import com.example.socialapp.model.User
 import com.example.socialapp.screens.userprofile.UserProfileFragmentDirections
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore

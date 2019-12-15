@@ -3,35 +3,51 @@ package com.example.socialapp.screens.editprofile
 
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.content.ContentValues
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.DatePicker
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.socialapp.AuthenticatedNestedGraphViewModel
-import com.example.socialapp.DatePickerFragment
 import com.example.socialapp.R
-import com.example.socialapp.User
 import com.example.socialapp.databinding.FragmentEditProfileBinding
+import com.example.socialapp.databinding.FragmentEditProfileBindingImpl
+import com.example.socialapp.model.User
+import com.google.firebase.Timestamp
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.*
 
 
-class EditProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
-
-    private val PICK_IMAGE_REQUEST = 71
+class EditProfileFragment : Fragment() {
 
     private lateinit var binding: FragmentEditProfileBinding
 
-    private lateinit var editProfileViewModel: EditProfileViewmodel
+    private val editProfileViewModel: EditProfileViewModel by viewModels()
+    private val nestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(R.id.authenticated_graph)
 
+    private val REQUEST_PICK_IMAGE = 71
+    private val REQUEST_IMAGE_CAPTURE = 666
+    private val PERMISSION_CODE = 1000
+
+    private lateinit var dpd: DatePickerDialog
+
+    private var imageUri: Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,44 +61,43 @@ class EditProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupToolbar()
-
         binding.lifecycleOwner = this
-
-        //Initialize Viewmodels
-        val nestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(R.id.authenticated_nested_graph)
-        editProfileViewModel = ViewModelProviders.of(this).get(EditProfileViewmodel::class.java)
         binding.editViewModel = editProfileViewModel
+
+        setupToolbar()
 
         //Set Observers to the observables
         nestedGraphViewModel.user.observe(viewLifecycleOwner, Observer<User> { binding.user = it })
 
         //Setting OnClick Listeners
-        binding.editProfileChooseImage.setOnClickListener { launchGallery() }
-        binding.etEditProfileDateOfBirth.setOnClickListener { showDatePickerDialog(this) }
+        binding.btnChooseImageGallery.setOnClickListener { launchGallery() }
+        binding.btnChooseImageCamera.setOnClickListener { checkPermissionAndOpenCamera() }
+        binding.etEditProfileDateOfBirth.setOnClickListener { showDatePickerDialog() }
 
-        binding.btnSaveChangesPersonalInfo.setOnClickListener {
-            val fName = binding.etEditProfileFirstName.text.toString()
+        binding.btnSaveChanges.setOnClickListener {
+            val fName = binding.etFirstName.text.toString()
             val nickname = binding.etEditProfileNickname.text.toString()
-            val dateOfBirth = binding.etEditProfileDateOfBirth.text.toString()
-            saveChanges(fName, nickname, dateOfBirth)
+
+            GlobalScope.launch {
+                withContext(Main) {
+                    saveChanges(fName, nickname)
+                }
+            }
+        }
+
+        // Goes to previous fragment from backstack
+        binding.btnCancelChanges.setOnClickListener {
+            findNavController().popBackStack()
         }
 
 
     }
 
-    override fun onDateSet(p0: DatePicker?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
-        val c = Calendar.getInstance()
-        c.set(Calendar.YEAR, year)
-        c.set(Calendar.MONTH, monthOfYear)
-        c.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-        val date = "${dayOfMonth}/${monthOfYear + 1}/${year}"
-        binding.etEditProfileDateOfBirth.setText(date)
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+        Timber.d("resultcode: $resultCode, requestCode: $requestCode")
+        if (requestCode == REQUEST_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
             //Check if picture was successfully given back from the gallery
             if (data == null || data.data == null) {
                 return
@@ -90,13 +105,37 @@ class EditProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
             val pictureUri = data.data
             editProfileViewModel.loadPicture(pictureUri!!)
         }
+
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_IMAGE_CAPTURE) {
+            Timber.i(imageUri.toString())
+            imageUri?.let { editProfileViewModel.loadPicture(it) }
+        }
+
     }
 
+    override fun onDestroy() {
+        Timber.i("onDestroy() called")
+        super.onDestroy()
+        /**
+         * If date picker dialog was opened on configuration change
+         * it is being dismissed to prevent activity leaking window by WindowManager
+         * */
+        //Checks if lateinit variable is initialized
+        if (::dpd.isInitialized) {
+            if (dpd.isShowing) {
+                Timber.d("isShowing: ${dpd.isShowing} | Date Picker Dialog Dismissed ")
+                dpd.dismiss()
+            }
+        }
+    }
+
+    /**    Opens gallery for picking image    **/
     private fun launchGallery() {
-        val intent = Intent()
-        intent.type = "image/*"
-        intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST)
+        Intent().also {
+            it.type = "image/*"
+            it.action = Intent.ACTION_GET_CONTENT
+            startActivityForResult(Intent.createChooser(it, "Select Picture"), REQUEST_PICK_IMAGE)
+        }
     }
 
     private fun setupToolbar() {
@@ -105,13 +144,86 @@ class EditProfileFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         binding.toolbar.setupWithNavController(navController, appBarConfiguration)
     }
 
-    private fun showDatePickerDialog(dateSetListener: DatePickerDialog.OnDateSetListener) {
-        val datePickerDialog = DatePickerFragment(dateSetListener)
-        datePickerDialog.show(activity!!.supportFragmentManager, "datePicker")
+    /**
+     *   NOTE: Showing date picker this way needs dismiss manual handling in
+     *   onDestroy() if it is currently showed in order to eliminate activity window leak
+     */
+    private fun showDatePickerDialog() {
+
+        val c = Calendar.getInstance()
+        val year = c.get(Calendar.YEAR)
+        val month = c.get(Calendar.MONTH)
+        val dayOfMonth = c.get(Calendar.DAY_OF_MONTH)
+        dpd = DatePickerDialog(
+            context!!,
+            DatePickerDialog.OnDateSetListener { _, y, m, d ->
+                c.set(Calendar.YEAR, y)
+                c.set(Calendar.MONTH, m)
+                c.set(Calendar.DAY_OF_MONTH, d)
+                c.set(Calendar.HOUR_OF_DAY, 0)
+                c.set(Calendar.MINUTE, 0)
+                c.set(Calendar.SECOND, 0)
+                val date = c.time
+                val timestamp = Timestamp(date)
+                editProfileViewModel.setDate(timestamp)
+            }, year, month, dayOfMonth
+        )
+        dpd.datePicker.maxDate = Calendar.getInstance().timeInMillis
+        dpd.show()
     }
 
-    private fun saveChanges(firstName: String, nickname: String, dateOfBirth: String) {
-        editProfileViewModel.updateUserProfileInfo(firstName, nickname, dateOfBirth)
+    private suspend fun saveChanges(firstName: String, nickname: String) {
+        editProfileViewModel.updateUserProfileInfo(firstName, nickname)
     }
 
+    private fun checkPermissionAndOpenCamera() {
+        if (activity!!.checkSelfPermission(android.Manifest.permission.CAMERA)
+            == PackageManager.PERMISSION_DENIED ||
+            activity!!.checkSelfPermission(
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
+            //permission was not enabled
+            val permission = arrayOf(
+                android.Manifest.permission.CAMERA,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+            // show popup to request permission
+            requestPermissions(permission, PERMISSION_CODE)
+        } else {
+            openCamera()
+        }
+    }
+
+    private fun openCamera() {
+        val values = ContentValues().also {
+            it.put(MediaStore.Images.Media.TITLE, "New Picture")
+            it.put(MediaStore.Images.Media.DESCRIPTION, "From the camera")
+        }
+
+        imageUri =
+            context!!.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
+            it.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+            startActivityForResult(it, REQUEST_IMAGE_CAPTURE)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PERMISSION_CODE -> {
+                if (!grantResults.isNotEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(context, "Permission denied", Toast.LENGTH_SHORT).show()
+                } else { //Permission from popup was granted }
+                }
+            }
+        }
+
+    }
 }

@@ -1,20 +1,27 @@
-package com.example.socialapp.screens
+package com.example.socialapp.screens.adverts
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.ViewModelProviders
 import com.example.socialapp.R
 import com.example.socialapp.databinding.DialogNewAdvertisementBinding
-import com.example.socialapp.screens.adverts.AdvertsViewModel
+import com.example.socialapp.model.Advertisement
+import com.example.socialapp.model.Filters
+import timber.log.Timber
 
 
 class NewAdvertisementDialogFragment : DialogFragment() {
 
+    interface NewAdvertisementListener {
+        fun onCreateNewAdvertisement(advert: Advertisement)
+    }
+
     private lateinit var binding: DialogNewAdvertisementBinding
+    private lateinit var listener: NewAdvertisementListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,19 +41,49 @@ class NewAdvertisementDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.toolbar.setNavigationOnClickListener {
-            dismiss()
-        }
-
-        //TODO(dev) use it to set filters inside parentFragment
-        val viewModel =
-            ViewModelProviders.of(parentFragment!!).get(AdvertsViewModel::class.java)
-
-        binding.viewModel = viewModel
-
+        binding.toolbar.setNavigationOnClickListener { dismiss() }
+        binding.btnAddNewPost.setOnClickListener { addNewPost() }
 
     }
 
+    private fun addNewPost() {
+        val newAdvert =
+            Advertisement(
+                advertisementId = null,
+                createdByUserUid = null,
+                dateCreated = null,
+                filters = Filters(
+                    playersNumber = if (binding.spinnerPlayersNumber.selectedItem.toString().contentEquals("Any")) {
+                        null
+                    } else {
+                        binding.spinnerPlayersNumber.selectedItem.toString().toLong()
+                    },
+                    game = binding.spinnerGame.selectedItem.toString(),
+                    communicationLanguage = if(binding.spinnerLanguage.selectedItem.toString().contentEquals("Any")){
+                        null
+                    }else{
+                        binding.spinnerLanguage.selectedItem.toString()
+                    }
+                ),
+                user = null,
+                description = if (!binding.etDescription.text.isNullOrEmpty()) {
+                    binding.etDescription.text.toString()
+                } else {
+                    null
+                }
+            )
+        listener.onCreateNewAdvertisement(newAdvert)
+        dismiss()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            listener = parentFragment as NewAdvertisementListener
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
 
     // Makes dialog display as fully maximized
     override fun onStart() {

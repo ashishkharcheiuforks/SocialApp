@@ -19,17 +19,28 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            tools:context=".screens.createpost.CreatePostFragment">
+            tools:context=".screens.createpost.CreatePostDialogFragment">
 
         <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:theme="@style/ToolbarTheme"
+                style="@style/ToolbarTheme"
                 app:title="Create post"
-                tools:menu="@menu/menu_create_new_post"
                 app:titleTextColor="#FFFFFF"
-                tools:background="@color/colorPrimaryDark" />
+                app:navigationIcon="@drawable/ic_close_white_24px"
+                tools:background="@color/colorPrimaryDark" >
+            <TextView
+                    android:id="@+id/btn_add_new_post"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Publish"
+                    android:layout_gravity="end"
+                    android:textColor="@drawable/publish_button_selector"
+                    android:enabled="@{viewmodel.publishButtonEnabled}"
+                    android:padding="16dp"/>
+
+        </androidx.appcompat.widget.Toolbar>
 
         <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
@@ -63,6 +74,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
+                            android:textSize="16sp"
+                            android:textColor="@color/solid_black"
                             android:text="@{@string/name_nickname(user.firstName, user.nickname)}"
                             app:layout_constraintStart_toEndOf="@+id/user_profile_picture"
                             app:layout_constraintTop_toTopOf="@+id/user_profile_picture"
@@ -72,6 +85,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_post_content"
                         android:gravity="top|start"
                         android:padding="16dp"
                         android:hint="Share your thoughts..."
@@ -82,6 +96,37 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:minHeight="230dp" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/btn_add_picture"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="24dp"
+                        android:drawableLeft="@drawable/ic_image_black_24dp"
+                        android:text="add picture"
+                        android:textColor="@color/solid_black"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:src="@drawable/ic_image_black_24dp" />
+
+                    <ImageView
+                        android:id="@+id/iv_loaded_picture"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="24dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/btn_add_picture"
+                        app:layout_constraintTop_toBottomOf="@+id/btn_add_picture"
+                        app:srcCompat="@drawable/profilepic" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

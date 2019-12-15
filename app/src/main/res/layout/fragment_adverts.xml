@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -9,7 +10,7 @@
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".screens.main.groups.GroupsFragment">
+            tools:context=".screens.adverts.AdvertsFragment">
 
         <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
@@ -21,11 +22,132 @@
                     android:background="@drawable/fragment_background"
                     android:orientation="vertical">
 
+
                 <TextView
+                        android:id="@+id/tvv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="Find your gaming compans now!"/>
+                        android:layout_gravity="center_horizontal"
+                        android:padding="16dp"
+                        android:text="Find your gaming compans now!"
+                        android:textColor="@color/solid_black"
+                        android:textSize="20sp" />
+
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/solid_white"
+                        android:minHeight="60dp">
+
+                    <FrameLayout
+                            android:id="@+id/filter_bar_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="16dp"
+                            android:paddingRight="16dp">
+
+                        <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/filter_bar"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:clickable="true"
+                                android:elevation="8dp"
+                                android:foreground="?attr/selectableItemBackground"
+                                app:strokeColor="@color/greyDisabled"
+                                app:strokeWidth="1dp">
+
+                            <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical">
+
+                                <ImageView
+                                        android:id="@+id/button_filter"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerVertical="true"
+                                        android:padding="8dp"
+                                        android:tint="@color/greySecondary"
+                                        app:srcCompat="@drawable/ic_filter_list_white_24px" />
+
+                                <LinearLayout
+                                        android:id="@+id/text_current_search_container"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerVertical="true"
+                                        android:layout_marginLeft="8dp"
+                                        android:layout_toRightOf="@+id/button_filter"
+                                        android:orientation="vertical"
+                                        android:paddingTop="8dp"
+                                        android:paddingBottom="8dp">
+
+                                    <TextView
+                                            android:id="@+id/tv_current_search"
+                                            style="@style/AppTheme.Body1"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="All advertisements"
+                                            android:textColor="@color/greySecondary"
+                                            tools:text="Filter" />
+
+                                    <TextView
+                                            android:id="@+id/tv_current_sort_by"
+                                            style="@style/AppTheme.Caption"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="sorted by date"
+                                            android:textColor="@color/greyDisabled" />
+
+                                </LinearLayout>
+
+                                <ImageView
+                                        android:id="@+id/btn_clear_filters"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+                                        android:layout_centerVertical="true"
+                                        android:padding="8dp"
+                                        android:tint="@color/greySecondary"
+                                        app:srcCompat="@drawable/ic_close_white_24px" />
+
+                            </RelativeLayout>
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                    </FrameLayout>
+
+
+                </LinearLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/btn_add_new_advert"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center_horizontal"
+                        android:padding="16dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        app:cardCornerRadius="30dp"
+                        app:strokeColor="@color/greyDisabled"
+                        app:strokeWidth="1dp">
+
+                    <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_add_black_24dp" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:overScrollMode="never"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:itemCount="2"
+                        tools:listitem="@layout/item_advert" />
 
             </LinearLayout>
 

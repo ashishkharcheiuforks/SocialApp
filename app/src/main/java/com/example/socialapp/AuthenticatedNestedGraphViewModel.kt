@@ -2,21 +2,19 @@ package com.example.socialapp
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import com.example.socialapp.livedata.UserLiveData
+import com.example.socialapp.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import timber.log.Timber
 
 class AuthenticatedNestedGraphViewModel : ViewModel() {
 
-    val userLiveData =
-        UserInfoLiveData(
-            FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(FirebaseAuth.getInstance().uid.toString())
-        )
+    private val auth = FirebaseAuth.getInstance()
 
-    val user: LiveData<User>
-        get() = userLiveData
+    private val repo = FirestoreRepository()
+
+    val user: LiveData<User> = repo.getUserLiveData(auth.uid!!)
 
     init {
         Timber.i("Init called")
@@ -26,6 +24,4 @@ class AuthenticatedNestedGraphViewModel : ViewModel() {
         Timber.i("onCleared() called")
         super.onCleared()
     }
-
-
 }

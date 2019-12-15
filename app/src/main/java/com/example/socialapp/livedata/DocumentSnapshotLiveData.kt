@@ -1,6 +1,7 @@
-package com.example.socialapp
+package com.example.socialapp.livedata
 
 import androidx.lifecycle.LiveData
+import com.example.socialapp.common.Resource
 import com.google.firebase.firestore.*
 import timber.log.Timber
 
@@ -16,7 +17,7 @@ class DocumentSnapshotLiveData(
         value = if (e != null) {
             Resource(e)
         } else {
-            Resource(snapshot!!)
+            Resource(snapshot)
         }
     }
 

@@ -3,7 +3,7 @@ package com.example.socialapp.screens.userprofile
 import androidx.paging.DataSource
 import androidx.paging.ItemKeyedDataSource
 import com.example.socialapp.model.Post
-import com.example.socialapp.screens.FirestoreRepository
+import com.example.socialapp.FirestoreRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -16,13 +16,13 @@ class UserPostsDataSource(private val scope: CoroutineScope, private val userUid
             UserPostsDataSource(scope, userUid)
     }
 
-
     override fun loadInitial(
         params: LoadInitialParams<String>,
         callback: LoadInitialCallback<Post>
     ) {
         scope.launch {
-            val items = FirestoreRepository().getUserPosts(userUid, params.requestedLoadSize)
+            val items = FirestoreRepository()
+                .getUserPosts(userUid, params.requestedLoadSize)
             callback.onResult(items)
         }
     }

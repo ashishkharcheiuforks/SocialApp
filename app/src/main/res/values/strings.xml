@@ -2,4 +2,51 @@
     <string name="app_name">Social App</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="name_nickname">%s  \'%s\'</string>
+    <string name="example_about_me_text">Lorem ipsum bla bla cos tam teges no w ogole fajnie i ten tegoLorem ipsum bla bla cos tam teges no w ogole fajnie Lorem ipsum bla bla cos tam teges no w ogole fajnie</string>
+    <string name="user_age">%d Years Old</string>
+    <string name="comments_number">Comments: %d</string>
+    <string name="likes_number">%d Likes</string>
+
+    <string-array name="games">
+        <item>Counter Strike: Global Offensive</item>
+        <item>Counter Strike: 1.6</item>
+        <item>Call Of Duty: Modern Warfare</item>
+        <item>Mario Bros</item>
+        <item>Pacman</item>
+        <item>Grand Theft Auto: V</item>
+        <item>Grand Theft Auto: Vice City</item>
+        <item>Grand Theft Auto: San Andreas</item>
+        <item>Need For Speed: Most Wanted</item>
+    </string-array>
+
+    <string-array name="languages">
+        <item>Any Language</item>
+        <item>English</item>
+        <item>Russian</item>
+        <item>Polish</item>
+        <item>Spanish</item>
+        <item>Italian</item>
+        <item>Lithuanian</item>
+        <item>Norwegian</item>
+        <item>Danish</item>
+        <item>French</item>
+        <item>Mexican</item>
+    </string-array>
+
+    <string-array name="playersNumber">
+        <item>Any Players Amount</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+
+    </string-array>
+
 </resources>

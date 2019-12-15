@@ -4,12 +4,14 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
                 name="user"
-                type="com.example.socialapp.User" />
+                type="com.example.socialapp.model.User" />
+
         <variable
                 name="editViewModel"
-                type="com.example.socialapp.screens.editprofile.EditProfileViewmodel" />
+                type="com.example.socialapp.screens.editprofile.EditProfileViewModel" />
     </data>
 
     <LinearLayout
@@ -21,10 +23,10 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:titleTextColor="#FFFFFF"
                 app:theme="@style/ToolbarTheme"
-                tools:background="@color/colorPrimaryDark"
-                app:title="Edit Profile" />
+                app:title="Edit Profile"
+                app:titleTextColor="#FFFFFF"
+                tools:background="@color/colorPrimaryDark" />
 
         <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
@@ -34,15 +36,17 @@
 
             <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/fragment_background"
                     android:orientation="vertical">
 
                 <TextView
-                        android:id="@+id/profile_picture_label"
+                        android:id="@+id/tv__change_profile_picture_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
-                        android:text="Profile Picture"
+                        android:paddingStart="24dp"
+                        android:text="Change Profile Picture"
                         android:textColor="@android:color/black"
                         android:textSize="20sp" />
 
@@ -50,28 +54,55 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
+                    <TextView
+                            android:id="@+id/tv_pick_image_from"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pick picture from: "
+                            android:textColor="@color/solid_black"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/iv_profile_picture_preview"
+                            app:layout_constraintTop_toTopOf="@+id/iv_profile_picture_preview" />
+
                     <ImageView
-                            android:id="@+id/edit_profile_image_preview"
+                            android:id="@+id/iv_profile_picture_preview"
+                            imageResourceUri="@{editViewModel.loadedImageUri ?? user.profilePictureUri}"
                             android:layout_width="130sp"
                             android:layout_height="130sp"
-                            android:layout_marginStart="16dp"
+                            android:layout_marginStart="24dp"
                             android:layout_marginTop="16dp"
                             android:layout_marginBottom="16dp"
-                            imageResourceUri="@{editViewModel.loadedImageUri ?? user.profilePictureUri}"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:src="@drawable/profilepic" />
 
                     <Button
-                            android:id="@+id/edit_profile_choose_image"
+                            android:id="@+id/btn_choose_image_gallery"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:layout_marginEnd="16dp"
-                            android:text="load picture"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            android:layout_marginTop="8dp"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:drawableEnd="@drawable/ic_image_black_24dp"
+                            android:drawableTint="@color/colorPrimary"
+                            android:text="Gallery"
+                            app:layout_constraintEnd_toEndOf="@+id/tv_pick_image_from"
+                            app:layout_constraintStart_toStartOf="@+id/tv_pick_image_from"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_pick_image_from" />
+
+                    <Button
+                            android:id="@+id/btn_choose_image_camera"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:drawableEnd="@drawable/ic_add_a_photo_black_24dp"
+                            android:drawableTint="@color/colorPrimary"
+                            android:text="Camera"
+                            app:layout_constraintBottom_toBottomOf="@+id/iv_profile_picture_preview"
+                            app:layout_constraintEnd_toEndOf="@+id/tv_pick_image_from"
+                            app:layout_constraintStart_toStartOf="@+id/tv_pick_image_from"
+                            app:layout_constraintTop_toBottomOf="@+id/btn_choose_image_gallery" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -87,11 +118,11 @@
                         android:layout_height="wrap_content">
 
                     <TextView
-                            android:id="@+id/personal_information_label"
+                            android:id="@+id/tv_personal_information_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
 
-                            android:layout_marginStart="16dp"
+                            android:layout_marginStart="24dp"
                             android:layout_marginTop="16dp"
                             android:layout_marginBottom="16dp"
                             android:text="Personal Information"
@@ -104,15 +135,16 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/edit_first_name_text_input"
+                        android:id="@+id/et_first_name_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_marginStart="32dp"
                         android:layout_marginTop="24dp"
                         android:layout_marginEnd="32dp">
 
                     <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_edit_profile_first_name"
+                            android:id="@+id/et_first_name"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:hint="First Name"
@@ -128,6 +160,7 @@
                         android:id="@+id/edit_nickname_text_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_marginStart="32dp"
                         android:layout_marginTop="24dp"
                         android:layout_marginEnd="32dp">
@@ -149,29 +182,54 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="32dp"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_marginTop="24dp"
                         android:layout_marginEnd="32dp">
 
                     <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/et_edit_profile_date_of_birth"
+                            dateToText="@{editViewModel.dateOfBirth ?? user.dateOfBirth}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Date Of Birth (dd/mm/yyyy)"
-                            android:text="@{user.dateOfBirth}"
-                            android:longClickable="false"
                             android:clickable="true"
                             android:focusable="false"
+                            android:hint="Date Of Birth (dd/mm/yyyy)"
+                            android:longClickable="false"
                             android:singleLine="true"
                             tools:text="20/4/2077" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
-                        android:id="@+id/btn_save_changes_personal_info"
+                <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="@android:color/darker_gray" />
+
+                <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
+                        android:layout_gravity="center"
                         android:layout_margin="16dp"
-                        android:text="Save Changes" />
+                        android:orientation="horizontal">
+
+                    <Button
+                            android:id="@+id/btn_save_changes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginRight="8dp"
+                            android:text="Save" />
+
+                    <Button
+                            android:id="@+id/btn_cancel_changes"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:text="Cancel" />
+                </LinearLayout>
 
             </LinearLayout>
 

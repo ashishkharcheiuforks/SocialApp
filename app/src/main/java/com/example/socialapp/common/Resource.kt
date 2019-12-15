@@ -1,4 +1,4 @@
-package com.example.socialapp
+package com.example.socialapp.common
 
 class Resource<T> private constructor(
     private val data: T?,

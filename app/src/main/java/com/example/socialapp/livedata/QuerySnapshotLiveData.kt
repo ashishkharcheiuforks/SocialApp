@@ -1,6 +1,7 @@
-package com.example.socialapp
+package com.example.socialapp.livedata
 
 import androidx.lifecycle.LiveData
+import com.example.socialapp.common.Resource
 import com.google.firebase.firestore.*
 import timber.log.Timber
 
@@ -19,7 +20,7 @@ class QuerySnapshotLiveData(private val query: Query) : LiveData<Resource<QueryS
         value = if (e != null) {
             Resource(e)
         } else {
-            Resource(snapshots!!)
+            Resource(snapshots)
         }
     }
 

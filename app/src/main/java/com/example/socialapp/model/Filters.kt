@@ -1,8 +1,7 @@
 package com.example.socialapp.model
 
-data class Filter(
+data class Filters(
     val game: String? = null,
     val communicationLanguage: String? = null,
-    val minAge: Long? = null,
-    val maxAge: Long? = null
+    val playersNumber: Long? = null
 )

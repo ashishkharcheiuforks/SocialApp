@@ -3,40 +3,55 @@ package com.example.socialapp.screens.userprofile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.socialapp.DocumentSnapshotLiveData
-import com.example.socialapp.User
-import com.example.socialapp.UserInfoLiveData
-import com.example.socialapp.screens.FirestoreRepository
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
+import com.example.socialapp.livedata.DocumentSnapshotLiveData
+import com.example.socialapp.livedata.UserLiveData
+import com.example.socialapp.model.Post
+import com.example.socialapp.FirestoreRepository
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import timber.log.Timber
 
-class UserProfileViewmodel(private val uid: String) : ViewModel() {
+class UserProfileViewModel(private val uid: String) : ViewModel() {
 
-    val userLiveData =
-        UserInfoLiveData(
+    private val viewModelJob = SupervisorJob()
+    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+
+    init {
+        Timber.i("init called")
+    }
+
+    val user =
+        UserLiveData(
             FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(uid)
         )
 
-    val user: LiveData<User>
-        get() = userLiveData
-
     val friendshipStatus = getFriendshipStatus(uid)
 
-    private val _friendshipButtonText = MutableLiveData<String>()
-    val friendshipButtonText: LiveData<String>
-        get() = _friendshipButtonText
 
+    private val config = PagedList.Config.Builder()
+        .setEnablePlaceholders(false)
+        .setPrefetchDistance(10)
+        .setPageSize(20)
+        .build()
 
-    /**    Updates invite button label    */
-    fun updateStatus(status: String?) {
-        if (status != null) _friendshipButtonText.value = status
-        else _friendshipButtonText.value = "Add to friends"
-    }
+    private val dataSource = UserPostsDataSource.Factory(uiScope, uid)
 
-    fun getFriendshipStatus(uid: String): DocumentSnapshotLiveData {
+    val posts: LiveData<PagedList<Post>> =
+        LivePagedListBuilder<String, Post>(
+            dataSource,
+            config
+        ).build()
+
+    fun refreshPosts() = posts.value?.dataSource?.invalidate()
+
+    private fun getFriendshipStatus(uid: String): DocumentSnapshotLiveData {
         return FirestoreRepository().getFriendshipStatus(uid)
     }
 
@@ -45,16 +60,24 @@ class UserProfileViewmodel(private val uid: String) : ViewModel() {
         super.onCleared()
     }
 
+    fun likeThePost(postId: String): Task<Void> {
+        return FirestoreRepository().likeThePost(postId)
+    }
+
+    fun unlikeThePost(postId: String): Task<Void>{
+        return FirestoreRepository().unlikeThePost(postId)
+    }
+
     fun inviteToFriends(): Task<Void> {
         return FirestoreRepository().inviteToFriends(uid)
     }
 
-    fun acceptFriendRequest() {
-        FirestoreRepository().acceptFriendRequest(uid)
+    fun acceptFriendRequest(): Task<Void> {
+        return FirestoreRepository().acceptFriendRequest(uid)
     }
 
-    fun cancelFriendRequest() {
-        FirestoreRepository().deleteFriendRequest(uid)
+    fun cancelFriendRequest(): Task<Void> {
+        return FirestoreRepository().deleteFriendRequest(uid)
     }
 
 }

@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#0390FF</color>
-    <color name="colorAccent">#00BCD4</color>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+<!--    <color name="colorPrimaryDark">#FF6F00</color>-->
+    <color name="colorAccent">#2979FF</color>
+
+
+    <color name="light_gray">#BEBDBD</color>
+    <color name="solid_white">#FFFFFF</color>
+    <color name="light_purple">#B39DDB</color>
+    <color name="solid_black">#000000</color>
+    <color name="greyPrimary">#DE000000</color>
+    <color name="greySecondary">#8B000000</color>
+    <color name="greyDisabled">#61000000</color>
+
+
+    <color name="tab_icon_selected">@color/solid_white</color>
+    <color name="tab_icon_unselected">@color/light_gray</color>
+
+    <color name="post_card_background">@color/light_purple</color>
+
 </resources>

@@ -11,7 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import timber.log.Timber
 
 
-class DeleteFromFriendsBottomSheetDialogFragment :
+class DeleteFromFriendsDialog :
     BottomSheetDialogFragment() {
 
     private lateinit var binding: DialogDeleteFromFriendsBottomSheetBinding

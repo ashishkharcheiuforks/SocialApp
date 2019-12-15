@@ -43,7 +43,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="start"
                 android:orientation="vertical">
 
@@ -64,44 +64,33 @@
                     style="@style/AppTheme.FilterSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
-                    android:paddingEnd="16dp"
                     android:entries="@array/games"
+                    android:paddingEnd="16dp"
                     app:layout_constraintStart_toStartOf="@+id/game_label"
                     app:layout_constraintTop_toBottomOf="@+id/game_label" />
 
-
-            <View
-                    android:id="@+id/view2"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@color/light_gray"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    app:layout_constraintTop_toBottomOf="@+id/spinner_game"
-                    tools:layout_editor_absoluteX="16dp" />
 
             <TextView
                     android:id="@+id/language_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="24dp"
                     android:text="Communication Language:"
                     android:textColor="@color/solid_black"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="@+id/spinner_game"
-                    app:layout_constraintTop_toBottomOf="@+id/view2" />
+                    app:layout_constraintTop_toBottomOf="@+id/spinner_game" />
 
             <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/spinner_language"
                     style="@style/AppTheme.FilterSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
                     android:entries="@array/languages"
                     app:layout_constraintStart_toStartOf="parent"
@@ -112,12 +101,55 @@
                     android:id="@+id/how_many_players_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="24dp"
                     android:text="How many players are you looking for?"
                     android:textColor="@color/solid_black"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="@+id/spinner_language"
                     app:layout_constraintTop_toBottomOf="@+id/spinner_language" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/spinner_players_number"
+                    style="@style/AppTheme.FilterSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:entries="@array/playersNumber"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/how_many_players_label" />
+
+            <TextView
+                    android:id="@+id/description_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:textColor="@color/solid_black"
+                    android:textSize="16sp"
+                    android:text="Description (Max 255 characters)"
+                    app:layout_constraintStart_toStartOf="@+id/spinner_players_number"
+                    app:layout_constraintTop_toBottomOf="@+id/spinner_players_number" />
+
+            <EditText
+                    android:id="@+id/et_description"
+                    android:layout_width="0dp"
+                    android:layout_height="170dp"
+                    android:gravity="top|start"
+                    android:background="@color/solid_white"
+                    android:maxLength="255"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:ems="10"
+                    android:padding="8dp"
+                    android:inputType="textPersonName"
+                    android:hint="Write something more(Optional)"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/description_label" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

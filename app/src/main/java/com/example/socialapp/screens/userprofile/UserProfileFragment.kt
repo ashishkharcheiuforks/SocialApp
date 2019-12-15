@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -15,23 +14,31 @@ import androidx.navigation.navGraphViewModels
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.socialapp.AuthenticatedNestedGraphViewModel
-import com.example.socialapp.FriendshipStatus
 import com.example.socialapp.R
-import com.example.socialapp.User
+import com.example.socialapp.adapter.PostsAdapter
 import com.example.socialapp.databinding.FragmentUserProfileBinding
+import com.example.socialapp.model.FriendshipStatus
+import com.example.socialapp.model.User
+import com.example.socialapp.screens.comments.CommentsFragment
 import com.google.firebase.auth.FirebaseAuth
 import timber.log.Timber
 
-class UserProfileFragment : Fragment(), View.OnClickListener {
+
+class UserProfileFragment : Fragment(),
+    ModalBottomSheetListener,
+    PostsAdapter.OnPostClickListener {
+
     private lateinit var binding: FragmentUserProfileBinding
 
-    private lateinit var userUid: String
+    private val nestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(R.id.authenticated_graph)
+    private val userProfileViewModel: UserProfileViewModel by lazy {
+        ViewModelProviders.of(this, UserProfileViewModelFactory(args.uid))
+            .get(UserProfileViewModel::class.java)
+    }
 
-    private lateinit var userProfileViewModel: UserProfileViewmodel
-
+    private val adapter by lazy { PostsAdapter(this) }
     private val args: UserProfileFragmentArgs by navArgs()
-
-    private val nestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(R.id.authenticated_nested_graph)
+    private val auth = FirebaseAuth.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,65 +52,27 @@ class UserProfileFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //Unique Id of user
-        userUid = args.uid
-
         binding.lifecycleOwner = this
 
         setupToolbar()
 
-        //Initialize Viewmodels
-        userProfileViewModel =
-            ViewModelProviders.of(this, UserProfileViewModelFactory(userUid))
-                .get(UserProfileViewmodel::class.java)
-
-
-        //Set Observers
+        //Shows friendship status button if opened profile is not currently logged user
         setupFriendshipStatusButton()
 
+        // Binds user object to the data binding variable that displays
+        // header of the opened user profile
         bindUser()
 
-        binding.userProfileViewmodel = userProfileViewModel
+        // Set adapter for recyclerview that displays user posts
+        binding.recyclerview.adapter = adapter
 
+        userProfileViewModel.posts.observe(viewLifecycleOwner, Observer {
+            binding.swipeRefreshLayout.isRefreshing = false
+            adapter.submitList(it)
+        })
 
-        //Set Listeners
-        binding.btnFriendshipStatus.setOnClickListener(this)
+        binding.swipeRefreshLayout.setOnRefreshListener { userProfileViewModel.refreshPosts() }
 
-    }
-
-    /**    On Click Handling    **/
-
-    override fun onClick(view: View?) {
-        when (view?.id) {
-            /**    Friendship status buttom    **/
-            R.id.btn_friendship_status -> {
-                val btn = view as Button
-                when (btn.text.toString()) {
-                    FriendshipStatus.INVITATION_SENT.status -> {
-                        openCancelFriendInviteBottomSheet()
-                    }
-                    FriendshipStatus.INVITATION_RECEIVED.status -> {
-                        openAcceptOrCancelInvitationBottomSheet()
-                    }
-                    FriendshipStatus.ACCEPTED.status -> {
-                        openDeleteFromFriendsBottomSheet()
-                    }
-                    "Add to friends" -> {
-                        userProfileViewModel.inviteToFriends()
-                    }
-                }
-            }
-            /**    Delete user from friend list - items in bottom sheets */
-            R.id.bottom_sheet_item_delete_from_friends,
-            R.id.bottom_sheet_item_cancel_friend_invite,
-            R.id.bottom_sheet_item_cancel_friend_request-> {
-                userProfileViewModel.cancelFriendRequest()
-            }
-            /**    Accept received friend request - bottom sheet dialog item */
-            R.id.bottom_sheet_item_accept_friend_request -> {
-                userProfileViewModel.acceptFriendRequest()
-            }
-        }
     }
 
     override fun onDestroy() {
@@ -111,36 +80,88 @@ class UserProfileFragment : Fragment(), View.OnClickListener {
         super.onDestroy()
     }
 
-    private fun setupFriendshipStatusButton() {
-        if(isAuthenticatedUserProfile()) return
-        userProfileViewModel.friendshipStatus
-            .observe(viewLifecycleOwner, Observer { result ->
-                if (result.isSuccessful) {
-                    val status = result.data().getString("status")
-                    Timber.d("Friendship status: $status")
-                    userProfileViewModel.updateStatus(status)
-                    binding.btnFriendshipStatus.visibility = View.VISIBLE
-                }
-            })
+    override fun onAcceptInvitation() {
+        userProfileViewModel.acceptFriendRequest()
+            .addOnCompleteListener {
+                // Handle UI
+            }
     }
 
-    private fun bindUser() {
-        if (isAuthenticatedUserProfile()) {
-            Timber.i("Observing user inside nested graph viewmodel")
-            nestedGraphViewModel.user.observe(
-                viewLifecycleOwner,
-                Observer<User> { binding.user = it })
-        } else {
-            Timber.i("Observing user inside user viewmodel")
-            userProfileViewModel.user.observe(
-                viewLifecycleOwner,
-                Observer<User> { binding.user = it })
+    override fun onDeleteInvitation() {
+        userProfileViewModel.cancelFriendRequest()
+            .addOnCompleteListener {
+                // Handle UI
+            }
+    }
+
+    override fun onLikeButtonClicked(postId: String) {
+        userProfileViewModel.likeThePost(postId)
+            .addOnCompleteListener {
+                // Handle UI
+            }
+    }
+
+    override fun onUnlikeButtonClicked(postId: String) {
+        userProfileViewModel.unlikeThePost(postId)
+            .addOnCompleteListener {
+                // Handle UI
+            }
+    }
+
+    override fun onCommentButtonClicked(postId: String) {
+        openCommentsSection(postId)
+    }
+
+    override fun onProfilePictureClicked(userId: String) {
+        // Do nothing - No need to reopen the same user profile
+    }
+
+    private fun openCommentsSection(postId: String) {
+        // Pass postId in bundle to dialog fragment that displays comments
+        val bottomSheetDialogFragment = CommentsFragment().apply {
+            arguments = Bundle().apply { putString("postId", postId) }
+        }
+        bottomSheetDialogFragment.show(childFragmentManager, "CancelSentInviteDialog")
+    }
+
+    // Shows and handles behaviour of friendship status button on other users profiles
+    private fun setupFriendshipStatusButton() {
+        if (!isAuthenticatedUserProfile()) {
+            userProfileViewModel.friendshipStatus
+                .observe(viewLifecycleOwner, Observer { result ->
+                    binding.btnFriendshipStatus.apply {
+                        when (result.data().get("status")) {
+                            null -> {
+                                text = FriendshipStatus.NO_STATUS.status
+                                setOnClickListener { userProfileViewModel.inviteToFriends() }
+                            }
+                            FriendshipStatus.ACCEPTED.status -> {
+                                text = FriendshipStatus.ACCEPTED.status
+                                setOnClickListener { openDeleteFromFriendsDialog() }
+                            }
+                            FriendshipStatus.INVITATION_SENT.status -> {
+                                text = FriendshipStatus.INVITATION_SENT.status
+                                setOnClickListener { openCancelFriendInviteDialog() }
+                            }
+                            FriendshipStatus.INVITATION_RECEIVED.status -> {
+                                text = FriendshipStatus.INVITATION_RECEIVED.status
+                                setOnClickListener { openAcceptOrCancelInviteDialog() }
+                            }
+                        }
+                        visibility = View.VISIBLE
+                        binding.btnMessage.visibility = View.VISIBLE
+                    }
+                })
         }
     }
 
-    private fun isAuthenticatedUserProfile(): Boolean =
-        userUid == FirebaseAuth.getInstance().uid
+    private fun bindUser() = if (isAuthenticatedUserProfile()) {
+        nestedGraphViewModel.user.observe(viewLifecycleOwner, Observer<User> { binding.user = it })
+    } else {
+        userProfileViewModel.user.observe(viewLifecycleOwner, Observer<User> { binding.user = it })
+    }
 
+    private fun isAuthenticatedUserProfile(): Boolean = args.uid == auth.uid
 
     private fun navigateToEditUserProfileScreen() {
         val action = UserProfileFragmentDirections.actionProfileFragmentToEditProfileFragment()
@@ -152,42 +173,34 @@ class UserProfileFragment : Fragment(), View.OnClickListener {
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         binding.toolbar.setupWithNavController(navController, appBarConfiguration)
 
-        //Adds edit profile action icon to the toolbar
+        // Shows edit button on toolbar when inside logged in user profile
         if (isAuthenticatedUserProfile()) {
             binding.toolbar.inflateMenu(R.menu.menu_toolbar_user_profile)
             binding.toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.action_edit_profile -> {
+                    R.id.action_edit_profile ->
                         navigateToEditUserProfileScreen()
-                        true
-                    }
-                    else -> {
-                        super.onOptionsItemSelected(it)
-                    }
                 }
+                true
             }
         }
     }
 
-    private fun openDeleteFromFriendsBottomSheet() {
-        DeleteFriendBottomSheetDialogFragment(this).show(
+    private fun openAcceptOrCancelInviteDialog() {
+        AcceptOrCancelInviteDialog()
+            .show(childFragmentManager, "AcceptOrCancelInviteDialog")
+    }
+
+    private fun openCancelFriendInviteDialog() {
+        CancelSentInviteDialog().show(
             childFragmentManager,
-            "Delete From Friends Bottom Sheet"
+            "CancelSentInviteDialog"
         )
     }
 
-    private fun openCancelFriendInviteBottomSheet() {
-        CancelFriendInviteBottomSheetDialogFragment(this).show(
-            childFragmentManager,
-            "Cancel Friend Invite Bottom Sheet"
-        )
-    }
-
-    private fun openAcceptOrCancelInvitationBottomSheet() {
-        AcceptOrCancelInviteBottomSheetDialogFragment(this).show(
-            childFragmentManager,
-            "Accept or Cancel Invite Bottom Sheet"
-        )
+    private fun openDeleteFromFriendsDialog() {
+        DeleteFromFriendsDialog()
+            .show(childFragmentManager, "DeleteFromFriendsDialog")
     }
 
 }

@@ -1,4 +1,4 @@
-package com.example.socialapp.screens.main.home
+package com.example.socialapp.screens.home
 
 
 import android.graphics.Color
@@ -16,9 +16,9 @@ import com.example.socialapp.AuthenticatedNestedGraphViewModel
 import com.example.socialapp.R
 import com.example.socialapp.adapter.PostsAdapter
 import com.example.socialapp.databinding.FragmentHomeBinding
+import com.example.socialapp.screens.main.MainScreenFragmentDirections
 import com.example.socialapp.screens.comments.CommentsFragment
 import com.example.socialapp.screens.createpost.CreatePostDialogFragment
-import com.example.socialapp.screens.main.MainScreenFragmentDirections
 import com.google.firebase.auth.FirebaseAuth
 import timber.log.Timber
 
@@ -32,7 +32,7 @@ class HomeFragment : Fragment(), PostsAdapter.OnPostClickListener {
     private val homeViewModel: HomeViewModel by viewModels()
 
     private val authenticatedNestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(
-        R.id.authenticated_nested_graph
+        R.id.authenticated_graph
     )
 
     override fun onCreateView(
@@ -46,10 +46,12 @@ class HomeFragment : Fragment(), PostsAdapter.OnPostClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.lifecycleOwner = this
+
         // Set recyclerview adapter for posts
         binding.recyclerview.adapter = adapter
 
-        //** Set the colors of the Pull To Refresh View
+        // Set the colors of the Pull To Refresh View
         binding.swipeRefreshLayout.setProgressBackgroundColorSchemeColor(ContextCompat.getColor(context!!.applicationContext, R.color.colorPrimary))
         binding.swipeRefreshLayout.setColorSchemeColors(Color.WHITE)
 

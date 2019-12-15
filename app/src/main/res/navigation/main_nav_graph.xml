@@ -7,7 +7,7 @@
     <fragment
             android:id="@+id/loginFragment"
             android:name="com.example.socialapp.screens.login.LoginFragment"
-            android:label="LoginFragment"
+            android:label="Login"
             tools:layout="@layout/fragment_login">
         <action
                 android:id="@+id/action_loginFragment_to_registerFragment"
@@ -16,7 +16,7 @@
                 app:popUpTo="@+id/loginFragment" />
         <action
                 android:id="@+id/action_loginFragment_to_mainFragment"
-                app:destination="@id/mainFragment"
+                app:destination="@id/authenticated_graph"
                 app:launchSingleTop="true"
                 app:popUpTo="@+id/loginFragment"
                 app:popUpToInclusive="true" />
@@ -24,23 +24,75 @@
     <fragment
             android:id="@+id/registerFragment"
             android:name="com.example.socialapp.screens.register.RegisterFragment"
-            android:label="RegisterFragment"
             tools:layout="@layout/fragment_register">
         <action
-                android:id="@+id/action_registerFragment_to_loginFragment"
-                app:destination="@id/loginFragment"
-                app:launchSingleTop="true"
+                android:id="@+id/action_registerFragment_to_mainFragment"
+                app:destination="@+id/authenticated_graph"
                 app:popUpTo="@+id/loginFragment"
                 app:popUpToInclusive="true" />
     </fragment>
-    <fragment
-            android:id="@+id/mainFragment"
-            android:name="com.example.socialapp.screens.main.MainFragment"
-            android:label="MainFragment"
-            tools:layout="@layout/fragment_main_screen" />
     <action
             android:id="@+id/action_global_loginFragment"
             app:destination="@id/loginFragment"
             app:popUpTo="@id/main_nav_graph"
             app:popUpToInclusive="true" />
+
+    <navigation
+            android:id="@+id/authenticated_graph"
+            app:startDestination="@id/mainFragment">
+        <fragment
+                android:id="@+id/mainFragment"
+                android:name="com.example.socialapp.screens.main.MainScreenFragment"
+                tools:layout="@layout/fragment_main_screen" >
+            <action
+                    android:id="@+id/action_mainFragment_to_searchUserFragment"
+                    app:destination="@id/searchUserFragment" />
+        </fragment>
+        <fragment
+                android:id="@+id/profileFragment"
+                android:name="com.example.socialapp.screens.userprofile.UserProfileFragment"
+                tools:layout="@layout/fragment_user_profile">
+            <action
+                    android:id="@+id/action_profileFragment_to_editProfileFragment"
+                    app:destination="@id/editProfileFragment" />
+            <argument
+                    android:name="uid"
+                    app:argType="string" />
+        </fragment>
+        <fragment
+                android:id="@+id/editProfileFragment"
+                android:name="com.example.socialapp.screens.editprofile.EditProfileFragment"
+                tools:layout="@layout/fragment_edit_profile" />
+        <fragment
+                android:id="@+id/searchUserFragment"
+                android:name="com.example.socialapp.screens.searchuser.SearchUserFragment"
+                tools:layout="@layout/fragment_search_user" />
+        <action
+                android:id="@+id/action_global_profileFragment"
+                app:destination="@id/profileFragment">
+            <argument
+                    android:name="uid"
+                    android:defaultValue="@null" />
+        </action>
+
+        <fragment
+                android:id="@+id/friendsFragment"
+                android:name="com.example.socialapp.screens.friends.FriendsFragment"
+                tools:layout="@layout/fragment_friends" />
+        <action
+                android:id="@+id/action_global_friendsFragment"
+                app:destination="@id/friendsFragment" />
+        <fragment
+                android:id="@+id/createPost"
+                android:name="com.example.socialapp.screens.createpost.CreatePostDialogFragment"
+                tools:layout="@layout/dialog_create_post" />
+        <action
+                android:id="@+id/action_global_createPost"
+                app:destination="@id/createPost" />
+        <fragment
+                android:id="@+id/chatRoomsFragment"
+                android:name="com.example.socialapp.screens.chat.ChatRoomsFragment"
+                android:label="chat_rooms_fragment"
+                tools:layout="@layout/fragment_chat_rooms" /><action android:id="@+id/action_global_chatRoomsFragment" app:destination="@id/chatRoomsFragment"/>
+    </navigation>
 </navigation>

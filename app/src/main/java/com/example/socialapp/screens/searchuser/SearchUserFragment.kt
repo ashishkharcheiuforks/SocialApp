@@ -1,42 +1,81 @@
-package com.example.socialapp.screens
+package com.example.socialapp.screens.searchuser
 
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
-
-import com.example.socialapp.R
+import com.example.socialapp.adapter.SearchUserAdapter
 import com.example.socialapp.databinding.FragmentSearchUserBinding
+import timber.log.Timber
 
-class SearchUserFragment : Fragment() {
-
+class SearchUserFragment : Fragment(), SearchUserAdapter.SearchUserItemListener {
     private lateinit var binding: FragmentSearchUserBinding
+
+    private val viewModel: SearchUserViewmodel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentSearchUserBinding.inflate(inflater,container,false)
+        binding = FragmentSearchUserBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setupToolbar()
+
+        binding.viewmodel = viewModel
+        binding.lifecycleOwner = this
+
+        viewModel.users.observe(this, Observer {
+            val adapter = SearchUserAdapter(it, this)
+            binding.recyclerview.adapter = adapter
+            adapter.notifyDataSetChanged()
+        })
+
+        //TODO(DEV): Use two-way databinding for edittext input and observe that input observable in fragment
+
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(editable: Editable?) {
+                if (editable.toString().trim().length > 2)
+                    viewModel.searchForUser(editable.toString())
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+        })
+
+
     }
 
-    private fun setupToolbar(){
+    override fun onSearchUserItemClick(userUid: String) {
+        Timber.d("user clicked uid: $userUid")
+        navigateToUserProfile(userUid)
+    }
+
+    private fun navigateToUserProfile(uid: String) {
+        val action = SearchUserFragmentDirections.actionGlobalProfileFragment(uid)
+        findNavController().navigate(action)
+    }
+
+    private fun setupToolbar() {
         val navController = findNavController()
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         binding.toolbar.setupWithNavController(navController, appBarConfiguration)
     }
-
-
 }

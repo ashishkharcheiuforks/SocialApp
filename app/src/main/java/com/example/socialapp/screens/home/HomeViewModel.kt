@@ -1,4 +1,4 @@
-package com.example.socialapp.screens.main.home
+package com.example.socialapp.screens.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel

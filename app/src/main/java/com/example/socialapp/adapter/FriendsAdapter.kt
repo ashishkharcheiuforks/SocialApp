@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.socialapp.databinding.FriendItemBinding
+import com.example.socialapp.databinding.ItemFriendBinding
 import com.example.socialapp.model.User
 
 class FriendsAdapter(private val listener: ViewHolder.OnFriendItemClickListener) :
@@ -20,7 +20,7 @@ class FriendsAdapter(private val listener: ViewHolder.OnFriendItemClickListener)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = FriendItemBinding.inflate(inflater, parent, false)
+        val binding = ItemFriendBinding.inflate(inflater, parent, false)
         return ViewHolder(binding)
     }
 
@@ -33,7 +33,7 @@ class FriendsAdapter(private val listener: ViewHolder.OnFriendItemClickListener)
     }
 
 
-    class ViewHolder(private val binding: FriendItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: ItemFriendBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(user: User, listener: OnFriendItemClickListener) {
             binding.user = user
 

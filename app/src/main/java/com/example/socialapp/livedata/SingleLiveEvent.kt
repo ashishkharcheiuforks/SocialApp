@@ -1,4 +1,4 @@
-package com.example.socialapp
+package com.example.socialapp.livedata
 
 
 import androidx.annotation.MainThread

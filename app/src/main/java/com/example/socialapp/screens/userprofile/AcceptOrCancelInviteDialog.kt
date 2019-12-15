@@ -11,7 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import timber.log.Timber
 
 
-class AcceptOrCancelInviteBottomSheetDialogFragment :
+class AcceptOrCancelInviteDialog :
     BottomSheetDialogFragment() {
 
     private lateinit var binding: DialogAcceptOrCancelInviteBottomSheetBinding

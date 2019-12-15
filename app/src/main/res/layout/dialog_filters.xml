@@ -71,70 +71,57 @@
                 android:layout_height="wrap_content">
 
             <ImageView
-                    android:id="@+id/icon_price"
+                    android:id="@+id/icon_players_number"
                     style="@style/AppTheme.FilterIcon"
                     android:layout_centerVertical="true"
                     android:tint="@color/greySecondary"
-                    app:srcCompat="@drawable/ic_add_black_24dp" />
+                    app:srcCompat="@drawable/ic_invites_black_24dp" />
 
             <Spinner
-                    android:id="@+id/spinner_price"
+                    android:id="@+id/spinner_players_number"
                     style="@style/AppTheme.FilterSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/icon_price"
-                    android:entries="@array/games" />
+                    android:layout_toRightOf="@+id/icon_players_number"
+                    android:entries="@array/playersNumber" />
 
         </RelativeLayout>
 
         <!-- Sort by -->
         <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            <ImageView
-                    android:id="@+id/icon_sort"
-                    style="@style/AppTheme.FilterIcon"
-                    android:layout_centerVertical="true"
-                    android:tint="@color/greySecondary"
-                    app:srcCompat="@drawable/ic_image_black_24dp" />
-
-            <Spinner
-                    android:id="@+id/spinner_sort"
-                    style="@style/AppTheme.FilterSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/icon_sort"
-                    android:entries="@array/games" />
-        </RelativeLayout>
+                android:layout_height="wrap_content"/>
 
         <!-- Cancel and apply buttons -->
         <LinearLayout
+                android:layout_marginTop="12dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="horizontal">
-
+            <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
 
             <Button
                     android:id="@+id/button_cancel"
-                    style="@style/Base.Widget.AppCompat.Button.Borderless"
-                    android:layout_width="wrap_content"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="Cancel"
-                    android:textColor="@color/light_gray"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:textColor="@color/greySecondary"
                     android:theme="@style/ThemeOverlay.FilterButton" />
 
-            <View
-                    android:layout_width="16dp"
-                    android:layout_height="0dp" />
 
             <Button
                     android:id="@+id/button_apply"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="Apply"
                     android:theme="@style/ThemeOverlay.FilterButton" />
 

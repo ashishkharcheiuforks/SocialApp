@@ -1,12 +1,15 @@
 package com.example.socialapp.model
 
-import android.net.Uri
+import com.google.firebase.Timestamp
+import io.reactivex.Observable
 
-data class PostItem(
+data class Post(
     val postId: String,
-    val postImage: Uri?,
+    val postImage: String?,
     val postContent: String,
-    val postDateCreated: String,
+    val postDateCreated: Timestamp,
     val postLikesNumber: Int,
-    val postCommentsNumber: Int
+    val postCommentsNumber: Int,
+    val user: User,
+    val postLiked: Observable<Boolean>
 )

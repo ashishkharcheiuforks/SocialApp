@@ -1,33 +1,27 @@
 package com.example.socialapp.screens.chat
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 
 import com.example.socialapp.R
 
 class ChatRoomsFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = ChatRoomsFragment()
-    }
-
-    private lateinit var viewModel: ChatRoomsViewModel
+    private val viewModel: ChatRoomsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.chat_rooms_fragment, container, false)
+        return inflater.inflate(R.layout.fragment_chat_rooms, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(ChatRoomsViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
+    }
 }

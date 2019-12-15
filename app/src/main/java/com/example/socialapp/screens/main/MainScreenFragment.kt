@@ -1,11 +1,9 @@
-package com.example.socialapp.screens
+package com.example.socialapp.screens.main
 
 
 import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -80,6 +78,7 @@ class MainScreenFragment : Fragment() {
         tabLayout.getTabAt(1)!!.setIcon(R.drawable.ic_home_black_24dp)
         tabLayout.getTabAt(2)!!.setIcon(R.drawable.ic_groups_black_24dp)
     }
+
 
     private fun setupToolbar() {
         // Inflate menu with search icon

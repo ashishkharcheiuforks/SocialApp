@@ -5,55 +5,52 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.algolia.search.saas.Client
-import com.example.socialapp.screens.FirestoreRepository
+import com.example.socialapp.FirestoreRepository
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import timber.log.Timber
 
-class EditProfileViewmodel : ViewModel() {
+class EditProfileViewModel : ViewModel() {
 
     private val _loadedImageUri = MutableLiveData<Uri>()
     val loadedImageUri: LiveData<Uri>
         get() = _loadedImageUri
 
+    private val _dateOfBirth = MutableLiveData<Timestamp>()
+    val dateOfBirth: LiveData<Timestamp>
+        get() = _dateOfBirth
+
+
+
     init {
         Timber.i("Init called")
-        _loadedImageUri.value = null
     }
 
     fun loadPicture(uri: Uri) {
         _loadedImageUri.value = uri
     }
 
-    fun updateUserProfileInfo(
+    fun setDate(date: Timestamp){
+        _dateOfBirth.value = date
+    }
+
+    suspend fun updateUserProfileInfo(
         firstName: String,
-        nickname: String,
-        dateOfBirth: String
+        nickname: String
     ) {
         FirestoreRepository().updateUserProfileInfo(
             firstName,
             nickname,
-            dateOfBirth,
+            _dateOfBirth.value,
             _loadedImageUri.value
         )
-        updateIndicesInAlgolia(firstName, nickname)
+
+        withContext(Dispatchers.Main){
         _loadedImageUri.value = null
-    }
-
-    private fun updateIndicesInAlgolia(
-        firstName: String,
-        nickname: String
-    ) {
-        val apiKey = "02097ce2016d6a6f130949f04093678d"
-        val applicationID = "78M3CITBN7"
-        val client = Client(applicationID, apiKey)
-        val index = client.getIndex("users")
-
-        val jsonObject = JSONObject()
-            .put("first_name", firstName)
-            .put("nickname", nickname)
-
-        index.partialUpdateObjectAsync(jsonObject, FirebaseAuth.getInstance().uid.toString(), null)
+        }
     }
 
     override fun onCleared() {
