@@ -15,7 +15,7 @@
         <!-- Color of Toolbar Back Arrow -->
         <item name="colorControlNormal">#FFFFFF</item>
         <!-- Color of Toolbar menu action icon/text depending on its state (enabled/disabled) -->
-        <item name="android:actionMenuTextColor">@drawable/publish_button_selector</item>
+        <item name="android:actionMenuTextColor">@drawable/selector_publish_text_color</item>
 
         <item name="android:titleTextColor">@color/solid_white</item>
 
