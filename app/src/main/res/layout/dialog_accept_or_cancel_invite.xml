@@ -25,6 +25,8 @@
             <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:tint="@color/solid_white"
+
                     android:src="@drawable/ic_check_black_24dp"
                     tools:src="@drawable/ic_check_black_24dp" />
 
@@ -50,6 +52,7 @@
             <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:tint="@color/solid_white"
                     android:src="@drawable/ic_delete_forever_black_24dp"
                     tools:src="@drawable/ic_close_black_24dp" />
 

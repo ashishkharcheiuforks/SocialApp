@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import com.example.socialapp.R
 import com.example.socialapp.databinding.DialogFiltersBinding
 import com.example.socialapp.model.Filters
 import timber.log.Timber
@@ -80,7 +81,7 @@ class FilterDialogFragment : DialogFragment() {
 
     private fun getSelectedPlayersNumber(): Long? {
         val selected = binding.spinnerPlayersNumber.selectedItem.toString()
-        return if (selected.contentEquals("Any Players Amount")) {
+        return if (selected.contentEquals(getString(R.string.any_players_number))) {
             null
         }
         else {

@@ -24,17 +24,13 @@
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:theme="@style/ToolbarTheme"
+                style="@style/ToolbarTheme"
                 app:title="Profile Page"
-                app:titleTextColor="#FFFFFF"
-                tools:background="@color/colorPrimaryDark" />
+                android:background="@drawable/background_tab_layout" />
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/fragment_background"
                 android:fillViewport="true">
 
                 <LinearLayout
@@ -73,7 +69,7 @@
                             android:text="@{@string/name_nickname(user.firstName, user.nickname)}"
                             android:textAlignment="center"
                             android:textAllCaps="false"
-                            android:textColor="@color/solid_black"
+                            android:textColor="@color/solid_white"
                             android:textSize="24sp"
                             android:textStyle="normal"
                             app:layout_constraintEnd_toEndOf="@+id/profile_profile_picture"
@@ -89,7 +85,6 @@
                             android:paddingTop="8dp"
                             android:paddingBottom="8dp"
                             android:textAlignment="center"
-                            android:textColor="@color/solid_black"
                             android:textSize="18sp"
                             android:visibility="gone"
                             app:layout_constraintEnd_toStartOf="@+id/btn_message"
@@ -107,7 +102,6 @@
                             android:paddingBottom="8dp"
                             android:text="Message"
                             android:textAlignment="center"
-                            android:textColor="@color/solid_black"
                             android:textSize="18sp"
                             android:visibility="gone"
                             app:layout_constraintBaseline_toBaselineOf="@+id/btn_friendship_status"

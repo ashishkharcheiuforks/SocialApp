@@ -24,12 +24,10 @@
 
             <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:theme="@style/ToolbarTheme"
+                    style="@style/ToolbarTheme"
                     app:title="Friends"
                     app:titleTextColor="#FFFFFF"
-                    tools:background="@color/colorPrimaryDark" />
+                    android:background="@drawable/background_tab_layout" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

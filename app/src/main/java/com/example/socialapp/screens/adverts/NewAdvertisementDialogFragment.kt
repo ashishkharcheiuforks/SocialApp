@@ -53,11 +53,7 @@ class NewAdvertisementDialogFragment : DialogFragment() {
                 createdByUserUid = null,
                 dateCreated = null,
                 filters = Filters(
-                    playersNumber = if (binding.spinnerPlayersNumber.selectedItem.toString().contentEquals("Any")) {
-                        null
-                    } else {
-                        binding.spinnerPlayersNumber.selectedItem.toString().toLong()
-                    },
+                    playersNumber = getPlayersNumber(),
                     game = binding.spinnerGame.selectedItem.toString(),
                     communicationLanguage = if(binding.spinnerLanguage.selectedItem.toString().contentEquals("Any")){
                         null
@@ -94,6 +90,15 @@ class NewAdvertisementDialogFragment : DialogFragment() {
             val height = ViewGroup.LayoutParams.MATCH_PARENT
             dialog.window!!.setLayout(width, height)
             dialog.window!!.setWindowAnimations(R.style.AppTheme_Slide)
+        }
+    }
+
+    private fun getPlayersNumber(): Long?{
+        val selected = binding.spinnerPlayersNumber.selectedItem.toString()
+        return if (selected.contentEquals(getString(R.string.any_players_number))) {
+            null
+        } else {
+            selected.toLong()
         }
     }
 }

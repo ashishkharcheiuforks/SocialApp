@@ -24,16 +24,15 @@
 
             <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:theme="@style/ToolbarTheme">
+                    android:background="@drawable/background_tab_layout"
+                    tools:navigationIcon="?attr/homeAsUpIndicator"
+                    style="@style/ToolbarTheme">
 
                 <EditText
                         android:id="@+id/et_search"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="#FFFFFF"
-                        android:textColorHint="@color/light_gray"
                         android:drawableEnd="@drawable/ic_search_black_24dp"
                         android:layout_marginEnd="16dp"
                         android:hint="@string/hint_search"
@@ -48,7 +47,6 @@
                 android:id="@+id/recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/fragment_background"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="4"
                 tools:listitem="@layout/item_search_user" />

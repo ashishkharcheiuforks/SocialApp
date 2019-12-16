@@ -11,6 +11,16 @@
     <string name="description_add_picture_from_gallery">add picture from gallery</string>
     <string name="hint_new_post_input">Share your thoughts...</string>
     <string name="label_publish_button">Publish</string>
+    <string name="sorted_by_date">sorted by date</string>
+    <string name="all_advertisements">All advertisements</string>
+    <string name="description_clear_filters">Clear Filters</string>
+    <string name="label_save">Save</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="hint_date_of_birth_format">Date Of Birth (dd/mm/yyyy)</string>
+    <string name="label_show_more">Show more...</string>
+    <string name="label_respond">respond</string>
+    <string name="label_comments">Comments</string>
+    <string name="hint_comment">Type your comment</string>
 
     <string-array name="games">
         <item>Counter Strike: Global Offensive</item>
@@ -23,6 +33,7 @@
         <item>Grand Theft Auto: San Andreas</item>
         <item>Need For Speed: Most Wanted</item>
     </string-array>
+
 
     <string-array name="languages">
         <item>Any Language</item>
@@ -38,8 +49,10 @@
         <item>Mexican</item>
     </string-array>
 
+    <string name="any_players_number">Any Players Number</string>
+
     <string-array name="playersNumber">
-        <item>Any Players Amount</item>
+        <item>@string/any_players_number</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>

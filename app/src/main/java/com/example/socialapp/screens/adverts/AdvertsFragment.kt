@@ -108,19 +108,10 @@ class AdvertsFragment : Fragment(),
 
         var query = db.collection("advertisements")
             .orderBy("dateCreated", Query.Direction.DESCENDING)
-        if (!filters.game.isNullOrEmpty()) {
-            Timber.d("game filter inside repo set")
-            query = query.whereEqualTo("game", filters.game)
-        }
 
-        filters.communicationLanguage?.let { language ->
-            Timber.d("language filter inside repo set")
-            query = query.whereEqualTo("communicationLanguage", language)
-        }
-        filters.playersNumber?.let { playersNum ->
-            Timber.d("players number filter inside repo set")
-            query = query.whereEqualTo("playersNumber", playersNum)
-        }
+        filters.game?.let { game -> query = query.whereEqualTo("game", game) }
+        filters.communicationLanguage?.let { language -> query = query.whereEqualTo("communicationLanguage", language) }
+        filters.playersNumber?.let { playersNum -> query = query.whereEqualTo("playersNumber", playersNum) }
 
         val config = PagedList.Config.Builder()
             .setEnablePlaceholders(false)

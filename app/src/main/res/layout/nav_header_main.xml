@@ -43,7 +43,7 @@
                 android:textStyle="bold"
                 android:layout_marginTop="8dp"
                 tools:text="Mike 'Zornerv'"
-                android:textColor="@color/solid_black"
+                android:textColor="@color/solid_white"
                 android:layout_gravity="center"
                 />
     </LinearLayout>

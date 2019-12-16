@@ -28,7 +28,6 @@
                     android:id="@+id/icon_game"
                     style="@style/AppTheme.FilterIcon"
                     android:layout_centerVertical="true"
-                    android:tint="@color/greySecondary"
                     app:srcCompat="@drawable/ic_videogame_asset_black_24dp" />
 
             <Spinner
@@ -37,7 +36,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/icon_game"
+                    android:layout_toEndOf="@+id/icon_game"
                     android:entries="@array/games" />
 
         </RelativeLayout>
@@ -51,7 +50,6 @@
                     android:id="@+id/icon_language"
                     style="@style/AppTheme.FilterIcon"
                     android:layout_centerVertical="true"
-                    android:tint="@color/greySecondary"
                     app:srcCompat="@drawable/ic_language_black_24dp" />
 
             <Spinner
@@ -60,7 +58,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/icon_language"
+                    android:layout_toEndOf="@+id/icon_language"
                     android:entries="@array/languages" />
 
         </RelativeLayout>
@@ -74,7 +72,6 @@
                     android:id="@+id/icon_players_number"
                     style="@style/AppTheme.FilterIcon"
                     android:layout_centerVertical="true"
-                    android:tint="@color/greySecondary"
                     app:srcCompat="@drawable/ic_invites_black_24dp" />
 
             <Spinner
@@ -112,9 +109,7 @@
                     android:layout_height="wrap_content"
                     android:text="Cancel"
                     android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:textColor="@color/greySecondary"
-                    android:theme="@style/ThemeOverlay.FilterButton" />
+                    android:layout_marginEnd="8dp" />
 
 
             <Button
@@ -123,7 +118,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Apply"
-                    android:theme="@style/ThemeOverlay.FilterButton" />
+                    android:textColor="@android:color/white"/>
 
         </LinearLayout>
 

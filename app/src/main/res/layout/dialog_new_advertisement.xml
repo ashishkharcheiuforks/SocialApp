@@ -23,8 +23,7 @@
             <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     style="@style/ToolbarTheme"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_tab_layout"
                     app:contentInsetStartWithNavigation="0dp"
                     app:navigationIcon="@drawable/ic_close_black_24dp"
                     app:title="Create new advert"
@@ -36,7 +35,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:padding="16dp"
-                        android:text="Publish"
+                        android:text="@string/label_publish_button"
                         android:textColor="@color/solid_white" />
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
@@ -54,7 +53,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:text="What game do you want to play?"
-                    android:textColor="@color/solid_black"
+                    android:textColor="@android:color/white"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -79,7 +78,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     android:text="Communication Language:"
-                    android:textColor="@color/solid_black"
+                    android:textColor="@android:color/white"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="@+id/spinner_game"
                     app:layout_constraintTop_toBottomOf="@+id/spinner_game" />
@@ -103,7 +102,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     android:text="How many players are you looking for?"
-                    android:textColor="@color/solid_black"
+                    android:textColor="@android:color/white"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="@+id/spinner_language"
                     app:layout_constraintTop_toBottomOf="@+id/spinner_language" />
@@ -126,7 +125,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:textColor="@color/solid_black"
+                    android:textColor="@android:color/white"
                     android:textSize="16sp"
                     android:text="Description (Max 255 characters)"
                     app:layout_constraintStart_toStartOf="@+id/spinner_players_number"
@@ -137,7 +136,7 @@
                     android:layout_width="0dp"
                     android:layout_height="170dp"
                     android:gravity="top|start"
-                    android:background="@color/solid_white"
+                    android:background="@android:color/background_dark"
                     android:maxLength="255"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"

@@ -26,32 +26,23 @@
 
                 <androidx.appcompat.widget.Toolbar
                         android:id="@+id/toolbar"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
                         app:layout_scrollFlags="scroll|enterAlways"
-                        app:theme="@style/ToolbarTheme"
+                        style="@style/ToolbarTheme"
                         app:title=""
-                        tools:background="@color/colorPrimaryDark"
                         tools:navigationIcon="@drawable/ic_menu_black_24dp">
 
                     <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="GamerNet"
+                            android:text="@string/app_name"
                             android:textAppearance="@style/TextAppearance.AppCompat.Title"
                             android:textColor="#FFFFFF" />
                 </androidx.appcompat.widget.Toolbar>
 
                 <com.google.android.material.tabs.TabLayout
                         android:id="@+id/tab_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:theme="@style/TabLayoutTheme"
-                        app:tabGravity="fill"
-                        app:tabIconTint="@drawable/tab_icon_selector"
-                        app:tabIndicatorColor="@color/light_gray"
-                        app:tabMode="fixed">
+                        style="@style/TabLayoutTheme">
 
                     <com.google.android.material.tabs.TabItem
                             android:id="@+id/home_tab"

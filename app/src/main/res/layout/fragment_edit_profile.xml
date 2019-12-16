@@ -21,12 +21,10 @@
 
         <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:theme="@style/ToolbarTheme"
+                style="@style/ToolbarTheme"
                 app:title="Edit Profile"
                 app:titleTextColor="#FFFFFF"
-                tools:background="@color/colorPrimaryDark" />
+                android:background="@drawable/background_tab_layout" />
 
         <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
@@ -37,7 +35,6 @@
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/fragment_background"
                     android:orientation="vertical">
 
                 <TextView
@@ -47,7 +44,7 @@
                         android:padding="16dp"
                         android:paddingStart="24dp"
                         android:text="Change Profile Picture"
-                        android:textColor="@android:color/black"
+                        android:textColor="@android:color/white"
                         android:textSize="20sp" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -59,7 +56,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Pick picture from: "
-                            android:textColor="@color/solid_black"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/iv_profile_picture_preview"
                             app:layout_constraintTop_toTopOf="@+id/iv_profile_picture_preview" />
@@ -84,7 +80,7 @@
                             android:layout_marginTop="8dp"
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:drawableEnd="@drawable/ic_image_black_24dp"
-                            android:drawableTint="@color/colorPrimary"
+                            android:drawableTint="@android:color/darker_gray"
                             android:text="Gallery"
                             app:layout_constraintEnd_toEndOf="@+id/tv_pick_image_from"
                             app:layout_constraintStart_toStartOf="@+id/tv_pick_image_from"
@@ -111,7 +107,7 @@
                         android:layout_height="1dp"
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
-                        android:background="@android:color/darker_gray" />
+                        android:background="@color/colorPrimaryDark" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -126,7 +122,7 @@
                             android:layout_marginTop="16dp"
                             android:layout_marginBottom="16dp"
                             android:text="Personal Information"
-                            android:textColor="@android:color/black"
+                            android:textColor="@android:color/white"
                             android:textSize="20sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -193,7 +189,7 @@
                             android:layout_height="wrap_content"
                             android:clickable="true"
                             android:focusable="false"
-                            android:hint="Date Of Birth (dd/mm/yyyy)"
+                            android:hint="@string/hint_date_of_birth_format"
                             android:longClickable="false"
                             android:singleLine="true"
                             tools:text="20/4/2077" />
@@ -205,7 +201,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="24dp"
                         android:layout_marginEnd="8dp"
-                        android:background="@android:color/darker_gray" />
+                        android:background="@color/colorPrimaryDark" />
 
                 <LinearLayout
                         android:layout_width="wrap_content"
@@ -218,17 +214,18 @@
                             android:id="@+id/btn_save_changes"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="@android:color/white"
                             android:layout_gravity="center_horizontal"
-                            android:layout_marginRight="8dp"
-                            android:text="Save" />
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/label_save" />
 
                     <Button
                             android:id="@+id/btn_cancel_changes"
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="8dp"
-                            android:text="Cancel" />
+                            android:layout_marginStart="8dp"
+                            android:text="@string/label_cancel" />
                 </LinearLayout>
 
             </LinearLayout>

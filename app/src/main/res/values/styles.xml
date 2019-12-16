@@ -1,31 +1,39 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@android:color/background_light</item>
+        <item name="android:windowBackground">@android:color/background_dark</item>
     </style>
 
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <!-- Customize color of Toolbar -->
         <item name="android:background">@color/colorPrimaryDark</item>
         <!-- Color of Toolbar Back Arrow -->
         <item name="colorControlNormal">#FFFFFF</item>
         <!-- Color of Toolbar menu action icon/text depending on its state (enabled/disabled) -->
         <item name="android:actionMenuTextColor">@drawable/selector_publish_text_color</item>
-
+        <!-- Title text color -->
         <item name="android:titleTextColor">@color/solid_white</item>
-
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-
     </style>
 
     <style name="TabLayoutTheme" parent="@style/Widget.MaterialComponents.TabLayout.Colored">
-        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">@drawable/background_tab_layout</item>
+        <!-- Tab related -->
+        <item name="tabGravity">fill</item>
+        <item name="tabMode">fixed</item>
+        <item name="tabIconTint">@drawable/tab_icon_selector</item>
+        <!-- Making tab indicator not visible on background -->
+        <item name="tabIndicatorFullWidth">false</item>
+        <item name="tabIndicatorColor">@color/colorPrimaryDark</item>
+        <item name="tabIndicatorGravity">top</item>
     </style>
 
     <style name="AppTheme.Body1">
@@ -44,12 +52,12 @@
         <item name="android:textSize">12sp</item>
     </style>
 
-    <style name="AppTheme.FullScreenDialog" parent="Theme.MaterialComponents.Light.Dialog">
+    <style name="AppTheme.FullScreenDialog" parent="Theme.MaterialComponents.Dialog">
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:windowIsFloating">false</item>
-        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowBackground">@android:color/background_dark</item>
         <item name="actionMenuTextColor">@color/colorAccent</item>
     </style>
 
@@ -72,12 +80,9 @@
         <item name="android:layout_height">30dp</item>
         <item name="android:layout_marginRight">8dp</item>
         <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:tint">@android:color/white</item>
     </style>
 
-
-    <style name="ThemeOverlay.FilterButton" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="colorButtonNormal">@color/colorPrimary</item>
-    </style>
 
 
 </resources>

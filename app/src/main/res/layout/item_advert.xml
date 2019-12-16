@@ -45,7 +45,6 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:text="@{@string/name_nickname(user.firstName, user.nickname)}"
-                    android:textColor="@color/solid_black"
                     android:textSize="20sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -57,7 +56,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="@{filters.game.toString()}"
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="@+id/tv_user_display_name"
                     app:layout_constraintTop_toBottomOf="@+id/tv_user_display_name"
@@ -69,7 +67,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     android:text="Looking for:"
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="@+id/tv_game_title"
                     app:layout_constraintTop_toBottomOf="@+id/tv_game_title" />
@@ -90,7 +87,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Communication:"
-                    android:textColor="@color/solid_black"
                     app:layout_constraintStart_toStartOf="@+id/tv_players_number_label"
                     app:layout_constraintTop_toBottomOf="@+id/tv_players_number_label" />
 
@@ -110,7 +106,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="16dp"
-                    android:text="respond"
+                    android:text="@string/label_respond"
+                    android:textColor="@android:color/primary_text_dark"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
 
@@ -120,7 +117,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
-                    android:text="Show more..."
+                    android:text="@string/label_show_more"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/tv_communication_language_label"

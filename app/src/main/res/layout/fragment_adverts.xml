@@ -21,10 +21,7 @@
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/fragment_background"
                     android:orientation="vertical">
-
-
                 <TextView
                         android:id="@+id/tvv"
                         android:layout_width="wrap_content"
@@ -32,14 +29,12 @@
                         android:layout_gravity="center_horizontal"
                         android:padding="16dp"
                         android:text="Find your gaming compans now!"
-                        android:textColor="@color/solid_black"
+                        android:textColor="@color/solid_white"
                         android:textSize="20sp" />
-
 
                 <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/solid_white"
                         android:minHeight="60dp">
 
                     <FrameLayout
@@ -78,8 +73,8 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_centerVertical="true"
-                                        android:layout_marginLeft="8dp"
-                                        android:layout_toRightOf="@+id/button_filter"
+                                        android:layout_marginStart="8dp"
+                                        android:layout_toEndOf="@+id/button_filter"
                                         android:orientation="vertical"
                                         android:paddingTop="8dp"
                                         android:paddingBottom="8dp">
@@ -89,8 +84,7 @@
                                             style="@style/AppTheme.Body1"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="All advertisements"
-                                            android:textColor="@color/greySecondary"
+                                            android:text="@string/all_advertisements"
                                             tools:text="Filter" />
 
                                     <TextView
@@ -98,8 +92,7 @@
                                             style="@style/AppTheme.Caption"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="sorted by date"
-                                            android:textColor="@color/greyDisabled" />
+                                            android:text="@string/sorted_by_date" />
 
                                 </LinearLayout>
 
@@ -107,11 +100,12 @@
                                         android:id="@+id/btn_clear_filters"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_alignParentRight="true"
+                                        android:layout_alignParentEnd="true"
                                         android:layout_centerVertical="true"
                                         android:padding="8dp"
                                         android:tint="@color/greySecondary"
-                                        app:srcCompat="@drawable/ic_close_white_24px" />
+                                        app:srcCompat="@drawable/ic_close_white_24px"
+                                        android:contentDescription="@string/description_clear_filters" />
 
                             </RelativeLayout>
 
@@ -139,6 +133,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
+                            android:tint="@color/solid_white"
                             android:src="@drawable/ic_add_black_24dp" />
                 </com.google.android.material.card.MaterialCardView>
 
