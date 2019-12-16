@@ -26,7 +26,6 @@ class UserLiveData(
 
     override fun onEvent(snap: DocumentSnapshot?, e: FirebaseFirestoreException?) {
         if (snap != null && snap.exists()) {
-            Timber.d("onEvent() called ${snap.toString()}")
             val firstName = snap.getString("firstName").toString()
             val nickname = snap.getString("nickname").toString()
             val dateOfBirth = snap.getTimestamp("dateOfBirth")

@@ -34,9 +34,9 @@
                     android:id="@+id/btn_add_new_post"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Publish"
+                    android:text="@string/label_publish_button"
                     android:layout_gravity="end"
-                    android:textColor="@drawable/publish_button_selector"
+                    android:textColor="@drawable/selector_publish_text_color"
                     android:enabled="@{viewmodel.publishButtonEnabled}"
                     android:padding="16dp"/>
 
@@ -53,6 +53,7 @@
                     android:orientation="vertical">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/constraintLayout_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -88,44 +89,43 @@
                         android:id="@+id/et_post_content"
                         android:gravity="top|start"
                         android:padding="16dp"
-                        android:hint="Share your thoughts..."
+                        android:hint="@string/hint_new_post_input"
                         android:textColorHint="#727272"
                         android:background="#FFFFFF"
                         android:singleLine="false"
                         android:text="@={viewmodel.postContent}"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="230dp" />
+                        android:layout_height="240dp" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/btn_add_picture"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:background="@color/solid_white"
+                        android:padding="12dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="24dp"
-                        android:layout_marginTop="24dp"
-                        android:drawableLeft="@drawable/ic_image_black_24dp"
-                        android:text="add picture"
+                        android:layout_marginTop="16dp"
+                        android:contentDescription="@string/description_add_picture_from_gallery"
                         android:textColor="@color/solid_black"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@drawable/ic_image_black_24dp" />
+                        android:src="@drawable/ic_image_black_24dp" />
 
                     <ImageView
-                        android:id="@+id/iv_loaded_picture"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="24dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/btn_add_picture"
-                        app:layout_constraintTop_toBottomOf="@+id/btn_add_picture"
-                        app:srcCompat="@drawable/profilepic" />
+                            android:id="@+id/iv_loaded_picture"
+                            android:layout_width="100dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginBottom="16dp"
+                            android:layout_marginEnd="24dp"
+                            android:layout_height="100dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:srcCompat="@drawable/profilepic" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>

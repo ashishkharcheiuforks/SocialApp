@@ -23,7 +23,7 @@ class CreatePostDialogFragment : DialogFragment() {
 
     private val viewModel: CreatePostViewModel by viewModels()
 
-    private val authenticatedNestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(
+    private val nestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(
         R.id.authenticated_graph
     )
 
@@ -53,33 +53,23 @@ class CreatePostDialogFragment : DialogFragment() {
         setupToolbar()
 
         viewModel.postImage.observe(this@CreatePostDialogFragment, Observer {
-            if (viewModel.postImage.value != null) {
-                binding.ivLoadedPicture.setImageURI(viewModel.postImage.value)
-                binding.ivLoadedPicture.visibility = View.VISIBLE
-            } else {
-                binding.ivLoadedPicture.visibility = View.GONE
-            }
+            if (it != null) { showImagePreview() } else { hideImagePreview() }
         })
 
-        binding.btnAddPicture.setOnClickListener {
-            openGallery()
-        }
+        nestedGraphViewModel.user.observe(viewLifecycleOwner, Observer { binding.user = it })
 
-        authenticatedNestedGraphViewModel.user.observe(viewLifecycleOwner, Observer {
-            binding.user = it
-        })
-
+        binding.btnAddPicture.setOnClickListener { openGallery() }
 
     }
 
-    private fun openGallery() {
-        Intent().also {
-            it.type = "image/*"
-            it.action = Intent.ACTION_GET_CONTENT
-            startActivityForResult(Intent.createChooser(it, "Select Picture"), REQUEST_PICK_IMAGE)
-        }
+    private fun showImagePreview(){
+        binding.ivLoadedPicture.setImageURI(viewModel.postImage.value)
+        binding.ivLoadedPicture.visibility = View.VISIBLE
     }
 
+    private fun hideImagePreview(){
+        binding.ivLoadedPicture.visibility = View.GONE
+    }
 
     override fun onStart() {
         super.onStart()
@@ -105,6 +95,13 @@ class CreatePostDialogFragment : DialogFragment() {
         }
     }
 
+    private fun openGallery() {
+        Intent().also {
+            it.type = "image/*"
+            it.action = Intent.ACTION_GET_CONTENT
+            startActivityForResult(Intent.createChooser(it, "Select Picture"), REQUEST_PICK_IMAGE)
+        }
+    }
 
     private fun setupToolbar() {
         binding.toolbar.setNavigationOnClickListener { dismiss() }

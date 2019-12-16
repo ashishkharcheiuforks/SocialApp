@@ -58,19 +58,34 @@ class FilterDialogFragment : DialogFragment() {
     }
 
     private fun getFilters(): Filters {
-        val selectedLanguage = binding.spinnerLanguage.selectedItem.toString()
-        val selectedPlayersNumber = binding.spinnerPlayersNumber.selectedItem.toString()
-        val filters = Filters(
-            game = binding.spinnerGame.selectedItem.toString(),
-            communicationLanguage = if (selectedLanguage.contentEquals("Any Language")) {
-                null
-            } else selectedLanguage,
-            playersNumber = if (selectedPlayersNumber.contentEquals("Any Players Amount"))
-                null
-            else
-                selectedPlayersNumber.toLong()
+        return Filters(
+            game = getSelectedGame(),
+            communicationLanguage = getSelectedLanguage(),
+            playersNumber = getSelectedPlayersNumber()
         )
-        return filters
+    }
+
+    private fun getSelectedGame(): String? {
+        return binding.spinnerGame.selectedItem.toString()
+    }
+
+    private fun getSelectedLanguage(): String? {
+        val selected = binding.spinnerLanguage.selectedItem.toString()
+        return if (selected.contentEquals("Any Language")) {
+            null
+        } else {
+            selected
+        }
+    }
+
+    private fun getSelectedPlayersNumber(): Long? {
+        val selected = binding.spinnerPlayersNumber.selectedItem.toString()
+        return if (selected.contentEquals("Any Players Amount")) {
+            null
+        }
+        else {
+            selected.toLong()
+        }
     }
 
 }

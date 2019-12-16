@@ -122,29 +122,23 @@ class MainScreenFragment : Fragment() {
     }
 
     private fun navigateToSearchUserScreen() {
-        val action =
-            MainScreenFragmentDirections.actionMainFragmentToSearchUserFragment()
+        val action = MainScreenFragmentDirections.actionMainFragmentToSearchUserFragment()
         findNavController().navigate(action)
     }
 
     private fun navigateToFriendsScreen() {
-        val action =
-            MainScreenFragmentDirections.actionGlobalFriendsFragment()
+        val action = MainScreenFragmentDirections.actionGlobalFriendsFragment()
         findNavController().navigate(action)
     }
 
     private fun navigateToProfileScreen() {
         val userId = nestedGraphViewModel.user.value?.uid
-        val action =
-            MainScreenFragmentDirections.actionGlobalProfileFragment(
-                userId
-            )
+        val action = MainScreenFragmentDirections.actionGlobalProfileFragment(userId)
         findNavController().navigate(action)
     }
 
     private fun navigateToChatRoomsScreen() {
-        val action =
-            MainScreenFragmentDirections.actionGlobalChatRoomsFragment()
+        val action = MainScreenFragmentDirections.actionGlobalChatRoomsFragment()
         findNavController().navigate(action)
     }
 

@@ -24,17 +24,13 @@ import timber.log.Timber
 class AdvertsFragment : Fragment(),
     FilterDialogFragment.FilterListener,
     NewAdvertisementDialogFragment.NewAdvertisementListener,
-//    AdvertsAdapter.OnAdvertisementClickListener
     AdsAdapter.OnAdvertisementClickListener {
 
     private lateinit var binding: FragmentAdvertsBinding
 
+    private lateinit var adapter: AdsAdapter
+
     private val viewModel: AdvertsViewModel by viewModels()
-
-    private lateinit var dupapter: AdsAdapter
-
-//    private lateinit var adapter:AdvertsAdapter
-//    private val adapter by lazy { AdvertsAdapter(this) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,15 +50,7 @@ class AdvertsFragment : Fragment(),
             btnClearFilters.setOnClickListener { clearFilter() }
         }
 
-        initTurboShitRecyclerv2(Filters())
-
-//        adapter = AdvertsAdapter(this)
-//        binding.recyclerview.adapter = adapter
-//
-//        viewModel.adverts.observe(viewLifecycleOwner, Observer {
-//            adapter.submitList(it)
-//
-//        })
+        initRecyclerview(viewModel.filters.value!!)
     }
 
     private fun openNewAdvertisementDialog() {
@@ -78,18 +66,17 @@ class AdvertsFragment : Fragment(),
     }
 
     private fun clearFilter() {
-        if(viewModel.filters.value!! != Filters()) {
+        if (viewModel.filters.value!! != Filters()) {
             viewModel.filters.value = Filters()
-            initTurboShitRecyclerv2(viewModel.filters.value!!)
+            initRecyclerview(viewModel.filters.value!!)
         }
     }
 
     override fun onFilter(filters: Filters?) {
         if (viewModel.filters.value != filters) {
             viewModel.filters.value = filters!!
-//            viewModel.refreshAdverts()
+            initRecyclerview(filters)
         }
-        initTurboShitRecyclerv2(filters!!)
     }
 
     override fun onCreateNewAdvertisement(advert: Advertisement) {
@@ -116,11 +103,11 @@ class AdvertsFragment : Fragment(),
         findNavController().navigate(action)
     }
 
+    private fun initRecyclerview(filters: Filters) {
+        val db = FirebaseFirestore.getInstance()
 
-    private fun initTurboShitRecyclerv2(filters: Filters) {
-        var query = FirebaseFirestore.getInstance().collection("advertisements")
+        var query = db.collection("advertisements")
             .orderBy("dateCreated", Query.Direction.DESCENDING)
-        Timber.d("Filter w dupodapterze: $filters")
         if (!filters.game.isNullOrEmpty()) {
             Timber.d("game filter inside repo set")
             query = query.whereEqualTo("game", filters.game)
@@ -128,16 +115,12 @@ class AdvertsFragment : Fragment(),
 
         filters.communicationLanguage?.let { language ->
             Timber.d("language filter inside repo set")
-            query = query.whereEqualTo(
-                "communicationLanguage",
-                language
-            )
+            query = query.whereEqualTo("communicationLanguage", language)
         }
         filters.playersNumber?.let { playersNum ->
             Timber.d("players number filter inside repo set")
             query = query.whereEqualTo("playersNumber", playersNum)
         }
-
 
         val config = PagedList.Config.Builder()
             .setEnablePlaceholders(false)
@@ -158,17 +141,16 @@ class AdvertsFragment : Fragment(),
                         ),
                         description = it.getString("description"),
                         dateCreated = it.getTimestamp("dateCreated")!!,
-//                        user = FirestoreRepository().getUser(it.getString("createdByUserUid")!!),
+                        // Set inside viewholder
                         user = null,
                         createdByUserUid = it.getString("createdByUserUid")
                     )
                 }
                 .build()
 
-        dupapter = AdsAdapter(this, options)
-        binding.recyclerview.adapter = dupapter
-        dupapter.notifyDataSetChanged()
-
+        adapter = AdsAdapter(this, options)
+        binding.recyclerview.adapter = adapter
+        adapter.notifyDataSetChanged()
     }
 
 }

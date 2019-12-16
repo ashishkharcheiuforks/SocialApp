@@ -12,7 +12,6 @@ import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import timber.log.Timber
 
-// This is ugly adapter boi :(((
 class AdsAdapter(
     private val listener: OnAdvertisementClickListener,
     options: FirestorePagingOptions<Advertisement>
@@ -35,14 +34,14 @@ class AdsAdapter(
 
     class ViewHolder(private val binding: ItemAdvertBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
+        private val db = FirebaseFirestore.getInstance()
+
         fun bind(advertisement: Advertisement, listener: OnAdvertisementClickListener) {
             binding.advert = advertisement
             binding.filters = advertisement.filters
 
-            // this is in normal adapter version -.-
-//            binding.user = advertisement.user
-            //soo here, we have to do this ugly boi instead, at least for now
-            FirebaseFirestore.getInstance().document("users/${advertisement.createdByUserUid!!}")
+            db.document("users/${advertisement.createdByUserUid!!}")
                 .get().addOnCompleteListener {task ->
                 if(task.isSuccessful){
                     binding.user = User(
@@ -66,8 +65,6 @@ class AdsAdapter(
 
             binding.executePendingBindings()
         }
-
-
     }
 
     interface OnAdvertisementClickListener {
