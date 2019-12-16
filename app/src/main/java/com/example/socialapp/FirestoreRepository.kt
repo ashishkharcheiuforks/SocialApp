@@ -405,7 +405,6 @@ class FirestoreRepository {
         return Observable.create<Boolean> { emitter ->
             likeDocRef
                 .addSnapshotListener { documentSnapshot, firestoreException ->
-                    Timber.i("Post id: $postId")
                     if (firestoreException != null) {
                         emitter.onError(firestoreException)
                     } else {
