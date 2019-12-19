@@ -1,20 +1,18 @@
 package com.example.socialapp.screens.register
 
 
-import android.app.Activity
 import android.app.DatePickerDialog
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.example.socialapp.common.hideKeyboard
+import com.example.socialapp.common.showSnack
 import com.example.socialapp.databinding.FragmentRegisterBinding
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Timestamp
 import timber.log.Timber
 import java.util.*
@@ -44,16 +42,11 @@ class RegisterFragment : Fragment() {
         binding.viewModel = viewModel
 
         viewModel.isRegisterSuccessful.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                //Login success
-                true -> {
-                    navigateToMainScreen()
-                }
-            }
+            if (it) navigateToMainScreen()
         })
 
         viewModel.displayErrorMessage.observe(viewLifecycleOwner, Observer {
-            showRegistrationFailedSnackbar(it)
+            showSnack(it)
         })
 
         binding.etRegisterDateOfBirth.setOnClickListener { showDatePickerDialog() }
@@ -86,16 +79,6 @@ class RegisterFragment : Fragment() {
         findNavController().navigate(direction)
     }
 
-    /**    Shows SnackBar with proper message about failed registration attempt    **/
-    private fun showRegistrationFailedSnackbar(message: String = "Registration failed") {
-        val snackbar =
-            Snackbar.make(
-                activity!!.findViewById(android.R.id.content),
-                message,
-                Snackbar.LENGTH_SHORT
-            )
-        snackbar.show()
-    }
 
     //TODO: Do it right, you know how to do it now
     /**
@@ -124,21 +107,5 @@ class RegisterFragment : Fragment() {
         )
         dpd.datePicker.maxDate = Calendar.getInstance().timeInMillis
         dpd.show()
-    }
-
-    // Extension functions for hiding keyboard
-    // TODO("DEV"): Move declarations to the global level inside the app
-    fun Fragment.hideKeyboard() {
-        view?.let { activity?.hideKeyboard(it) }
-    }
-
-    fun Activity.hideKeyboard() {
-        hideKeyboard(currentFocus ?: View(this))
-    }
-
-    fun Context.hideKeyboard(view: View) {
-        val inputMethodManager =
-            getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }

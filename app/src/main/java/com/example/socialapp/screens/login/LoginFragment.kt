@@ -1,20 +1,17 @@
 package com.example.socialapp.screens.login
 
 
-import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.example.socialapp.R
+import com.example.socialapp.common.hideKeyboard
+import com.example.socialapp.common.showSnack
 import com.example.socialapp.databinding.FragmentLoginBinding
-import com.google.android.material.snackbar.Snackbar
 
 
 class LoginFragment : Fragment() {
@@ -51,7 +48,7 @@ class LoginFragment : Fragment() {
                 //Login success - navigate to main screen
                 true -> navigateToMainScreen()
                 //Login failed - show error message
-                false -> showLoginFailedSnackbar()
+                false -> showSnack("Failed to sign in")
             }
         })
 
@@ -87,30 +84,4 @@ class LoginFragment : Fragment() {
         val direction = LoginFragmentDirections.actionLoginFragmentToMainFragment()
         findNavController().navigate(direction)
     }
-
-    private fun showLoginFailedSnackbar(message: String = "Failed to sign in") {
-        Snackbar
-            .make(
-                activity!!.findViewById(android.R.id.content),
-                message,
-                Snackbar.LENGTH_LONG
-            )
-            .show()
-    }
-
-    fun Fragment.hideKeyboard() {
-        view?.let { activity?.hideKeyboard(it) }
-    }
-
-    fun Activity.hideKeyboard() {
-        hideKeyboard(currentFocus ?: View(this))
-    }
-
-    fun Context.hideKeyboard(view: View) {
-        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-    }
-
-
-
 }
