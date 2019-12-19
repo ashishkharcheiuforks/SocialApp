@@ -48,7 +48,7 @@
                     android:text="@{@string/name_nickname(user.firstName, user.nickname)}"
                     app:layout_constraintStart_toEndOf="@+id/image_post_item_user_profile_picture"
                     app:layout_constraintTop_toTopOf="@+id/image_post_item_user_profile_picture"
-                    tools:text="Mike 'Zornerv'" />
+                    tools:text="@string/placeholder_name_nickname" />
 
             <TextView
                     android:id="@+id/text_post_date"
@@ -59,7 +59,7 @@
                     android:layout_marginEnd="32dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="11/07/2019 21:37" />
+                    tools:text="@string/placeholder_date_time_text" />
 
             <LinearLayout
                     android:id="@+id/linearLayout_post_content"
@@ -103,7 +103,7 @@
                     app:layout_constraintBottom_toBottomOf="@+id/button_post_item_like"
                     app:layout_constraintStart_toEndOf="@+id/button_post_item_like"
                     app:layout_constraintTop_toTopOf="@+id/button_post_item_like"
-                    tools:text="0 Likes" />
+                    tools:text="@string/placeholder_likes" />
 
             <ImageButton
                     android:id="@+id/button_post_item_like"
@@ -113,7 +113,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:contentDescription="Like button"
+                    android:contentDescription="@string/description_like_button"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/linearLayout_post_content"
                     app:layout_constraintTop_toBottomOf="@+id/linearLayout_post_content"

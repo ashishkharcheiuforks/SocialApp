@@ -54,13 +54,6 @@ class FirestoreRepository {
         return UserLiveData(userDocRef)
     }
 
-    // Updates reference link to the user profile picture in firestore database
-    fun updateProfilePictureUrl(url: String) {
-        val userDocRef = db.document("users/${auth.uid}")
-        val data = hashMapOf<String, Any>("profilePictureUrl" to url)
-        userDocRef.update(data)
-    }
-
     // Updates user profile with provided non-null values
     suspend fun updateUserProfileInfo(
         firstName: String?,
@@ -68,23 +61,49 @@ class FirestoreRepository {
         dateOfBirth: Timestamp?,
         profilePictureUri: Uri?
     ): Task<Void> {
-        val userDocRef = db.document("users/${auth.uid}")
+        return withContext(Dispatchers.IO) {
+            val userDocRef = db.document("users/${auth.uid}")
 
-        // Data set with fields to update in user document
-        val data = mutableMapOf<String, Any>()
+            // Data set with fields to update in user document
+            val data = mutableMapOf<String, Any>()
+            // If value exists add it to update data set
+            firstName?.let { data.put("firstName", it) }
+            nickname?.let { data.put("nickname", it) }
+            dateOfBirth?.let { data.put("dateOfBirth", it) }
 
-        // If value exists add it to update data set
-        firstName?.let { data.put("firstName", it) }
-        nickname?.let { data.put("nickname", it) }
-        dateOfBirth?.let { data.put("dateOfBirth", it) }
+            profilePictureUri?.let { changeUserProfilePicture(profilePictureUri) }
 
-        profilePictureUri?.let {
-            changeUserProfilePicture(profilePictureUri)
+            algolia.updateNameAndNickname(firstName!!, nickname!!)
+
+            userDocRef.update(data)
         }
+    }
 
-        algolia.updateNameAndNickname(firstName!!, nickname!!)
+    suspend fun changeUserProfilePicture(uri: Uri) = withContext(Dispatchers.IO) {
+        val userProfileStorageRef = storageReference.child("users/${auth.uid}/")
+        val filename = "profile_picture"
+        val urlToUpdate = uploadPhotoAndReturnUrl(uri, userProfileStorageRef, filename)
+        updateProfilePictureUrl(urlToUpdate)
+        // Update profile picture url in algolia
+        algolia.updateProfilePictureUrl(urlToUpdate)
+    }
 
-        return userDocRef.update(data)
+    // Uploads picture to the given location in cloud storage and return
+    suspend fun uploadPhotoAndReturnUrl(
+        uri: Uri,
+        storageRef: StorageReference,
+        name: String
+    ): String {
+        val fileRef = storageRef.child(name)
+        fileRef.putFile(uri).await()
+        // Return url
+        return fileRef.downloadUrl.await().toString()
+    }
+
+    // Updates reference link to the user profile picture in firestore database
+    fun updateProfilePictureUrl(url: String) {
+        val userDocRef = db.document("users/${auth.uid}")
+        userDocRef.update(mapOf("profilePictureUrl" to url))
     }
 
     /**    Sending friend request to the user    **/
@@ -318,85 +337,31 @@ class FirestoreRepository {
         }
     }
 
-    suspend fun getAdvertisements(
-        filters: Filters,
-        pageSize: Int,
-        loadBefore: String? = null,
-        loadAfter: String? = null
-    ): List<Advertisement> {
-        Timber.d(filters.toString())
-        val advertsCollRef = db.collection("advertisements")
-        var query = advertsCollRef
-            .orderBy("dateCreated", Query.Direction.DESCENDING)
-            .limit(pageSize.toLong())
-            .also {
-                if (filters.game != null) {
-                    Timber.d("game filter inside repo set")
-                    it.whereEqualTo("game", filters.game)
-                }
-                if (filters.communicationLanguage != null) {
-                    Timber.d("language filter inside repo set")
-                    it.whereEqualTo("communicationLanguage", filters.communicationLanguage)
-                }
-                if (filters.playersNumber != null) {
-                    Timber.d("players number filter inside repo set")
-                    it.whereEqualTo("playersNumber", filters.playersNumber)
-                }
-            }
-
-        loadBefore?.let {
-            val item = advertsCollRef.document(it).get().await()
-            query = query.endBefore(item)
-        }
-
-        loadAfter?.let {
-            val item = advertsCollRef.document(it).get().await()
-            query = query.startAfter(item)
-        }
-
-        return query.get().await().map {
-            Advertisement(
-                advertisementId = it.id,
-                filters = Filters(
-                    game = it.getString("game"),
-                    communicationLanguage = it.getString("communicationLanguage"),
-                    playersNumber = it.getLong("playersNumber")
-                ),
-                description = it.getString("description"),
-                dateCreated = it.getTimestamp("dateCreated")!!,
-                user = getUser(it.getString("createdByUserUid")!!),
-                createdByUserUid = it.getString("createdByUserUid")
-            )
-        }
-
-    }
-
     suspend fun getPost(postId: String, userId: String): Post {
         val user = getUser(userId)
-        val postDocumentSnapshot = db.document("posts/$postId").get().await()
+        val postDocSnap = db.document("posts/$postId").get().await()
 
         return Post(
             postId = postId,
-            postCommentsNumber = postDocumentSnapshot.getLong("commentsNumber")!!.toInt(),
-            postContent = postDocumentSnapshot.getString("postContent").toString(),
-            postDateCreated = postDocumentSnapshot.getTimestamp("dateCreated")!!,
-            postImage = postDocumentSnapshot.getString("postImage"),
-            postLikesNumber = postDocumentSnapshot.getLong("likesNumber")!!.toInt(),
+            postCommentsNumber = postDocSnap.getLong("commentsNumber")!!.toInt(),
+            postContent = postDocSnap.getString("postContent").toString(),
+            postDateCreated = postDocSnap.getTimestamp("dateCreated")!!,
+            postImage = postDocSnap.getString("postImage"),
+            postLikesNumber = postDocSnap.getLong("likesNumber")!!.toInt(),
             user = user,
             postLiked = getPostLikeStatus(postId)
         )
     }
 
-    suspend fun getUser(userId: String): User {
-        val userDocumentSnapshot = db.document("users/${userId}").get().await()
-
-        return User(
-            uid = userDocumentSnapshot.id,
-            firstName = userDocumentSnapshot.getString("firstName").toString(),
-            nickname = userDocumentSnapshot.getString("nickname").toString(),
-            dateOfBirth = userDocumentSnapshot.getTimestamp("dateOfBirth"),
+    suspend fun getUser(userId: String): User = withContext(Dispatchers.IO) {
+        val userDocSnap = db.document("users/${userId}").get().await()
+        User(
+            uid = userDocSnap.id,
+            firstName = userDocSnap.getString("firstName").toString(),
+            nickname = userDocSnap.getString("nickname").toString(),
+            dateOfBirth = userDocSnap.getTimestamp("dateOfBirth"),
             aboutMe = null,
-            profilePictureUri = Uri.parse(userDocumentSnapshot.getString("profilePictureUrl").toString())
+            profilePictureUri = Uri.parse(userDocSnap.getString("profilePictureUrl").toString())
         )
     }
 
@@ -408,9 +373,9 @@ class FirestoreRepository {
                     if (firestoreException != null) {
                         emitter.onError(firestoreException)
                     } else {
-                        if (documentSnapshot != null && documentSnapshot.exists() && documentSnapshot.getBoolean(
-                                "exists"
-                            )!!
+                        if (documentSnapshot != null
+                            && documentSnapshot.exists()
+                            && documentSnapshot.getBoolean("exists")!!
                         ) {
                             emitter.onNext(true)
                         } else {
@@ -442,30 +407,6 @@ class FirestoreRepository {
     fun unlikeThePost(postId: String): Task<Void> {
         val postLikesCollectionRef = db.document("posts/$postId/likes/${auth.uid}")
         return postLikesCollectionRef.delete()
-    }
-
-    suspend fun changeUserProfilePicture(uri: Uri) = withContext(Dispatchers.IO) {
-        val userProfileStorageRef = storageReference.child("users/${auth.uid}/")
-
-        val filename = "profile_picture"
-
-        val urlToUpdate = uploadPhotoAndReturnUrl(uri, userProfileStorageRef, filename)
-        // Update profile picture url in algolia
-        algolia.updateProfilePictureUrl(urlToUpdate)
-
-        updateProfilePictureUrl(urlToUpdate)
-    }
-
-    // Uploads picture to the given location in cloud storage and return
-    suspend fun uploadPhotoAndReturnUrl(
-        uri: Uri,
-        storageRef: StorageReference,
-        name: String
-    ): String {
-        val fileRef = storageRef.child(name)
-        fileRef.putFile(uri).await()
-        // Return url
-        return fileRef.downloadUrl.await().toString()
     }
 
     fun uploadNewComment(postId: String, postContent: String) {

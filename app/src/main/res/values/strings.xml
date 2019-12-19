@@ -50,6 +50,10 @@
     </string-array>
 
     <string name="any_players_number">Any Players Number</string>
+    <string name="placeholder_date_time_text">11/07/2019 21:37</string>
+    <string name="placeholder_name_nickname">Nikolaj \'Netoperek\'</string>
+    <string name="placeholder_likes">0 Likes</string>
+    <string name="description_like_button">Like button</string>
 
     <string-array name="playersNumber">
         <item>@string/any_players_number</item>
