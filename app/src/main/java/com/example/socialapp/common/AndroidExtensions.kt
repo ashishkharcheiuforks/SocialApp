@@ -17,6 +17,10 @@ internal fun Fragment.hideKeyboard() {
     view?.let { activity?.hideKeyboard(it) }
 }
 
+internal fun Activity.hideKeyboard() {
+    hideKeyboard(currentFocus ?: View(this))
+}
+
 internal fun Fragment.showToast(message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }

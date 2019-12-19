@@ -9,12 +9,10 @@
                 type="com.example.socialapp.screens.adverts.AdvertsViewModel" />
     </data>
 
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".screens.adverts.AdvertsFragment">
+
 
         <androidx.core.widget.NestedScrollView
+                tools:context=".screens.adverts.AdvertsFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -23,7 +21,7 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
                 <TextView
-                        android:id="@+id/tvv"
+                        android:id="@+id/tv_header"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -32,16 +30,14 @@
                         android:textColor="@color/solid_white"
                         android:textSize="20sp" />
 
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="60dp">
+
 
                     <FrameLayout
                             android:id="@+id/filter_bar_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:paddingLeft="16dp"
+                            android:minHeight="60dp"
                             android:paddingRight="16dp">
 
                         <com.google.android.material.card.MaterialCardView
@@ -84,7 +80,7 @@
                                             style="@style/AppTheme.Body1"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="@string/all_advertisements"
+                                            android:text="@string/label_filter"
                                             tools:text="Filter" />
 
                                     <TextView
@@ -112,9 +108,6 @@
                         </com.google.android.material.card.MaterialCardView>
 
                     </FrameLayout>
-
-
-                </LinearLayout>
 
                 <com.google.android.material.card.MaterialCardView
                         android:id="@+id/btn_add_new_advert"
@@ -150,5 +143,4 @@
 
         </androidx.core.widget.NestedScrollView>
 
-    </LinearLayout>
 </layout>

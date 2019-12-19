@@ -2,8 +2,10 @@ package com.example.socialapp.adapter
 
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.socialapp.R
 import com.example.socialapp.databinding.ItemAdvertBinding
 import com.example.socialapp.model.Advertisement
 import com.example.socialapp.model.User
@@ -42,18 +44,18 @@ class AdsAdapter(
             binding.filters = advertisement.filters
 
             db.document("users/${advertisement.createdByUserUid!!}")
-                .get().addOnCompleteListener {task ->
-                if(task.isSuccessful){
-                    binding.user = User(
-                        profilePictureUri = Uri.parse(task.result!!["profilePictureUrl"] as String),
-                        nickname = task.result!!["nickname"] as String,
-                        firstName = task.result!!["firstName"] as String,
-                        uid = task.result!!.id
-                    )
-                }else{
-                    Timber.e(task.exception)
+                .get().addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        binding.user = User(
+                            profilePictureUri = Uri.parse(task.result!!["profilePictureUrl"] as String),
+                            nickname = task.result!!["nickname"] as String,
+                            firstName = task.result!!["firstName"] as String,
+                            uid = task.result!!.id
+                        )
+                    } else {
+                        Timber.e(task.exception)
+                    }
                 }
-            }
 
             binding.btnRespond.setOnClickListener {
                 listener.onRespond(advertisement.createdByUserUid)
@@ -63,6 +65,19 @@ class AdsAdapter(
                 listener.onProfilePictureClicked(advertisement.createdByUserUid)
             }
 
+            if (advertisement.description != null) {
+                binding.tvShowMore.visibility = View.VISIBLE
+                binding.tvShowMore.setOnClickListener {
+                    val text = binding.tvShowMore.text
+                    if (text == it.resources.getString(R.string.label_show_more)) {
+                        binding.tvDescription.visibility = View.VISIBLE
+                        binding.tvShowMore.text = it.resources.getString(R.string.label_show_less)
+                    } else {
+                        binding.tvDescription.visibility = View.GONE
+                        binding.tvShowMore.text = it.resources.getString(R.string.label_show_more)
+                    }
+                }
+            }
             binding.executePendingBindings()
         }
     }
