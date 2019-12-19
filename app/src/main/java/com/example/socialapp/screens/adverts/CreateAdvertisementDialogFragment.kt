@@ -8,19 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.example.socialapp.R
-import com.example.socialapp.databinding.DialogNewAdvertisementBinding
+import com.example.socialapp.databinding.DialogCreateAdvertisementBinding
 import com.example.socialapp.model.Advertisement
 import com.example.socialapp.model.Filters
 import timber.log.Timber
 
 
-class NewAdvertisementDialogFragment : DialogFragment() {
+class CreateAdvertisementDialogFragment : DialogFragment() {
 
     interface NewAdvertisementListener {
         fun onCreateNewAdvertisement(advert: Advertisement)
     }
 
-    private lateinit var binding: DialogNewAdvertisementBinding
+    private lateinit var binding: DialogCreateAdvertisementBinding
     private lateinit var listener: NewAdvertisementListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +33,7 @@ class NewAdvertisementDialogFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DialogNewAdvertisementBinding.inflate(inflater, container, false)
+        binding = DialogCreateAdvertisementBinding.inflate(inflater, container, false)
         binding.toolbar.navigationIcon!!.setTint(Color.WHITE)
         return binding.root
     }

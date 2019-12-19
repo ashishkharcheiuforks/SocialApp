@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.PagedList
 import com.example.socialapp.adapter.AdsAdapter
+import com.example.socialapp.common.showToast
 import com.example.socialapp.databinding.FragmentAdvertsBinding
 import com.example.socialapp.model.Advertisement
 import com.example.socialapp.model.Filters
@@ -18,12 +19,11 @@ import com.example.socialapp.screens.main.MainScreenFragmentDirections
 import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import timber.log.Timber
 
 
 class AdvertsFragment : Fragment(),
     FilterDialogFragment.FilterListener,
-    NewAdvertisementDialogFragment.NewAdvertisementListener,
+    CreateAdvertisementDialogFragment.NewAdvertisementListener,
     AdsAdapter.OnAdvertisementClickListener {
 
     private lateinit var binding: FragmentAdvertsBinding
@@ -54,15 +54,11 @@ class AdvertsFragment : Fragment(),
     }
 
     private fun openNewAdvertisementDialog() {
-        val dialog =
-            NewAdvertisementDialogFragment()
-        dialog.show(childFragmentManager, "new_advert_dialog")
+        CreateAdvertisementDialogFragment().show(childFragmentManager, "new_advert_dialog")
     }
 
     private fun openFilterDialog() {
-        val dialogFragment =
-            FilterDialogFragment()
-        dialogFragment.show(childFragmentManager, "filter_dialog")
+            FilterDialogFragment().show(childFragmentManager, "filter_dialog")
     }
 
     private fun clearFilter() {
@@ -86,7 +82,7 @@ class AdvertsFragment : Fragment(),
             } else {
                 "Failed to add the advert, try again"
             }
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            showToast(message)
         }
     }
 
@@ -110,8 +106,12 @@ class AdvertsFragment : Fragment(),
             .orderBy("dateCreated", Query.Direction.DESCENDING)
 
         filters.game?.let { game -> query = query.whereEqualTo("game", game) }
-        filters.communicationLanguage?.let { language -> query = query.whereEqualTo("communicationLanguage", language) }
-        filters.playersNumber?.let { playersNum -> query = query.whereEqualTo("playersNumber", playersNum) }
+        filters.communicationLanguage?.let { language ->
+            query = query.whereEqualTo("communicationLanguage", language)
+        }
+        filters.playersNumber?.let { playersNum ->
+            query = query.whereEqualTo("playersNumber", playersNum)
+        }
 
         val config = PagedList.Config.Builder()
             .setEnablePlaceholders(false)
