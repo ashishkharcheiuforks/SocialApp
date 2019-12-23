@@ -1,15 +1,18 @@
 package com.example.socialapp.screens.invites
 
 
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.example.socialapp.R
 import com.example.socialapp.adapter.InvitesAdapter
 import com.example.socialapp.databinding.FragmentInvitesBinding
 import com.example.socialapp.model.User
@@ -17,7 +20,6 @@ import com.example.socialapp.screens.userprofile.UserProfileFragmentDirections
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreException
 import timber.log.Timber
 
 class InvitesFragment : Fragment(), InvitesAdapter.onInviteItemClickListener {
@@ -34,13 +36,31 @@ class InvitesFragment : Fragment(), InvitesAdapter.onInviteItemClickListener {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentInvitesBinding.inflate(inflater, container, false)
+        // Set colors of Swipe To Refresh Layout Widget
+        binding.swipeRefreshLayout.apply {
+            setColorSchemeColors(Color.WHITE)
+            setProgressBackgroundColorSchemeColor(
+                ContextCompat.getColor(context!!.applicationContext, R.color.colorPrimary)
+            )
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.swipeRefreshLayout.apply {
+            setOnRefreshListener {
+                initRecyclerView()
+                isRefreshing = false
+            }
+        }
 
+        initRecyclerView()
+
+    }
+
+    private fun initRecyclerView() {
         viewModel.fetchInvitesLiveData().observe(this, Observer { result ->
             if (result.isSuccessful) {
                 val users: MutableList<User> = ArrayList()
@@ -49,12 +69,15 @@ class InvitesFragment : Fragment(), InvitesAdapter.onInviteItemClickListener {
 
                 Timber.d("queried documents: ${data.size}")
 
+                // If invites list is empty show placeholder
+                binding.noInvitesPlaceholder.apply {
+                    visibility = if(data.isEmpty()) View.VISIBLE else View.GONE
+                }
+
                 //Create adapter and pass new list of Users
                 data.forEach {
-                    try {
                     db.collection("users").document(it.id).get()
                         .addOnCompleteListener { task ->
-                            Timber.d(task.result!!.metadata.toString())
                             if (task.isSuccessful) {
                                 users.add(
                                     User(
@@ -65,21 +88,12 @@ class InvitesFragment : Fragment(), InvitesAdapter.onInviteItemClickListener {
                                     )
                                 )
                             }
-                            binding.invitesRecyclerview.adapter =
-                                InvitesAdapter(users, this)
+                            binding.invitesRecyclerview.adapter = InvitesAdapter(users, this)
                         }
                 }
-                    catch(e: FirebaseFirestoreException ){
-                        Timber.d(e, "exception occured")
-                    }
-                }
             }//End of if statement
-
         })
-
-
     }
-
 
     override fun acceptInvite(uid: String) {
         viewModel.acceptFriendRequest(uid)
@@ -90,7 +104,7 @@ class InvitesFragment : Fragment(), InvitesAdapter.onInviteItemClickListener {
     }
 
     override fun openUserProfile(uid: String) {
-        if(uid != FirebaseAuth.getInstance().uid){
+        if (uid != FirebaseAuth.getInstance().uid) {
             val action = UserProfileFragmentDirections.actionGlobalProfileFragment(uid)
             findNavController().navigate(action)
         }

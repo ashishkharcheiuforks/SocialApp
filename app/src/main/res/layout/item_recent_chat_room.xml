@@ -8,6 +8,10 @@
         <variable
                 name="user"
                 type="com.example.socialapp.model.User" />
+        
+        <variable
+                name="message"
+                type="com.example.socialapp.model.Message" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,29 +39,38 @@
                 android:id="@+id/tv_user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="@{@string/name_nickname(user.firstName, user.nickname)}"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 app:layout_constraintStart_toEndOf="@+id/iv_profile_pic"
                 app:layout_constraintTop_toTopOf="@+id/iv_profile_pic"
-                tools:text="Robert 'Pedziwiatr'" />
+                tools:text="Krzysztof 'Pedziwiatr'" />
 
         <TextView
-                android:id="@+id/tv_options_menu"
+                android:id="@+id/tv_last_message"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:maxLines="1"
+                android:paddingEnd="16dp"
+                android:singleLine="true"
+                tools:text="@string/example_about_me_text"
+                android:text="@{message.text}"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_profile_pic"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/tv_user_name" />
+
+        <TextView
+                android:id="@+id/tv_date_created"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:visibility="invisible"
-                tools:visibility="visible"
-                android:paddingStart="8dp"
-                android:text="@string/icon_overflow"
-                android:textAppearance="?android:textAppearanceLarge"
+                tools:text="21/07/2019 20:55"
+                dateToFullDateText="@{message.dateCreated}"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/tv_user_name" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -7,10 +7,10 @@
 
     </data>
 
-    <LinearLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".screens.invites.InvitesFragment">
+            android:layout_height="match_parent">
 
         <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
@@ -37,12 +37,12 @@
                         android:id="@+id/no_invites_placeholder"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="No pending invites :)"
+                        android:gravity="center"
                         android:minHeight="100dp"
+                        android:text="No pending invites :)"
                         android:textSize="20sp"
                         android:visibility="gone"
-                        tools:visibility="visible"
-                        android:gravity="center"/>
+                        tools:visibility="visible" />
 
                 <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/invites_recyclerview"
@@ -58,8 +58,6 @@
                         tools:listitem="@layout/item_invite" />
 
             </LinearLayout>
-
         </androidx.core.widget.NestedScrollView>
-
-    </LinearLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

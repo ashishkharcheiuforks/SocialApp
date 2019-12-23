@@ -390,6 +390,7 @@ class FirestoreRepository {
         val data = hashMapOf<String, Any>()
 
         data["dateCreated"] = FieldValue.serverTimestamp()
+        advertisement.filters.playersNumber?.let { data["playersNumber"] = it }
         advertisement.filters.game?.let { data["game"] = it }
         advertisement.filters.communicationLanguage?.let { data["communicationLanguage"] = it }
         advertisement.description?.let { data["description"] = it }
@@ -417,7 +418,6 @@ class FirestoreRepository {
         data["dateCreated"] = FieldValue.serverTimestamp()
         data["createdByUserId"] = auth.uid!!
 
-//        commentsCollectionRef.document().set(data)
         commentsCollectionRef.add(data)
     }
 

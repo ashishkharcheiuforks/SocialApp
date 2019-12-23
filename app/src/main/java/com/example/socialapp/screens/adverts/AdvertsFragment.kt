@@ -1,15 +1,17 @@
 package com.example.socialapp.screens.adverts
 
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.PagedList
+import com.example.socialapp.R
 import com.example.socialapp.adapter.AdsAdapter
 import com.example.socialapp.common.showToast
 import com.example.socialapp.databinding.FragmentAdvertsBinding
@@ -38,6 +40,13 @@ class AdvertsFragment : Fragment(),
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentAdvertsBinding.inflate(inflater, container, false)
+        // Set colors of Swipe To Refresh Layout Widget
+        binding.swipeRefreshLayout.apply {
+            setColorSchemeColors(Color.WHITE)
+            setProgressBackgroundColorSchemeColor(
+                ContextCompat.getColor(context!!.applicationContext, R.color.colorPrimary)
+            )
+        }
         return binding.root
     }
 
@@ -51,6 +60,11 @@ class AdvertsFragment : Fragment(),
         }
 
         initRecyclerview(viewModel.filters.value!!)
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            initRecyclerview(viewModel.filters.value!!)
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
     }
 
     private fun openNewAdvertisementDialog() {
@@ -58,7 +72,7 @@ class AdvertsFragment : Fragment(),
     }
 
     private fun openFilterDialog() {
-            FilterDialogFragment().show(childFragmentManager, "filter_dialog")
+        FilterDialogFragment().show(childFragmentManager, "filter_dialog")
     }
 
     private fun clearFilter() {
@@ -87,7 +101,7 @@ class AdvertsFragment : Fragment(),
     }
 
     override fun onRespond(userId: String) {
-        Toast.makeText(context, "TODO: Implement", Toast.LENGTH_LONG).show()
+        showToast("TODO: Implement")
     }
 
     override fun onProfilePictureClicked(userId: String) {

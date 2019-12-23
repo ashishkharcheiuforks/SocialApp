@@ -61,19 +61,19 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.1.0'
 
     // Firebase Authentication
-    implementation 'com.google.firebase:firebase-auth:18.1.0'
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
 
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:2.1.0"
 
     // Firebase rule to add Google Services plugin
-    implementation 'com.google.firebase:firebase-core:17.0.1'
+    implementation 'com.google.firebase:firebase-core:17.2.1'
 
     // Firestore
-    implementation 'com.google.firebase:firebase-firestore:20.2.0'
+    implementation 'com.google.firebase:firebase-firestore:21.3.1'
 
     // Firebase Storage
-    implementation 'com.google.firebase:firebase-storage:19.0.1'
+    implementation 'com.google.firebase:firebase-storage:19.1.0'
 
     implementation 'androidx.multidex:multidex:2.0.1'
 
@@ -82,7 +82,7 @@ dependencies {
     kapt("com.github.bumptech.glide:compiler:4.9.0")
 
     // Google Material Design Components
-    implementation 'com.google.android.material:material:1.2.0-alpha02'
+    implementation 'com.google.android.material:material:1.2.0-alpha03'
 
     // Algolia
     implementation 'com.algolia:algoliasearch-android:3.27.0'
@@ -100,7 +100,7 @@ dependencies {
     implementation "androidx.viewpager2:viewpager2:1.0.0"
 
     // Paging library
-    implementation "androidx.paging:paging-runtime:2.1.0"
+    implementation "androidx.paging:paging-runtime:2.1.1"
 
     // RxJava 
     implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'

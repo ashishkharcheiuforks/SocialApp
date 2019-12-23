@@ -43,7 +43,7 @@
         <fragment
                 android:id="@+id/mainFragment"
                 android:name="com.example.socialapp.screens.main.MainScreenFragment"
-                tools:layout="@layout/fragment_main_screen" >
+                tools:layout="@layout/fragment_main_screen">
             <action
                     android:id="@+id/action_mainFragment_to_searchUserFragment"
                     app:destination="@id/searchUserFragment" />
@@ -83,16 +83,21 @@
                 android:id="@+id/action_global_friendsFragment"
                 app:destination="@id/friendsFragment" />
         <fragment
-                android:id="@+id/createPost"
-                android:name="com.example.socialapp.screens.createpost.CreatePostDialogFragment"
-                tools:layout="@layout/dialog_create_post" />
-        <action
-                android:id="@+id/action_global_createPost"
-                app:destination="@id/createPost" />
-        <fragment
                 android:id="@+id/chatRoomsFragment"
                 android:name="com.example.socialapp.screens.chat.ChatRoomsFragment"
                 android:label="chat_rooms_fragment"
-                tools:layout="@layout/fragment_chat_rooms" /><action android:id="@+id/action_global_chatRoomsFragment" app:destination="@id/chatRoomsFragment"/>
+                tools:layout="@layout/fragment_chat_rooms">
+            <action
+                    android:id="@+id/action_chatRoomsFragment_to_conversationFragment"
+                    app:destination="@id/conversationFragment" />
+        </fragment>
+        <action
+                android:id="@+id/action_global_chatRoomsFragment"
+                app:destination="@id/chatRoomsFragment" />
+        <fragment
+                android:id="@+id/conversationFragment"
+                android:name="com.example.socialapp.screens.chat.ConversationFragment"
+                tools:layout="@layout/fragment_conversation"
+                android:label="ConversationFragment" />
     </navigation>
 </navigation>

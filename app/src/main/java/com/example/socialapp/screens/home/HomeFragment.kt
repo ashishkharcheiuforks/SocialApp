@@ -16,9 +16,9 @@ import com.example.socialapp.AuthenticatedNestedGraphViewModel
 import com.example.socialapp.R
 import com.example.socialapp.adapter.PostsAdapter
 import com.example.socialapp.databinding.FragmentHomeBinding
-import com.example.socialapp.screens.main.MainScreenFragmentDirections
 import com.example.socialapp.screens.comments.CommentsFragment
 import com.example.socialapp.screens.createpost.CreatePostDialogFragment
+import com.example.socialapp.screens.main.MainScreenFragmentDirections
 import com.google.firebase.auth.FirebaseAuth
 import timber.log.Timber
 
@@ -40,6 +40,14 @@ class HomeFragment : Fragment(), PostsAdapter.OnPostClickListener {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
+
+        // Set colors of Swipe To Refresh Layout Widget
+        binding.swipeRefreshLayout.apply {
+            setColorSchemeColors(Color.WHITE)
+            setProgressBackgroundColorSchemeColor(
+                ContextCompat.getColor(context!!.applicationContext, R.color.colorPrimary)
+            )
+        }
         return binding.root
     }
 
@@ -51,10 +59,6 @@ class HomeFragment : Fragment(), PostsAdapter.OnPostClickListener {
         // Set recyclerview adapter for posts
         binding.recyclerview.adapter = adapter
 
-        // Set the colors of the Pull To Refresh View
-        binding.swipeRefreshLayout.setProgressBackgroundColorSchemeColor(ContextCompat.getColor(context!!.applicationContext, R.color.colorPrimary))
-        binding.swipeRefreshLayout.setColorSchemeColors(Color.WHITE)
-
         authenticatedNestedGraphViewModel.user.observe(viewLifecycleOwner, Observer {
             binding.user = it
         })
@@ -64,13 +68,9 @@ class HomeFragment : Fragment(), PostsAdapter.OnPostClickListener {
             adapter.submitList(it)
         })
 
-        binding.createNewPost.setOnClickListener {
-            openNewPostDialog()
-        }
+        binding.createNewPost.setOnClickListener { openNewPostDialog() }
 
-        binding.swipeRefreshLayout.setOnRefreshListener {
-            homeViewModel.refreshPosts()
-        }
+        binding.swipeRefreshLayout.setOnRefreshListener { homeViewModel.refreshPosts() }
 
 
     }
