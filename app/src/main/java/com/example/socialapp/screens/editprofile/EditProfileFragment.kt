@@ -94,11 +94,11 @@ class EditProfileFragment : Fragment() {
                 return
             }
             val pictureUri = data.data
-            viewModel.loadedImageUri.value = pictureUri!!
+            viewModel.loadedImageUri.value = pictureUri.toString()
         }
 
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_IMAGE_CAPTURE) {
-            imageUri?.let { viewModel.loadedImageUri.value = it }
+            imageUri?.let { viewModel.loadedImageUri.value = it.toString() }
         }
 
     }

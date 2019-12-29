@@ -51,7 +51,7 @@
 
                         <ImageView
                             android:id="@+id/profile_profile_picture"
-                            imageResourceUri="@{user.profilePictureUri}"
+                            imageResourceUri="@{user.profilePictureUrl}"
                             android:layout_width="120dp"
                             android:layout_height="120dp"
                             android:layout_marginStart="16dp"

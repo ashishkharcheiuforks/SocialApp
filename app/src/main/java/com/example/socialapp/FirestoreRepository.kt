@@ -12,6 +12,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -38,7 +39,8 @@ class FirestoreRepository {
         dateOfBirth: Timestamp
     ): Task<Void> {
         val defaultProfilePictureUrl =
-            "https://firebasestorage.googleapis.com/v0/b/social-app-a3759.appspot.com/o/profilepic.jpg?alt=media&token=ad32501b-383e-4a25-b1d2-b3586ee338bd"
+            "https://firebasestorage.googleapis.com/v0/b/social-app-a3759.appspot.com/o/pr" +
+                    "ofilepic.jpg?alt=media&token=ad32501b-383e-4a25-b1d2-b3586ee338bd"
         val userProfileInfo = hashMapOf(
             "firstName" to firstName,
             "nickname" to nickname,
@@ -59,7 +61,7 @@ class FirestoreRepository {
         firstName: String?,
         nickname: String?,
         dateOfBirth: Timestamp?,
-        profilePictureUri: Uri?
+        profilePictureUri: String?
     ): Task<Void> {
         return withContext(Dispatchers.IO) {
             val userDocRef = db.document("users/${auth.uid}")
@@ -79,22 +81,19 @@ class FirestoreRepository {
         }
     }
 
-    suspend fun changeUserProfilePicture(uri: Uri) = withContext(Dispatchers.IO) {
+    suspend fun changeUserProfilePicture(url: String) = withContext(Dispatchers.IO) {
         val userProfileStorageRef = storageReference.child("users/${auth.uid}/")
         val filename = "profile_picture"
-        val urlToUpdate = uploadPhotoAndReturnUrl(uri, userProfileStorageRef, filename)
+        val urlToUpdate = uploadPhotoAndReturnUrl(url, userProfileStorageRef, filename)
         updateProfilePictureUrl(urlToUpdate)
         // Update profile picture url in algolia
         algolia.updateProfilePictureUrl(urlToUpdate)
     }
 
     // Uploads picture to the given location in cloud storage and return
-    suspend fun uploadPhotoAndReturnUrl(
-        uri: Uri,
-        storageRef: StorageReference,
-        name: String
-    ): String {
+    suspend fun uploadPhotoAndReturnUrl(url: String, storageRef: StorageReference, name: String): String {
         val fileRef = storageRef.child(name)
+        val uri = Uri.parse(url)
         fileRef.putFile(uri).await()
         // Return url
         return fileRef.downloadUrl.await().toString()
@@ -106,7 +105,7 @@ class FirestoreRepository {
         userDocRef.update(mapOf("profilePictureUrl" to url))
     }
 
-    /**    Sending friend request to the user    **/
+    /**    Friend Request related functions    **/
 
     fun inviteToFriends(uid: String): Task<Void> {
         val data = mapOf<String, Any>("status" to FriendshipStatus.INVITATION_SENT.status)
@@ -119,22 +118,16 @@ class FirestoreRepository {
         return myFriends.set(data)
     }
 
-    /**    Accepting friend request    **/
-
     fun acceptFriendRequest(uid: String): Task<Void> {
         val data = mapOf<String, Any>("status" to FriendshipStatus.ACCEPTED.status)
         val friendDocRef = db.document("users/${auth.uid}/friends/$uid")
         return friendDocRef.update(data)
     }
 
-    /**    Cancel pending friend request    **/
-
     fun deleteFriendRequest(uid: String): Task<Void> {
         val friendDocRef = db.document("users/${auth.uid}/friends/$uid")
         return friendDocRef.delete()
     }
-
-    /**    Snapshot for real-time friendship status    **/
 
     fun getFriendshipStatus(uid: String): DocumentSnapshotLiveData {
         val friendDocRef = db.document("users/${auth.uid}/friends/$uid")
@@ -147,14 +140,6 @@ class FirestoreRepository {
         val query = friendsCollectionRef.whereEqualTo("status", status)
         return QuerySnapshotLiveData(query)
     }
-
-    /**     NEW STUFF   **/
-
-    /**
-     * Adds a new post to 'savedPosts' collection
-     * and cloud functions populates reference to it
-     * in user friends timelines
-     * */
 
     fun addPost(postContent: String?, postImage: Uri?) {
         val newPostDocRef = db.collection("posts").document()
@@ -177,7 +162,6 @@ class FirestoreRepository {
         // If image was passed to add to the document
         // it will be uploaded
         postImage?.let {
-            //TODO(DEV): create random name for the uploaded file
             val postImagesReference = storageReference.child("posts/$newPostId/images/image.jpeg")
 
             uploadPictureAndReturnUrl(it, postImagesReference).addOnCompleteListener { task ->
@@ -188,12 +172,6 @@ class FirestoreRepository {
         }
 
         newPostDocRef.set(data)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Timber.d("Added new post successfully")
-                } else
-                    Timber.d(task.exception, "Failed to add the post")
-            }
     }
 
 
@@ -238,7 +216,7 @@ class FirestoreRepository {
         }
 
         return query.get().await().map {
-            getPost(it.id, it.getString("createdByUserUid").toString())
+            getPost(it.id, it.getString("createdByUserUid")!!)
         }
     }
 
@@ -263,9 +241,7 @@ class FirestoreRepository {
             query = query.startAfter(item)
         }
 
-        return query.get().await().map {
-            getUser(it.id)
-        }
+        return query.get().await().map { getUser(it.id) }
     }
 
     suspend fun getUserPosts(
@@ -297,42 +273,11 @@ class FirestoreRepository {
                 postId = it.id,
                 postLikesNumber = it.getLong("likesNumber")!!.toInt(),
                 postImage = it.getString("postImage"),
-                postDateCreated = it.getTimestamp("dateCreated")!!,
-                postContent = it.get("postContent").toString(),
+                dateCreated = it.getTimestamp("dateCreated")!!,
+                content = it.get("postContent").toString(),
                 postCommentsNumber = it.getLong("commentsNumber")!!.toInt(),
                 user = user,
                 postLiked = getPostLikeStatus(it.id)
-            )
-        }
-    }
-
-    suspend fun getPostComments(
-        postId: String,
-        pageSize: Int,
-        loadBefore: String? = null,
-        loadAfter: String? = null
-    ): List<Comment> {
-        val commentsCollRef = db.collection("posts/${postId}/comments")
-        var query = commentsCollRef
-            .orderBy("dateCreated", Query.Direction.DESCENDING)
-            .limit(pageSize.toLong())
-
-        loadBefore?.let {
-            val item = commentsCollRef.document(it).get().await()
-            query = query.endBefore(item)
-        }
-
-        loadAfter?.let {
-            val item = commentsCollRef.document(it).get().await()
-            query = query.startAfter(item)
-        }
-
-        return query.get().await().map {
-            Comment(
-                it.id,
-                it.getString("content")!!,
-                it.getTimestamp("dateCreated")!!,
-                getUser(it.getString("createdByUserId")!!)
             )
         }
     }
@@ -344,8 +289,8 @@ class FirestoreRepository {
         return Post(
             postId = postId,
             postCommentsNumber = postDocSnap.getLong("commentsNumber")!!.toInt(),
-            postContent = postDocSnap.getString("postContent").toString(),
-            postDateCreated = postDocSnap.getTimestamp("dateCreated")!!,
+            content = postDocSnap.getString("postContent").toString(),
+            dateCreated = postDocSnap.getTimestamp("dateCreated")!!,
             postImage = postDocSnap.getString("postImage"),
             postLikesNumber = postDocSnap.getLong("likesNumber")!!.toInt(),
             user = user,
@@ -355,14 +300,7 @@ class FirestoreRepository {
 
     suspend fun getUser(userId: String): User = withContext(Dispatchers.IO) {
         val userDocSnap = db.document("users/${userId}").get().await()
-        User(
-            uid = userDocSnap.id,
-            firstName = userDocSnap.getString("firstName").toString(),
-            nickname = userDocSnap.getString("nickname").toString(),
-            dateOfBirth = userDocSnap.getTimestamp("dateOfBirth"),
-            aboutMe = null,
-            profilePictureUri = Uri.parse(userDocSnap.getString("profilePictureUrl").toString())
-        )
+        userDocSnap.toObject(User::class.java)!!
     }
 
     private fun getPostLikeStatus(postId: String): Observable<Boolean> {
@@ -419,6 +357,29 @@ class FirestoreRepository {
         data["createdByUserId"] = auth.uid!!
 
         commentsCollectionRef.add(data)
+    }
+
+    fun addCommentsListener(
+        postId: String,
+        onListen: (List<Comment>) -> Unit
+    ): ListenerRegistration {
+        val commentsCollectionRef = db.collection("posts/$postId/comments")
+
+        return commentsCollectionRef
+            .orderBy("dateCreated")
+            .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                if (firebaseFirestoreException != null) {
+                    Timber.e(firebaseFirestoreException, "CommentsListener error.")
+                    return@addSnapshotListener
+                }
+
+                val comments = mutableListOf<Comment>()
+                querySnapshot!!.documents.forEach {
+                    comments.add(it.toObject(Comment::class.java)!!)
+                    return@forEach
+                }
+                onListen(comments)
+            }
     }
 
 }

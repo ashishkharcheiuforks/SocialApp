@@ -1,6 +1,5 @@
 package com.example.socialapp.screens.editprofile
 
-import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,7 +19,7 @@ class EditProfileViewModel : ViewModel() {
     val firstName = MutableLiveData<String>()
     val nickname = MutableLiveData<String>()
     val dateOfBirth = MutableLiveData<Timestamp>()
-    val loadedImageUri = MutableLiveData<Uri?>()
+    val loadedImageUri = MutableLiveData<String?>()
 
 
     init {

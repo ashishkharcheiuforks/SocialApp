@@ -7,6 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.fragment.NavHostFragment
+import com.example.socialapp.common.hideKeyboard
 import com.example.socialapp.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
 import timber.log.Timber
@@ -38,12 +39,12 @@ class MainActivity : AppCompatActivity(), ViewModelStoreOwner {
                 }
             }
         })
-        setStartDestination(auth)
+        setStartDestination()
 
     }
 
     // Inflates main_nav_graph.xml and sets proper start destination depending on auth state
-    private fun setStartDestination(auth: FirebaseAuth) {
+    private fun setStartDestination() {
         Timber.d("setStartDestination() called")
         val navHost = supportFragmentManager.findFragmentById(R.id.nav_fragment) as NavHostFragment
         val navController = navHost.navController

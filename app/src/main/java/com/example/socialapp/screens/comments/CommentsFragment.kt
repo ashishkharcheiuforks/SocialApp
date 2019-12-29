@@ -8,22 +8,24 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import com.example.socialapp.AuthenticatedNestedGraphViewModel
 import com.example.socialapp.R
 import com.example.socialapp.adapter.CommentsAdapter
 import com.example.socialapp.databinding.FragmentCommentsBinding
+import com.example.socialapp.model.Comment
+import com.example.socialapp.screens.main.MainScreenFragmentDirections
+import com.google.firebase.firestore.ListenerRegistration
 import timber.log.Timber
 
-class CommentsFragment : DialogFragment(), CommentsAdapter.OnCommentClickListener {
+class CommentsFragment : DialogFragment(), CommentsAdapter.onCommentClickListener {
 
     private lateinit var binding: FragmentCommentsBinding
-
+    private lateinit var viewModel: CommentsViewModel
     private lateinit var postId: String
 
-    private lateinit var viewModel: CommentsViewModel
-
-    private val adapter by lazy { CommentsAdapter(this) }
+    private lateinit var listener: ListenerRegistration
 
     private val authenticatedNestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(
         R.id.authenticated_graph
@@ -39,7 +41,12 @@ class CommentsFragment : DialogFragment(), CommentsAdapter.OnCommentClickListene
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentCommentsBinding.inflate(inflater, container, false)
-        binding.toolbar.navigationIcon!!.setTint(Color.WHITE)
+
+        binding.toolbar.apply {
+            navigationIcon!!.setTint(Color.WHITE)
+            setNavigationOnClickListener { dismiss() }
+        }
+
         return binding.root
     }
 
@@ -48,31 +55,24 @@ class CommentsFragment : DialogFragment(), CommentsAdapter.OnCommentClickListene
 
         // Get passed postId in bundle
         arguments?.let {
-            postId = it.getString("postId").toString()
+            postId = it.getString("postId")!!
+            Timber.i("Passed postId: $postId")
         }
-        Timber.i("Passed postId: $postId")
 
         // Initialize viewmodel with received postId
-        viewModel = ViewModelProviders
-            .of(this, CommentsViewModelFactory(postId))
-            .get(CommentsViewModel::class.java)
+        viewModel =
+            ViewModelProviders.of(this, CommentsViewModelFactory(postId))
+                .get(CommentsViewModel::class.java)
 
         binding.lifecycleOwner = this
-
         binding.viewModel = viewModel
-
-        // Set navigation icon behaviour to dismiss the dialog
-        binding.toolbar.setNavigationOnClickListener { dismiss() }
-
-        binding.recyclerview.adapter = adapter
-
-        viewModel.comments.observe(viewLifecycleOwner, Observer {
-//                        adapter.submit(it)
-        })
 
         authenticatedNestedGraphViewModel.user.observe(this, Observer {
             binding.user = it
         })
+
+        binding.btnAddNewComment.setOnClickListener { viewModel.addNewComment() }
+
     }
 
     // Makes dialog display as fully maximized
@@ -85,11 +85,24 @@ class CommentsFragment : DialogFragment(), CommentsAdapter.OnCommentClickListene
             dialog.window!!.setLayout(width, height)
             dialog.window!!.setWindowAnimations(R.style.AppTheme_Slide)
         }
+        listener = viewModel.addCommentsListener(::updateRecyclerView)
     }
 
-    override fun onProfilePictureClicked(userId: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onStop() {
+        listener.remove()
+        super.onStop()
     }
 
+    private fun updateRecyclerView(comments: List<Comment>) {
+        binding.recyclerview.apply {
+            adapter = CommentsAdapter(comments, this@CommentsFragment)
+            scrollToPosition(comments.lastIndex - 1)
+        }
+    }
+
+    override fun openUserProfile(uid: String) {
+        val action = MainScreenFragmentDirections.actionGlobalProfileFragment(uid)
+        findNavController().navigate(action)
+    }
 
 }

@@ -1,56 +1,54 @@
 package com.example.socialapp.adapter
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.socialapp.databinding.ItemCommentBinding
 import com.example.socialapp.model.Comment
+import com.example.socialapp.model.User
+import com.google.firebase.firestore.FirebaseFirestore
 
-class CommentsAdapter(private val listener: OnCommentClickListener) :
-    PagedListAdapter<Comment, CommentsAdapter.ViewHolder>(
-        object : DiffUtil.ItemCallback<Comment>() {
-            override fun areItemsTheSame(oldItem: Comment, newItem: Comment): Boolean =
-                oldItem.commentId == newItem.commentId
+class CommentsAdapter(
+    private val comments: List<Comment>,
+    private val listener: onCommentClickListener
+) : RecyclerView.Adapter<CommentsAdapter.CommentViewHolder>() {
 
-            override fun areContentsTheSame(oldItem: Comment, newItem: Comment): Boolean =
-                oldItem == newItem
-        }) {
-
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemCommentBinding.inflate(inflater, parent, false)
-        return ViewHolder(binding)
+        return CommentViewHolder(binding, listener)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val comment = getItem(position)
+    override fun getItemCount(): Int = comments.size
 
-        if (comment != null) {
-            holder.bind(comment, listener)
-        }
-    }
+    override fun onBindViewHolder(holder: CommentViewHolder, position: Int) =
+        holder.bind(comments[position])
 
-
-    class ViewHolder(private val binding: ItemCommentBinding) :
+    class CommentViewHolder(
+        private val binding: ItemCommentBinding,
+        private val listener: onCommentClickListener
+    ) :
         RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(comment: Comment, listener: OnCommentClickListener) {
-            // set data binding variables
+        fun bind(comment: Comment) {
             binding.comment = comment
 
-            binding.userProfilePicture.setOnClickListener {
-                listener.onProfilePictureClicked(comment.user.uid)
-            }
+            FirebaseFirestore.getInstance()
+                .document("users/${comment.createdByUserId}")
+                .get()
+                .addOnSuccessListener {
+                    val user = it.toObject(User::class.java)
+                    binding.user = user
+                }
+
+            binding.userProfilePicture.setOnClickListener { listener.openUserProfile(comment.createdByUserId) }
 
             binding.executePendingBindings()
         }
     }
 
-
-    interface OnCommentClickListener {
-        fun onProfilePictureClicked(userId: String)
+    interface onCommentClickListener {
+        fun openUserProfile(uid: String)
     }
+
 }

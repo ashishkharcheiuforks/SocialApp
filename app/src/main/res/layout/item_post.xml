@@ -31,7 +31,7 @@
 
             <ImageView
                     android:id="@+id/image_post_item_user_profile_picture"
-                    imageResourceUri="@{user.profilePictureUri}"
+                    imageResourceUri="@{user.profilePictureUrl}"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginStart="16dp"
@@ -52,7 +52,7 @@
 
             <TextView
                     android:id="@+id/text_post_date"
-                    dateToFullDateText="@{post.postDateCreated}"
+                    dateToFullDateText="@{post.dateCreated}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -77,7 +77,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
-                        android:text="@{post.postContent}"
+                        android:text="@{post.content}"
                         tools:text='"At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est' />
 
                 <ImageView

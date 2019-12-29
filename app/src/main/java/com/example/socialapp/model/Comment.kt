@@ -1,10 +1,12 @@
 package com.example.socialapp.model
 
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentId
 
 data class Comment(
-    val commentId: String,
-    val content: String,
-    val dateCreated: Timestamp,
-    val user: User
+    @DocumentId
+    val commentId: String = "",
+    val content: String = "",
+    val dateCreated: Timestamp? = null,
+    val createdByUserId: String = ""
 )

@@ -62,7 +62,7 @@
 
                     <ImageView
                             android:id="@+id/iv_profile_picture_preview"
-                            imageResourceUri="@{vm.loadedImageUri ?? user.profilePictureUri}"
+                            imageResourceUri="@{vm.loadedImageUri ?? user.profilePictureUrl}"
                             android:layout_width="130sp"
                             android:layout_height="130sp"
                             android:layout_marginStart="24dp"

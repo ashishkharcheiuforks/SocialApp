@@ -18,7 +18,7 @@
 
         <ImageView
                 android:id="@+id/invite_profile_picture"
-                imageResourceUri="@{user.profilePictureUri}"
+                imageResourceUri="@{user.profilePictureUrl}"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_marginStart="8dp"

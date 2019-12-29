@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.algolia.search.saas.Client
 import com.algolia.search.saas.Query
-import com.example.socialapp.AlgoliaRepository
 import com.example.socialapp.model.User
 import org.json.JSONArray
 import org.json.JSONException
@@ -62,7 +61,7 @@ class SearchUserViewmodel : ViewModel() {
                             firstName = jsonObject.getString("first_name"),
                             nickname = jsonObject.getString("nickname"),
                             dateOfBirth = null,
-                            profilePictureUri = Uri.parse(jsonObject.getString("profile_picture_url")),
+                            profilePictureUrl = jsonObject.getString("profile_picture_url"),
                             aboutMe = null
                         )
                     )

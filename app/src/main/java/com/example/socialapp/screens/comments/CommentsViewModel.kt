@@ -1,12 +1,10 @@
 package com.example.socialapp.screens.comments
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
 import com.example.socialapp.FirestoreRepository
 import com.example.socialapp.model.Comment
+import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -25,26 +23,15 @@ class CommentsViewModel(private val postId: String) : ViewModel() {
 
     val newPostContent = MutableLiveData<String>("")
 
-    private val config = PagedList.Config.Builder()
-        .setEnablePlaceholders(false)
-        .setPrefetchDistance(10)
-        .setPageSize(20)
-        .build()
-
-    private val dataSource = CommentsDataSource.Factory(uiScope, postId)
-
-    val comments: LiveData<PagedList<Comment>> =
-        LivePagedListBuilder<String, Comment>(
-            dataSource,
-            config
-        ).build()
-
-
-    fun addNewComment(){
-        // TODO(): Add proper validation for the add comment button
-        if(newPostContent.value!!.trim().isNotEmpty() ){
-           repo.uploadNewComment(postId, newPostContent.value!!)
+    fun addNewComment() {
+        if (newPostContent.value!!.isNotBlank()) {
+            repo.uploadNewComment(postId, newPostContent.value!!)
+            newPostContent.value = ""
         }
+    }
+
+    fun addCommentsListener(onComplete: (List<Comment>) -> Unit): ListenerRegistration {
+        return repo.addCommentsListener(postId, onComplete)
     }
 
     override fun onCleared() {

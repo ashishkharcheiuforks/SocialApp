@@ -1,6 +1,5 @@
 package com.example.socialapp.adapter
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import com.example.socialapp.model.User
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter
 import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import com.google.firebase.firestore.FirebaseFirestore
-import timber.log.Timber
 
 class AdsAdapter(
     private val listener: OnAdvertisementClickListener,
@@ -44,18 +42,10 @@ class AdsAdapter(
             binding.filters = advertisement.filters
 
             db.document("users/${advertisement.createdByUserUid!!}")
-                .get().addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        binding.user = User(
-                            profilePictureUri = Uri.parse(task.result!!["profilePictureUrl"] as String),
-                            nickname = task.result!!["nickname"] as String,
-                            firstName = task.result!!["firstName"] as String,
-                            uid = task.result!!.id
-                        )
-                    } else {
-                        Timber.e(task.exception)
-                    }
+                .get().addOnSuccessListener {
+                    binding.user = it.toObject(User::class.java)
                 }
+
 
             binding.btnRespond.setOnClickListener {
                 listener.onRespond(advertisement.createdByUserUid)

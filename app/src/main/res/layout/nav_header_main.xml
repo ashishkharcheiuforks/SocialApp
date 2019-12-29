@@ -19,7 +19,7 @@
 
         <ImageView
                 android:id="@+id/iv_profile_picture"
-                imageResourceUri="@{user.profilePictureUri}"
+                imageResourceUri="@{user.profilePictureUrl}"
                 android:layout_width="120sp"
                 android:layout_height="120sp"
                 android:layout_gravity="center|top"

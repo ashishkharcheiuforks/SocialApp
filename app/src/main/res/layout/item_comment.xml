@@ -8,6 +8,9 @@
         <variable
                 name="comment"
                 type="com.example.socialapp.model.Comment" />
+        <variable
+                name="user"
+                type="com.example.socialapp.model.User" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -30,7 +33,7 @@
                     android:layout_height="35dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    imageResourceUri="@{comment.user.profilePictureUri}"
+                    imageResourceUri="@{user.profilePictureUrl}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:src="@drawable/profilepic" />
@@ -40,7 +43,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="@{@string/name_nickname(comment.user.firstName, comment.user.nickname)}"
+                    android:text="@{@string/name_nickname(user.firstName, user.nickname)}"
                     app:layout_constraintStart_toEndOf="@+id/user_profile_picture"
                     app:layout_constraintTop_toTopOf="@+id/user_profile_picture"
                     tools:text="Mike 'Zornerv" />
@@ -64,7 +67,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginBottom="8dp"
-                    android:text="TextView"
+                    android:text="@{comment.content}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/comment_date_created"
                     app:layout_constraintStart_toStartOf="@+id/user_profile_picture"

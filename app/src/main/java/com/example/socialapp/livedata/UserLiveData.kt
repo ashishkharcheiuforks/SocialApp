@@ -1,6 +1,5 @@
 package com.example.socialapp.livedata
 
-import android.net.Uri
 import androidx.lifecycle.LiveData
 import com.example.socialapp.model.User
 import com.google.firebase.firestore.*
@@ -26,21 +25,7 @@ class UserLiveData(
 
     override fun onEvent(snap: DocumentSnapshot?, e: FirebaseFirestoreException?) {
         if (snap != null && snap.exists()) {
-            val firstName = snap.getString("firstName").toString()
-            val nickname = snap.getString("nickname").toString()
-            val dateOfBirth = snap.getTimestamp("dateOfBirth")
-            val profilePictureUri = Uri.parse(snap.getString("profilePictureUrl").toString())
-            val aboutMe = snap.getString("aboutMe")
-
-            val model = User(
-                snap.id,
-                firstName,
-                nickname,
-                dateOfBirth,
-                profilePictureUri,
-                aboutMe
-            )
-            value = model
+            value = snap.toObject(User::class.java)
         } else if (e != null) {
             Timber.w(e)
         }

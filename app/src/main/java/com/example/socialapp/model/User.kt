@@ -1,13 +1,14 @@
 package com.example.socialapp.model
 
-import android.net.Uri
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentId
 
 data class User(
-    val uid: String,
-    val firstName: String = "",
+    @DocumentId
+    val uid: String = "",
+    val firstName: String? = "",
     val nickname: String = "",
     val dateOfBirth: Timestamp? = null,
-    val profilePictureUri: Uri,
+    val profilePictureUrl: String? = "",
     val aboutMe: String? = null
 )

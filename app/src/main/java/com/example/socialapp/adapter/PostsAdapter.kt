@@ -64,17 +64,16 @@ class PostsAdapter(private val listener: OnPostClickListener) :
             post.postLiked.subscribeBy(onNext = { isPostLiked ->
 
                 // Set suitable image drawable and onClickListener for like button
-                if (isPostLiked) {
-                    binding.buttonPostItemLike.setImageResource(R.drawable.ic_favorite_black_24dp)
-                    binding.buttonPostItemLike.setOnClickListener {
-                        listener.onUnlikeButtonClicked(post.postId)
-                    }
-                } else {
-                    binding.buttonPostItemLike.setImageResource(R.drawable.ic_favorite_border_black_24dp)
-                    binding.buttonPostItemLike.setOnClickListener {
-                        listener.onLikeButtonClicked(post.postId)
+                binding.buttonPostItemLike.apply {
+                    if (isPostLiked) {
+                        setImageResource(R.drawable.ic_favorite_black_24dp)
+                        setOnClickListener { listener.onUnlikeButtonClicked(post.postId) }
+                    } else {
+                        setImageResource(R.drawable.ic_favorite_border_black_24dp)
+                        setOnClickListener { listener.onLikeButtonClicked(post.postId) }
                     }
                 }
+
 
             },
                 onError = {
@@ -92,7 +91,7 @@ class PostsAdapter(private val listener: OnPostClickListener) :
             }
 
             binding.imagePostItemUserProfilePicture.setOnClickListener {
-                listener.onProfilePictureClicked(post.user.uid)
+                listener.onProfilePictureClicked(post.user!!.uid)
             }
 
             binding.executePendingBindings()
