@@ -95,14 +95,14 @@ class UserProfileFragment : Fragment(),
     }
 
     override fun onLikeButtonClicked(postId: String) {
-        userProfileViewModel.likeThePost(postId)
+        userProfileViewModel.likePost(postId)
             .addOnCompleteListener {
                 // Handle UI
             }
     }
 
     override fun onUnlikeButtonClicked(postId: String) {
-        userProfileViewModel.unlikeThePost(postId)
+        userProfileViewModel.unlikePost(postId)
             .addOnCompleteListener {
                 // Handle UI
             }

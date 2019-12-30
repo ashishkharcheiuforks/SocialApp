@@ -82,11 +82,11 @@ class HomeFragment : Fragment(), PostsAdapter.OnPostClickListener {
 
 
     override fun onLikeButtonClicked(postId: String) {
-        homeViewModel.likeThePost(postId)
+        homeViewModel.likePost(postId)
     }
 
     override fun onUnlikeButtonClicked(postId: String) {
-        homeViewModel.unlikeThePost(postId)
+        homeViewModel.unlikePost(postId)
     }
 
     override fun onCommentButtonClicked(postId: String) {

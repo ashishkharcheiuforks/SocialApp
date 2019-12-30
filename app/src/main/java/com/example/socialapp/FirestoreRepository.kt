@@ -18,9 +18,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import io.reactivex.Observable
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 
@@ -61,9 +59,8 @@ class FirestoreRepository {
         firstName: String?,
         nickname: String?,
         dateOfBirth: Timestamp?,
-        profilePictureUri: String?
+        profilePictureUrl: String?
     ): Task<Void> {
-        return withContext(Dispatchers.IO) {
             val userDocRef = db.document("users/${auth.uid}")
 
             // Data set with fields to update in user document
@@ -73,15 +70,14 @@ class FirestoreRepository {
             nickname?.let { data.put("nickname", it) }
             dateOfBirth?.let { data.put("dateOfBirth", it) }
 
-            profilePictureUri?.let { changeUserProfilePicture(profilePictureUri) }
+            profilePictureUrl?.let { changeUserProfilePicture(profilePictureUrl) }
 
             algolia.updateNameAndNickname(firstName!!, nickname!!)
 
-            userDocRef.update(data)
-        }
+            return userDocRef.update(data)
     }
 
-    suspend fun changeUserProfilePicture(url: String) = withContext(Dispatchers.IO) {
+    suspend fun changeUserProfilePicture(url: String){
         val userProfileStorageRef = storageReference.child("users/${auth.uid}/")
         val filename = "profile_picture"
         val urlToUpdate = uploadPhotoAndReturnUrl(url, userProfileStorageRef, filename)
@@ -141,6 +137,8 @@ class FirestoreRepository {
         return QuerySnapshotLiveData(query)
     }
 
+    /**    Posts and comments related functions    **/
+
     fun addPost(postContent: String?, postImage: Uri?) {
         val newPostDocRef = db.collection("posts").document()
         val newPostId = newPostDocRef.id
@@ -174,19 +172,65 @@ class FirestoreRepository {
         newPostDocRef.set(data)
     }
 
+    suspend fun getPost(postId: String, userId: String): Post {
+        val user = getUser(userId)
+        val postDocSnap = db.document("posts/$postId").get().await()
 
-    // Uploads Picture to the provided path in Firebase Storage and returns Task
-    // with newly uploaded picture Url as a result
-    fun uploadPictureAndReturnUrl(pictureToUpload: Uri, path: StorageReference): Task<Uri> {
-        val uploadTask = path.putFile(pictureToUpload)
+        return Post(
+            postId = postId,
+            postCommentsNumber = postDocSnap.getLong("commentsNumber")!!.toInt(),
+            content = postDocSnap.getString("postContent").toString(),
+            dateCreated = postDocSnap.getTimestamp("dateCreated")!!,
+            postImage = postDocSnap.getString("postImage"),
+            postLikesNumber = postDocSnap.getLong("likesNumber")!!.toInt(),
+            user = user,
+            postLiked = getPostLikeStatus(postId)
+        )
+    }
 
-        return uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
-            if (!task.isSuccessful) {
-                task.exception?.let { throw it }
+    fun likePost(postId: String): Task<Void> {
+        val postLikesCollectionRef = db.document("posts/$postId/likes/${auth.uid}")
+        val data = mapOf("exists" to true)
+        return postLikesCollectionRef.set(data)
+    }
+
+    fun unlikePost(postId: String): Task<Void> {
+        val postLikesCollectionRef = db.document("posts/$postId/likes/${auth.uid}")
+        return postLikesCollectionRef.delete()
+    }
+
+    fun uploadNewComment(postId: String, postContent: String) {
+        val commentsCollectionRef = db.collection("posts/$postId/comments")
+        val data = HashMap<String, Any>()
+
+        data["content"] = postContent
+        data["dateCreated"] = FieldValue.serverTimestamp()
+        data["createdByUserId"] = auth.uid!!
+
+        commentsCollectionRef.add(data)
+    }
+
+    fun addCommentsListener(
+        postId: String,
+        onListen: (List<Comment>) -> Unit
+    ): ListenerRegistration {
+        val commentsCollectionRef = db.collection("posts/$postId/comments")
+
+        return commentsCollectionRef
+            .orderBy("dateCreated")
+            .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                if (firebaseFirestoreException != null) {
+                    Timber.e(firebaseFirestoreException, "CommentsListener error.")
+                    return@addSnapshotListener
+                }
+
+                val comments = mutableListOf<Comment>()
+                querySnapshot!!.documents.forEach {
+                    comments.add(it.toObject(Comment::class.java)!!)
+                    return@forEach
+                }
+                onListen(comments)
             }
-            return@Continuation path.downloadUrl
-        })
-
     }
 
     fun updatePostImageUrl(postId: String, imageUrl: Uri) {
@@ -282,25 +326,20 @@ class FirestoreRepository {
         }
     }
 
-    suspend fun getPost(postId: String, userId: String): Post {
-        val user = getUser(userId)
-        val postDocSnap = db.document("posts/$postId").get().await()
+    fun uploadPictureAndReturnUrl(pictureToUpload: Uri, path: StorageReference): Task<Uri> {
+        val uploadTask = path.putFile(pictureToUpload)
 
-        return Post(
-            postId = postId,
-            postCommentsNumber = postDocSnap.getLong("commentsNumber")!!.toInt(),
-            content = postDocSnap.getString("postContent").toString(),
-            dateCreated = postDocSnap.getTimestamp("dateCreated")!!,
-            postImage = postDocSnap.getString("postImage"),
-            postLikesNumber = postDocSnap.getLong("likesNumber")!!.toInt(),
-            user = user,
-            postLiked = getPostLikeStatus(postId)
-        )
+        return uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+            if (!task.isSuccessful) {
+                task.exception?.let { throw it }
+            }
+            return@Continuation path.downloadUrl
+        })
     }
 
-    suspend fun getUser(userId: String): User = withContext(Dispatchers.IO) {
+    suspend fun getUser(userId: String): User{
         val userDocSnap = db.document("users/${userId}").get().await()
-        userDocSnap.toObject(User::class.java)!!
+        return userDocSnap.toObject(User::class.java)!!
     }
 
     private fun getPostLikeStatus(postId: String): Observable<Boolean> {
@@ -335,51 +374,6 @@ class FirestoreRepository {
         data["createdByUserUid"] = auth.uid!!
 
         return db.collection("advertisements").document().set(data)
-    }
-
-    fun likeThePost(postId: String): Task<Void> {
-        val postLikesCollectionRef = db.document("posts/$postId/likes/${auth.uid}")
-        val data = mapOf("exists" to true)
-        return postLikesCollectionRef.set(data)
-    }
-
-    fun unlikeThePost(postId: String): Task<Void> {
-        val postLikesCollectionRef = db.document("posts/$postId/likes/${auth.uid}")
-        return postLikesCollectionRef.delete()
-    }
-
-    fun uploadNewComment(postId: String, postContent: String) {
-        val commentsCollectionRef = db.collection("posts/$postId/comments")
-        val data = HashMap<String, Any>()
-
-        data["content"] = postContent
-        data["dateCreated"] = FieldValue.serverTimestamp()
-        data["createdByUserId"] = auth.uid!!
-
-        commentsCollectionRef.add(data)
-    }
-
-    fun addCommentsListener(
-        postId: String,
-        onListen: (List<Comment>) -> Unit
-    ): ListenerRegistration {
-        val commentsCollectionRef = db.collection("posts/$postId/comments")
-
-        return commentsCollectionRef
-            .orderBy("dateCreated")
-            .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                if (firebaseFirestoreException != null) {
-                    Timber.e(firebaseFirestoreException, "CommentsListener error.")
-                    return@addSnapshotListener
-                }
-
-                val comments = mutableListOf<Comment>()
-                querySnapshot!!.documents.forEach {
-                    comments.add(it.toObject(Comment::class.java)!!)
-                    return@forEach
-                }
-                onListen(comments)
-            }
     }
 
 }

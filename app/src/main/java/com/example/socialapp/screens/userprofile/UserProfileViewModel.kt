@@ -1,16 +1,12 @@
 package com.example.socialapp.screens.userprofile
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.example.socialapp.livedata.DocumentSnapshotLiveData
-import com.example.socialapp.livedata.UserLiveData
 import com.example.socialapp.model.Post
 import com.example.socialapp.FirestoreRepository
 import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -49,18 +45,17 @@ class UserProfileViewModel(private val uid: String) : ViewModel() {
 
     fun refreshPosts() = posts.value?.dataSource?.invalidate()
 
-
     override fun onCleared() {
         Timber.i("onCleared() called")
         super.onCleared()
     }
 
-    fun likeThePost(postId: String): Task<Void> {
-        return repo.likeThePost(postId)
+    fun likePost(postId: String): Task<Void> {
+        return repo.likePost(postId)
     }
 
-    fun unlikeThePost(postId: String): Task<Void>{
-        return repo.unlikeThePost(postId)
+    fun unlikePost(postId: String): Task<Void>{
+        return repo.unlikePost(postId)
     }
 
     fun inviteToFriends(): Task<Void> {

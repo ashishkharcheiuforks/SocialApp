@@ -45,12 +45,12 @@ class HomeViewModel : ViewModel() {
         posts.value?.dataSource?.invalidate()
     }
 
-    fun likeThePost(postId: String): Task<Void> {
-        return repo.likeThePost(postId)
+    fun likePost(postId: String): Task<Void> {
+        return repo.likePost(postId)
     }
 
-    fun unlikeThePost(postId: String): Task<Void> {
-        return repo.unlikeThePost(postId)
+    fun unlikePost(postId: String): Task<Void> {
+        return repo.unlikePost(postId)
     }
 
     override fun onCleared() {
