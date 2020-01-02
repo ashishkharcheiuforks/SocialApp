@@ -2,19 +2,15 @@ package com.example.socialapp.screens.adverts
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.socialapp.FirestoreRepository
+import com.example.socialapp.common.Result
 import com.example.socialapp.model.Advertisement
 import com.example.socialapp.model.Filters
-import com.google.android.gms.tasks.Task
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class AdvertsViewModel : ViewModel() {
-
-    private val viewModelJob = SupervisorJob()
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     private val repo = FirestoreRepository()
 
@@ -24,13 +20,16 @@ class AdvertsViewModel : ViewModel() {
         Timber.i("init called")
     }
 
-    fun createNewAdvert(advert: Advertisement): Task<Void> {
-        return repo.addNewAdvertisement(advert)
+    fun createNewAdvert(advert: Advertisement) = viewModelScope.launch {
+        val createTask = repo.addNewAdvertisement(advert)
+        when(createTask){
+            is Result.Value -> {}
+            is Result.Error -> {}
+        }
     }
 
     override fun onCleared() {
         Timber.i("onCleared() called")
-        viewModelJob.cancel()
         super.onCleared()
     }
 }

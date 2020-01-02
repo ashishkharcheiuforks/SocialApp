@@ -82,30 +82,18 @@ class UserProfileFragment : Fragment(),
 
     override fun onAcceptInvitation() {
         userProfileViewModel.acceptFriendRequest()
-            .addOnCompleteListener {
-                // Handle UI
-            }
     }
 
     override fun onDeleteInvitation() {
         userProfileViewModel.cancelFriendRequest()
-            .addOnCompleteListener {
-                // Handle UI
-            }
     }
 
     override fun onLikeButtonClicked(postId: String) {
         userProfileViewModel.likePost(postId)
-            .addOnCompleteListener {
-                // Handle UI
-            }
     }
 
     override fun onUnlikeButtonClicked(postId: String) {
         userProfileViewModel.unlikePost(postId)
-            .addOnCompleteListener {
-                // Handle UI
-            }
     }
 
     override fun onCommentButtonClicked(postId: String) {
@@ -155,10 +143,16 @@ class UserProfileFragment : Fragment(),
         }
     }
 
-    private fun bindUser() = if (isAuthenticatedUserProfile()) {
-        nestedGraphViewModel.user.observe(viewLifecycleOwner, Observer<User> { binding.user = it })
-    } else {
-        userProfileViewModel.user.observe(viewLifecycleOwner, Observer<User> { binding.user = it })
+    private fun bindUser() {
+        if (isAuthenticatedUserProfile()) {
+            nestedGraphViewModel.user.observe(
+                viewLifecycleOwner,
+                Observer<User> { binding.user = it })
+        } else {
+            userProfileViewModel.user.observe(
+                viewLifecycleOwner,
+                Observer<User> { binding.user = it })
+        }
     }
 
     private fun isAuthenticatedUserProfile(): Boolean = args.uid == auth.uid

@@ -2,20 +2,20 @@ package com.example.socialapp.screens.userprofile
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.example.socialapp.model.Post
 import com.example.socialapp.FirestoreRepository
+import com.example.socialapp.common.Result
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class UserProfileViewModel(private val uid: String) : ViewModel() {
-
-    private val viewModelJob = SupervisorJob()
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     private val repo = FirestoreRepository()
 
@@ -35,7 +35,7 @@ class UserProfileViewModel(private val uid: String) : ViewModel() {
         .setPageSize(20)
         .build()
 
-    private val dataSource = UserPostsDataSource.Factory(uiScope, uid)
+    private val dataSource = UserPostsDataSource.Factory(viewModelScope, uid)
 
     val posts: LiveData<PagedList<Post>> =
         LivePagedListBuilder<String, Post>(
@@ -50,24 +50,44 @@ class UserProfileViewModel(private val uid: String) : ViewModel() {
         super.onCleared()
     }
 
-    fun likePost(postId: String): Task<Void> {
-        return repo.likePost(postId)
+    fun likePost(postId: String) = viewModelScope.launch{
+        val likeResult = repo.likePost(postId)
+        when(likeResult){
+            is Result.Error -> {  }
+            is Result.Value -> { }
+        }
     }
 
-    fun unlikePost(postId: String): Task<Void>{
-        return repo.unlikePost(postId)
+    fun unlikePost(postId: String) = viewModelScope.launch{
+        val unlikeResult = repo.unlikePost(postId)
+        when(unlikeResult){
+            is Result.Error -> { }
+            is Result.Value -> { }
+        }
     }
 
-    fun inviteToFriends(): Task<Void> {
-        return repo.inviteToFriends(uid)
+    fun inviteToFriends() = viewModelScope.launch{
+        val inviteTask = repo.inviteToFriends(uid)
+        when(inviteTask){
+            is Result.Error -> { }
+            is Result.Value -> { }
+        }
     }
 
-    fun acceptFriendRequest(): Task<Void> {
-        return repo.acceptFriendRequest(uid)
+    fun acceptFriendRequest() = viewModelScope.launch {
+        val acceptTask = repo.acceptFriendRequest(uid)
+        when(acceptTask){
+            is Result.Error -> { }
+            is Result.Value -> { }
+        }
     }
 
-    fun cancelFriendRequest(): Task<Void> {
-        return repo.deleteFriendRequest(uid)
+    fun cancelFriendRequest() = viewModelScope.launch {
+        val deleteTask = repo.deleteFriendRequest(uid)
+        when(deleteTask){
+            is Result.Error -> { }
+            is Result.Value -> { }
+        }
     }
 
 }

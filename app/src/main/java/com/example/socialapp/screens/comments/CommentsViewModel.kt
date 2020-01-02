@@ -2,18 +2,15 @@ package com.example.socialapp.screens.comments
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.socialapp.FirestoreRepository
+import com.example.socialapp.common.Result
 import com.example.socialapp.model.Comment
 import com.google.firebase.firestore.ListenerRegistration
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class CommentsViewModel(private val postId: String) : ViewModel() {
-
-    private val viewModelJob = SupervisorJob()
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     private val repo = FirestoreRepository()
 
@@ -21,12 +18,20 @@ class CommentsViewModel(private val postId: String) : ViewModel() {
         Timber.i("init called")
     }
 
+    // Two way databinding variable that holds comment input message
     val newPostContent = MutableLiveData<String>("")
 
-    fun addNewComment() {
+    fun addNewComment() = viewModelScope.launch {
         if (newPostContent.value!!.isNotBlank()) {
-            repo.uploadNewComment(postId, newPostContent.value!!)
-            newPostContent.value = ""
+            val addTask = repo.uploadNewComment(postId, newPostContent.value!!)
+            when (addTask) {
+                is Result.Value -> {
+                    newPostContent.value = ""
+                }
+                is Result.Error -> {
+                    // TODO: trigger event with error message <String>
+                }
+            }
         }
     }
 

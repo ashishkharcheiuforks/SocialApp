@@ -2,6 +2,9 @@ package com.example.socialapp
 
 import android.net.Uri
 import androidx.lifecycle.LiveData
+import com.example.socialapp.common.Result
+import com.example.socialapp.common.awaitTaskCompletable
+import com.example.socialapp.common.getDataFlow
 import com.example.socialapp.livedata.DocumentSnapshotLiveData
 import com.example.socialapp.livedata.QuerySnapshotLiveData
 import com.example.socialapp.livedata.UserLiveData
@@ -18,6 +21,9 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import io.reactivex.Observable
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
@@ -61,23 +67,30 @@ class FirestoreRepository {
         dateOfBirth: Timestamp?,
         profilePictureUrl: String?
     ): Task<Void> {
-            val userDocRef = db.document("users/${auth.uid}")
+        val userDocRef = db.document("users/${auth.uid}")
 
-            // Data set with fields to update in user document
-            val data = mutableMapOf<String, Any>()
-            // If value exists add it to update data set
-            firstName?.let { data.put("firstName", it) }
-            nickname?.let { data.put("nickname", it) }
-            dateOfBirth?.let { data.put("dateOfBirth", it) }
+        val data = mutableMapOf<String, Any>()
+        // If value exists add it to update data set
+        firstName?.let {
+            data.put("firstName", it)
+        }
+        nickname?.let {
+            data.put("nickname", it)
+        }
+        dateOfBirth?.let {
+            data.put("dateOfBirth", it)
+        }
 
-            profilePictureUrl?.let { changeUserProfilePicture(profilePictureUrl) }
+        profilePictureUrl?.let {
+            changeUserProfilePicture(profilePictureUrl)
+        }
 
-            algolia.updateNameAndNickname(firstName!!, nickname!!)
+        algolia.updateNameAndNickname(firstName!!, nickname!!)
 
-            return userDocRef.update(data)
+        return userDocRef.update(data)
     }
 
-    suspend fun changeUserProfilePicture(url: String){
+    suspend fun changeUserProfilePicture(url: String) {
         val userProfileStorageRef = storageReference.child("users/${auth.uid}/")
         val filename = "profile_picture"
         val urlToUpdate = uploadPhotoAndReturnUrl(url, userProfileStorageRef, filename)
@@ -87,7 +100,11 @@ class FirestoreRepository {
     }
 
     // Uploads picture to the given location in cloud storage and return
-    suspend fun uploadPhotoAndReturnUrl(url: String, storageRef: StorageReference, name: String): String {
+    suspend fun uploadPhotoAndReturnUrl(
+        url: String,
+        storageRef: StorageReference,
+        name: String
+    ): String {
         val fileRef = storageRef.child(name)
         val uri = Uri.parse(url)
         fileRef.putFile(uri).await()
@@ -103,38 +120,26 @@ class FirestoreRepository {
 
     /**    Friend Request related functions    **/
 
-    fun inviteToFriends(uid: String): Task<Void> {
-        val data = mapOf<String, Any>("status" to FriendshipStatus.INVITATION_SENT.status)
-
-        val myFriends = db.collection("users")
-            .document(auth.uid!!)
-            .collection("friends")
-            .document(uid)
-
-        return myFriends.set(data)
+    suspend fun inviteToFriends(uid: String): Result<Exception, Unit> {
+        val data = mapOf("status" to FriendshipStatus.INVITATION_SENT.status)
+        val myFriends = db.document("users/${auth.uid}/friends/$uid")
+        return Result.build { awaitTaskCompletable(myFriends.set(data)) }
     }
 
-    fun acceptFriendRequest(uid: String): Task<Void> {
-        val data = mapOf<String, Any>("status" to FriendshipStatus.ACCEPTED.status)
+    suspend fun acceptFriendRequest(uid: String): Result<Exception, Unit> {
+        val data = mapOf("status" to FriendshipStatus.ACCEPTED.status)
         val friendDocRef = db.document("users/${auth.uid}/friends/$uid")
-        return friendDocRef.update(data)
+        return Result.build { awaitTaskCompletable(friendDocRef.update(data)) }
     }
 
-    fun deleteFriendRequest(uid: String): Task<Void> {
+    suspend fun deleteFriendRequest(uid: String): Result<Exception, Unit> {
         val friendDocRef = db.document("users/${auth.uid}/friends/$uid")
-        return friendDocRef.delete()
+        return Result.build { awaitTaskCompletable(friendDocRef.delete()) }
     }
 
     fun getFriendshipStatus(uid: String): DocumentSnapshotLiveData {
         val friendDocRef = db.document("users/${auth.uid}/friends/$uid")
         return DocumentSnapshotLiveData(friendDocRef)
-    }
-
-    fun fetchInvitesLiveData(): QuerySnapshotLiveData {
-        val friendsCollectionRef = db.collection("users/${auth.uid}/friends")
-        val status = FriendshipStatus.INVITATION_RECEIVED.status
-        val query = friendsCollectionRef.whereEqualTo("status", status)
-        return QuerySnapshotLiveData(query)
     }
 
     /**    Posts and comments related functions    **/
@@ -172,7 +177,7 @@ class FirestoreRepository {
         newPostDocRef.set(data)
     }
 
-    suspend fun getPost(postId: String, userId: String): Post {
+    private suspend fun getPost(postId: String, userId: String): Post {
         val user = getUser(userId)
         val postDocSnap = db.document("posts/$postId").get().await()
 
@@ -188,18 +193,22 @@ class FirestoreRepository {
         )
     }
 
-    fun likePost(postId: String): Task<Void> {
+    suspend fun likePost(postId: String): Result<Exception, Unit> {
         val postLikesCollectionRef = db.document("posts/$postId/likes/${auth.uid}")
         val data = mapOf("exists" to true)
-        return postLikesCollectionRef.set(data)
+        return Result.build {
+            awaitTaskCompletable(postLikesCollectionRef.set(data))
+        }
     }
 
-    fun unlikePost(postId: String): Task<Void> {
+    suspend fun unlikePost(postId: String): Result<Exception, Unit> {
         val postLikesCollectionRef = db.document("posts/$postId/likes/${auth.uid}")
-        return postLikesCollectionRef.delete()
+        return Result.build {
+            awaitTaskCompletable(postLikesCollectionRef.delete())
+        }
     }
 
-    fun uploadNewComment(postId: String, postContent: String) {
+    suspend fun uploadNewComment(postId: String, postContent: String): Result<Exception, Unit> {
         val commentsCollectionRef = db.collection("posts/$postId/comments")
         val data = HashMap<String, Any>()
 
@@ -207,7 +216,11 @@ class FirestoreRepository {
         data["dateCreated"] = FieldValue.serverTimestamp()
         data["createdByUserId"] = auth.uid!!
 
-        commentsCollectionRef.add(data)
+        return Result.build {
+            awaitTaskCompletable(
+                commentsCollectionRef.add(data)
+            )
+        }
     }
 
     fun addCommentsListener(
@@ -232,6 +245,7 @@ class FirestoreRepository {
                 onListen(comments)
             }
     }
+
 
     fun updatePostImageUrl(postId: String, imageUrl: Uri) {
         val postDocRef = db.document("posts/$postId")
@@ -337,7 +351,7 @@ class FirestoreRepository {
         })
     }
 
-    suspend fun getUser(userId: String): User{
+    suspend fun getUser(userId: String): User {
         val userDocSnap = db.document("users/${userId}").get().await()
         return userDocSnap.toObject(User::class.java)!!
     }
@@ -363,7 +377,7 @@ class FirestoreRepository {
         }
     }
 
-    fun addNewAdvertisement(advertisement: Advertisement): Task<Void> {
+    suspend fun addNewAdvertisement(advertisement: Advertisement): Result<Exception, Unit> {
         val data = hashMapOf<String, Any>()
 
         data["dateCreated"] = FieldValue.serverTimestamp()
@@ -373,7 +387,27 @@ class FirestoreRepository {
         advertisement.description?.let { data["description"] = it }
         data["createdByUserUid"] = auth.uid!!
 
-        return db.collection("advertisements").document().set(data)
+        return Result.build {
+            awaitTaskCompletable(
+                db.collection("advertisements").document().set(data)
+            )
+        }
     }
+
+
+    // Emits list of user ids that currently have pending friend requests
+    @ExperimentalCoroutinesApi
+    fun invitesFlow(): Flow<List<String>> {
+        val query = db.collection("users/${auth.uid}/friends")
+            .whereEqualTo("status", FriendshipStatus.INVITATION_RECEIVED.status)
+        return query.getDataFlow { querySnapshot ->
+            querySnapshot?.documents?.map {
+                it.id
+            } ?: emptyList()
+        }
+    }
+
+// ? -> lets pass scope to run getUser inside passed coroutine scope
+
 
 }

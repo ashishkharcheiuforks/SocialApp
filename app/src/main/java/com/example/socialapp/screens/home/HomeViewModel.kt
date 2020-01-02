@@ -2,6 +2,7 @@ package com.example.socialapp.screens.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.example.socialapp.FirestoreRepository
@@ -11,7 +12,9 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import com.example.socialapp.common.Result
 
 class HomeViewModel : ViewModel() {
 
@@ -45,12 +48,22 @@ class HomeViewModel : ViewModel() {
         posts.value?.dataSource?.invalidate()
     }
 
-    fun likePost(postId: String): Task<Void> {
-        return repo.likePost(postId)
+    fun likePost(postId: String) = viewModelScope.launch{
+        val likeResult = repo.likePost(postId)
+
+        when(likeResult){
+            is Result.Error -> { Timber.d("like post result error") }
+            is Result.Value -> { Timber.d("like post result value") }
+        }
     }
 
-    fun unlikePost(postId: String): Task<Void> {
-        return repo.unlikePost(postId)
+    fun unlikePost(postId: String) = viewModelScope.launch{
+        val unlikeResult = repo.unlikePost(postId)
+
+        when(unlikeResult){
+            is Result.Error -> { Timber.d("unlike post result error") }
+            is Result.Value -> { Timber.d("unlike post result value") }
+        }
     }
 
     override fun onCleared() {

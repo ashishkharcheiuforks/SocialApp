@@ -9,16 +9,14 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.example.socialapp.R
 import com.example.socialapp.adapter.InvitesAdapter
 import com.example.socialapp.databinding.FragmentInvitesBinding
-import com.example.socialapp.model.User
 import com.example.socialapp.screens.userprofile.UserProfileFragmentDirections
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import timber.log.Timber
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 class InvitesFragment : Fragment(), InvitesAdapter.onInviteItemClickListener {
 
@@ -44,45 +42,23 @@ class InvitesFragment : Fragment(), InvitesAdapter.onInviteItemClickListener {
         return binding.root
     }
 
+    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.swipeRefreshLayout.apply {
             setOnRefreshListener {
-                initRecyclerView()
                 isRefreshing = false
             }
         }
 
-        initRecyclerView()
+        viewModel.invites.observe(viewLifecycleOwner) {
+            binding.invitesRecyclerview.adapter = InvitesAdapter(it, this)
+        }
+
 
     }
 
-    private fun initRecyclerView() {
-        viewModel.fetchInvitesLiveData().observe(this, Observer { result ->
-            if (result.isSuccessful) {
-                val users: MutableList<User> = ArrayList()
-                //Returned document snapshots contains only uid of users that sent invites to friends
-                val data: List<DocumentSnapshot> = result.data().documents
-
-                Timber.d("queried documents: ${data.size}")
-
-                // If invites list is empty show placeholder
-                binding.noInvitesPlaceholder.apply {
-                    visibility = if (data.isEmpty()) View.VISIBLE else View.GONE
-                }
-
-                //Create adapter and pass new list of Users
-                data.forEach {
-                    db.collection("users").document(it.id).get()
-                        .addOnSuccessListener { snap ->
-                            users.add(snap.toObject(User::class.java)!!)
-                            binding.invitesRecyclerview.adapter = InvitesAdapter(users, this)
-                        }
-                }
-            }//End of if statement
-        })
-    }
 
     override fun acceptInvite(uid: String) {
         viewModel.acceptFriendRequest(uid)

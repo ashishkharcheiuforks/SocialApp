@@ -90,14 +90,7 @@ class AdvertsFragment : Fragment(),
     }
 
     override fun onCreateNewAdvertisement(advert: Advertisement) {
-        viewModel.createNewAdvert(advert).addOnCompleteListener { task ->
-            val message: String = if (task.isSuccessful) {
-                "Advertisement had been added!"
-            } else {
-                "Failed to add the advert, try again"
-            }
-            showToast(message)
-        }
+        viewModel.createNewAdvert(advert)
     }
 
     override fun onRespond(userId: String) {
