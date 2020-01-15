@@ -169,7 +169,7 @@ class UserProfileFragment : Fragment(),
 
         // Shows edit button on toolbar when inside logged in user profile
         if (isAuthenticatedUserProfile()) {
-            binding.toolbar.inflateMenu(R.menu.menu_toolbar_user_profile)
+            binding.toolbar.inflateMenu(R.menu.menu_user_profile)
             binding.toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.action_edit_profile ->

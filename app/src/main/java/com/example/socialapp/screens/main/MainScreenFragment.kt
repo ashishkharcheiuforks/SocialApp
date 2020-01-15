@@ -86,7 +86,7 @@ class MainScreenFragment : Fragment() {
 
     private fun setupToolbar() {
         // Inflate menu with search icon
-        binding.toolbar.inflateMenu(R.menu.toolbar_main_screen)
+        binding.toolbar.inflateMenu(R.menu.menu_main_screen)
         // Set navigation icon color to white
         binding.toolbar.navigationIcon?.setTint(Color.WHITE)
 

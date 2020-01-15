@@ -32,7 +32,7 @@
                         android:background="@color/colorPrimaryDark"
                         app:title=""
                         tools:tint="@color/solid_white"
-                        tools:menu="@menu/toolbar_main_screen"
+                        tools:menu="@menu/menu_main_screen"
                         tools:navigationIcon="@drawable/ic_menu_black_24dp">
 
                     <TextView
