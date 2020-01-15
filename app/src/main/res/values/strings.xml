@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Social App</string>
+    <string name="app_name">GamerNet</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="name_nickname">%s  \'%s\'</string>
@@ -22,6 +22,7 @@
     <string name="hint_comment">Type your comment</string>
     <string name="label_show_more">Show more…</string>
     <string name="label_show_less">Show less…</string>
+    <string name="players_number">%d Player</string>
 
     <string-array name="games">
         <item>Counter Strike: Global Offensive</item>

@@ -2,7 +2,7 @@ package com.example.socialapp.screens.friends
 
 import androidx.paging.DataSource
 import androidx.paging.ItemKeyedDataSource
-import com.example.socialapp.FirestoreRepository
+import com.example.socialapp.repository.FirestoreRepository
 import com.example.socialapp.model.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -21,7 +21,8 @@ class FriendsDataSource(private val scope: CoroutineScope, private val userUid: 
         callback: LoadInitialCallback<User>
     ) {
         scope.launch {
-            val items = FirestoreRepository().getFriends(userUid, params.requestedLoadSize)
+            val items = FirestoreRepository()
+                .getFriends(userUid, params.requestedLoadSize)
             callback.onResult(items)
         }
     }

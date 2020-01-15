@@ -4,7 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.socialapp.FirestoreRepository
+import com.example.socialapp.repository.FirestoreRepository
 import timber.log.Timber
 
 class CreatePostViewModel : ViewModel() {

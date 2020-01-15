@@ -6,7 +6,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.algolia.search.saas.Client
-import com.example.socialapp.FirestoreRepository
+import com.example.socialapp.repository.FirestoreRepository
 import com.example.socialapp.livedata.SingleLiveEvent
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth

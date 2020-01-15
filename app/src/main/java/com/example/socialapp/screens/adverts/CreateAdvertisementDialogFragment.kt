@@ -55,18 +55,10 @@ class CreateAdvertisementDialogFragment : DialogFragment() {
                 filters = Filters(
                     playersNumber = getPlayersNumber(),
                     game = binding.spinnerGame.selectedItem.toString(),
-                    communicationLanguage = if(binding.spinnerLanguage.selectedItem.toString().contentEquals("Any")){
-                        null
-                    }else{
-                        binding.spinnerLanguage.selectedItem.toString()
-                    }
+                    communicationLanguage = getCommunicationLanguage()
                 ),
                 user = null,
-                description = if (!binding.etDescription.text.isNullOrEmpty()) {
-                    binding.etDescription.text.toString()
-                } else {
-                    null
-                }
+                description = getDescription()
             )
         listener.onCreateNewAdvertisement(newAdvert)
         dismiss()
@@ -99,6 +91,23 @@ class CreateAdvertisementDialogFragment : DialogFragment() {
             null
         } else {
             selected.toLong()
+        }
+    }
+
+    private fun getCommunicationLanguage(): String?{
+        val selected = binding.spinnerLanguage.selectedItem.toString()
+        return if(selected.contentEquals("Any")){
+            null
+        }else{
+            selected
+        }
+    }
+
+    private fun getDescription(): String?{
+        return if (!binding.etDescription.text.isNullOrEmpty()) {
+            binding.etDescription.text.toString()
+        } else {
+            null
         }
     }
 }

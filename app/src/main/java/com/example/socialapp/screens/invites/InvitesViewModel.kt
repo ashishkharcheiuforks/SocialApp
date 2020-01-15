@@ -4,9 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import com.example.socialapp.FirestoreRepository
+import com.example.socialapp.repository.FirestoreRepository
 import com.example.socialapp.common.Result
-import com.example.socialapp.livedata.QuerySnapshotLiveData
 import com.example.socialapp.model.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect

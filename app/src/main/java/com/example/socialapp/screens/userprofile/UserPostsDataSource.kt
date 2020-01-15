@@ -2,7 +2,7 @@ package com.example.socialapp.screens.userprofile
 
 import androidx.paging.DataSource
 import androidx.paging.ItemKeyedDataSource
-import com.example.socialapp.FirestoreRepository
+import com.example.socialapp.repository.FirestoreRepository
 import com.example.socialapp.model.Post
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

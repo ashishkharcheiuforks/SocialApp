@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import com.example.socialapp.AuthenticatedNestedGraphViewModel
@@ -17,15 +18,17 @@ import com.example.socialapp.databinding.FragmentCommentsBinding
 import com.example.socialapp.model.Comment
 import com.example.socialapp.screens.main.MainScreenFragmentDirections
 import com.google.firebase.firestore.ListenerRegistration
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import timber.log.Timber
 
 class CommentsFragment : DialogFragment(), CommentsAdapter.onCommentClickListener {
 
     private lateinit var binding: FragmentCommentsBinding
-    private lateinit var viewModel: CommentsViewModel
+    private val viewModel by lazy {
+        ViewModelProviders.of(this, CommentsViewModelFactory(postId))
+            .get(CommentsViewModel::class.java)
+    }
     private lateinit var postId: String
-
-    private lateinit var listener: ListenerRegistration
 
     private val authenticatedNestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(
         R.id.authenticated_graph
@@ -50,6 +53,7 @@ class CommentsFragment : DialogFragment(), CommentsAdapter.onCommentClickListene
         return binding.root
     }
 
+    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -59,19 +63,16 @@ class CommentsFragment : DialogFragment(), CommentsAdapter.onCommentClickListene
             Timber.i("Passed postId: $postId")
         }
 
-        // Initialize viewmodel with received postId
-        viewModel =
-            ViewModelProviders.of(this, CommentsViewModelFactory(postId))
-                .get(CommentsViewModel::class.java)
-
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = this@CommentsFragment
         binding.viewModel = viewModel
 
         authenticatedNestedGraphViewModel.user.observe(this, Observer {
             binding.user = it
         })
 
-        binding.btnAddNewComment.setOnClickListener { viewModel.addNewComment() }
+        viewModel.comments.observe(this@CommentsFragment){
+            updateRecyclerView(it)
+        }
 
     }
 
@@ -85,12 +86,6 @@ class CommentsFragment : DialogFragment(), CommentsAdapter.onCommentClickListene
             dialog.window!!.setLayout(width, height)
             dialog.window!!.setWindowAnimations(R.style.AppTheme_Slide)
         }
-        listener = viewModel.addCommentsListener(::updateRecyclerView)
-    }
-
-    override fun onStop() {
-        listener.remove()
-        super.onStop()
     }
 
     private fun updateRecyclerView(comments: List<Comment>) {

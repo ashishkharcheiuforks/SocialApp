@@ -1,4 +1,4 @@
-package com.example.socialapp
+package com.example.socialapp.repository
 
 import android.net.Uri
 import androidx.lifecycle.LiveData
@@ -6,7 +6,6 @@ import com.example.socialapp.common.Result
 import com.example.socialapp.common.awaitTaskCompletable
 import com.example.socialapp.common.getDataFlow
 import com.example.socialapp.livedata.DocumentSnapshotLiveData
-import com.example.socialapp.livedata.QuerySnapshotLiveData
 import com.example.socialapp.livedata.UserLiveData
 import com.example.socialapp.model.*
 import com.google.android.gms.tasks.Continuation
@@ -23,7 +22,6 @@ import com.google.firebase.storage.UploadTask
 import io.reactivex.Observable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
@@ -246,6 +244,16 @@ class FirestoreRepository {
             }
     }
 
+    @ExperimentalCoroutinesApi
+    fun commentsFlow(postId: String): Flow<List<Comment>> {
+        val commentsCollectionRef = db.collection("posts/$postId/comments")
+        return commentsCollectionRef.getDataFlow { querySnapshot ->
+            querySnapshot?.documents?.map {
+                it.toObject(Comment::class.java)!!
+            } ?: emptyList()
+        }
+    }
+
 
     fun updatePostImageUrl(postId: String, imageUrl: Uri) {
         val postDocRef = db.document("posts/$postId")
@@ -409,5 +417,58 @@ class FirestoreRepository {
 
 // ? -> lets pass scope to run getUser inside passed coroutine scope
 
+    /**    Chat related functions   */
+
+    suspend fun sendTextMessage(roomId: String, text: String): Result<Exception, Unit> {
+        val docRef = db.collection("chatRooms/${roomId}/messages")
+
+        val data = mapOf(
+            "text" to text,
+            "dateCreated" to FieldValue.serverTimestamp(),
+            "createdByUserId" to auth.uid
+        )
+
+        return Result.build {
+            awaitTaskCompletable(
+                docRef.add(data)
+            )
+        }
+    }
+
+
+    suspend fun getChatRoomId(otherUserId: String): String {
+        val userId = auth.uid
+        val querySnap = db.collection("chatRooms")
+            .whereEqualTo("members.$otherUserId", true)
+            .whereEqualTo("members.$userId", true)
+            .limit(1)
+            .get().await()
+        return if (!querySnap.isEmpty) querySnap.documents[0].id
+        else createChatRoom(otherUserId)
+    }
+
+    suspend fun createChatRoom(otherUserId: String): String {
+        val createRoomTask =
+            db.collection("chatRooms").add(
+                mapOf(
+                    "members" to mapOf(
+                        otherUserId to true,
+                        auth.uid!! to true
+                    )
+                )
+            ).await()
+        return createRoomTask.id
+    }
+
+    @ExperimentalCoroutinesApi
+    fun chatMessagesFlow(roomId: String): Flow<List<Message>> {
+        val collRef = db.collection("chatRooms/$roomId/messages")
+            .orderBy("dateCreated", Query.Direction.ASCENDING)
+        return collRef.getDataFlow { querySnapshot ->
+            querySnapshot?.documents?.map {
+                it.toObject(Message::class.java)!!
+            } ?: emptyList()
+        }
+    }
 
 }

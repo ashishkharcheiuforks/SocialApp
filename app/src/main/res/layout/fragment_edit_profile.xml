@@ -23,6 +23,7 @@
                 android:id="@+id/toolbar"
                 style="@style/ToolbarTheme"
                 app:title="Edit Profile"
+                tools:navigationIcon="?attr/homeAsUpIndicator"
                 app:titleTextColor="#FFFFFF"
                 android:background="@drawable/background_tab_layout" />
 

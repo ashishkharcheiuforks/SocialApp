@@ -13,7 +13,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
         <!-- Customize color of Toolbar -->
-        <item name="android:background">@color/colorPrimaryDark</item>
+        <item name="android:background">@drawable/background_tab_layout</item>
         <!-- Color of Toolbar Back Arrow -->
         <item name="colorControlNormal">#FFFFFF</item>
         <!-- Color of Toolbar menu action icon/text depending on its state (enabled/disabled) -->

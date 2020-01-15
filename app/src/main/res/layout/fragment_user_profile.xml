@@ -25,8 +25,7 @@
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 style="@style/ToolbarTheme"
-                app:title="Profile Page"
-                android:background="@drawable/background_tab_layout" />
+                app:title="Profile Page" />
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"

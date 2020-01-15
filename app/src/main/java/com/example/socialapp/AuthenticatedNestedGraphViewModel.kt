@@ -2,10 +2,9 @@ package com.example.socialapp
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.example.socialapp.livedata.UserLiveData
 import com.example.socialapp.model.User
+import com.example.socialapp.repository.FirestoreRepository
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import timber.log.Timber
 
 class AuthenticatedNestedGraphViewModel : ViewModel() {

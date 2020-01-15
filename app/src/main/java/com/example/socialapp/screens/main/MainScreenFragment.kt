@@ -53,7 +53,7 @@ class MainScreenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = this@MainScreenFragment
 
         nestedGraphViewModel.user.observe(viewLifecycleOwner, Observer {
             navHeaderMainBinding.user = it
@@ -71,6 +71,8 @@ class MainScreenFragment : Fragment() {
                 R.id.action_chat -> navigateToChatRoomsScreen()
                 R.id.action_log_out -> signOut()
             }
+            // Close drawer after selecting an item
+            binding.drawerLayout.closeDrawer(binding.navView)
             true
         }
     }
@@ -111,7 +113,7 @@ class MainScreenFragment : Fragment() {
         pagerAdapter = MainScreenPagerAdapter(this@MainScreenFragment)
         viewPager.adapter = pagerAdapter
 
-        TabLayoutMediator(tabLayout, viewPager) { _, _ ->
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             // Here you can modify the tabs
         }.attach()
 

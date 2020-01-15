@@ -1,16 +1,8 @@
-package com.example.socialapp
+package com.example.socialapp.repository
 
-import android.net.Uri
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.algolia.search.saas.Client
-import com.algolia.search.saas.Query
-import com.example.socialapp.model.User
 import com.google.firebase.auth.FirebaseAuth
-import org.json.JSONArray
-import org.json.JSONException
 import org.json.JSONObject
-import timber.log.Timber
 
 class AlgoliaRepository {
 

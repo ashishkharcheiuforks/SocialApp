@@ -24,7 +24,6 @@
 
             <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
-                    android:background="@drawable/background_tab_layout"
                     tools:navigationIcon="?attr/homeAsUpIndicator"
                     style="@style/ToolbarTheme">
 

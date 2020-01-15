@@ -1,12 +1,11 @@
 package com.example.socialapp.screens.comments
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.socialapp.FirestoreRepository
+import androidx.lifecycle.*
+import com.example.socialapp.repository.FirestoreRepository
 import com.example.socialapp.common.Result
 import com.example.socialapp.model.Comment
-import com.google.firebase.firestore.ListenerRegistration
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -16,6 +15,13 @@ class CommentsViewModel(private val postId: String) : ViewModel() {
 
     init {
         Timber.i("init called")
+    }
+
+    @ExperimentalCoroutinesApi
+    val comments: LiveData<List<Comment>> = liveData {
+        repo.commentsFlow(postId).collect {
+            emit(it)
+        }
     }
 
     // Two way databinding variable that holds comment input message
@@ -33,10 +39,6 @@ class CommentsViewModel(private val postId: String) : ViewModel() {
                 }
             }
         }
-    }
-
-    fun addCommentsListener(onComplete: (List<Comment>) -> Unit): ListenerRegistration {
-        return repo.addCommentsListener(postId, onComplete)
     }
 
     override fun onCleared() {

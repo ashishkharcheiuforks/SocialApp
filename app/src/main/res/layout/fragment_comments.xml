@@ -42,7 +42,6 @@
                 android:id="@+id/recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:nestedScrollingEnabled="true"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toTopOf="@+id/constraintLayout3"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -95,6 +94,7 @@
                     android:layout_marginEnd="16dp"
                     android:src="@drawable/ic_send_black_24dp"
                     android:tint="@android:color/white"
+                    android:onClick="@{() -> viewModel.addNewComment()}"
                     app:layout_constraintBottom_toBottomOf="@+id/et_new_post_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/et_new_post_content" />

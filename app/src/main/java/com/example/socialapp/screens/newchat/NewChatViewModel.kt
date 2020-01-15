@@ -1,4 +1,4 @@
-package com.example.socialapp.screens.friends
+package com.example.socialapp.screens.newchat
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -6,19 +6,16 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.example.socialapp.model.User
+import com.example.socialapp.screens.friends.FriendsDataSource
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import timber.log.Timber
 
-class FriendsViewModel : ViewModel() {
+class NewChatViewModel : ViewModel() {
 
-    init {
-        Timber.i("init called")
-    }
+    val auth = FirebaseAuth.getInstance()
 
-    private val auth = FirebaseAuth.getInstance()
+    // Data source for loading paged posts
+    private val dataSource = FriendsDataSource.Factory(viewModelScope, auth.uid!!)
 
     // Configuration on loading paged list of posts
     private val config = PagedList.Config.Builder()
@@ -27,9 +24,6 @@ class FriendsViewModel : ViewModel() {
         .setPageSize(20)
         .build()
 
-    // Data source for loading paged posts
-    private val dataSource = FriendsDataSource.Factory(viewModelScope, auth.uid!!)
-
     // PagedList of posts as LiveData
     val friends: LiveData<PagedList<User>> =
         LivePagedListBuilder<String, User>(
@@ -37,7 +31,7 @@ class FriendsViewModel : ViewModel() {
             config
         ).build()
 
-    // Reloads the posts
+    // Reloads the friends list
     fun refreshFriends() {
         friends.value?.dataSource?.invalidate()
     }

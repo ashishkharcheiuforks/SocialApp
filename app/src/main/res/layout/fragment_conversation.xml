@@ -1,34 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
+        <variable
+                name="vm"
+                type="com.example.socialapp.screens.conversation.ConversationViewModel" />
+        <variable
+                name="graphvm"
+                type="com.example.socialapp.AuthenticatedNestedGraphViewModel" />
+        <variable
+                name="user"
+                type="com.example.socialapp.model.User" />
     </data>
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".screens.chat.ConversationFragment">
+            tools:context=".screens.conversation.ConversationFragment">
 
-        <LinearLayout
+        <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                style="@style/TabLayoutTheme"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:title="@{@string/name_nickname(vm.user.firstName, vm.user.nickname)}"
+                tools:navigationIcon="?attr/homeAsUpIndicator"
+                tools:title="Adam 'Fatality'" />
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="0dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+                tools:listitem="@layout/item_text_message"
+                tools:itemCount="2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-            <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    style="@style/TabLayoutTheme"
-                    android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_height="80dp" >
+
+            <ImageView
+                    android:id="@+id/iv_profile_pic"
+                    imageResourceUri="@{graphvm.user.profilePictureUrl}"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/profilepic" />
+
+            <EditText
+                    android:id="@+id/et_message"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    tools:title="Adam 'Fatality'"
-                    tools:titleTextColor="#FFFFFF" />
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="@={vm.message}"
+                    android:hint="@string/hint_comment"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_profile_pic"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_send"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/iv_profile_pic"
+                    app:layout_constraintTop_toTopOf="@+id/iv_profile_pic" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerview"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp" />
-        </LinearLayout>
+            <ImageView
+                    android:id="@+id/btn_send"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_send_black_24dp"
+                    android:tint="@android:color/white"
+                    android:onClick="@{() -> vm.sendMessage()}"
+                    app:layout_constraintBottom_toBottomOf="@+id/et_message"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/et_message" />
 
-    </androidx.core.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

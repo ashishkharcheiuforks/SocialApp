@@ -46,7 +46,8 @@
                 tools:layout="@layout/fragment_main_screen">
             <action
                     android:id="@+id/action_mainFragment_to_searchUserFragment"
-                    app:destination="@id/searchUserFragment" />
+                    app:destination="@id/searchUserFragment"
+                    app:enterAnim="@anim/slide_in_right" />
         </fragment>
         <fragment
                 android:id="@+id/profileFragment"
@@ -85,19 +86,34 @@
         <fragment
                 android:id="@+id/chatRoomsFragment"
                 android:name="com.example.socialapp.screens.chat.ChatRoomsFragment"
-                android:label="chat_rooms_fragment"
                 tools:layout="@layout/fragment_chat_rooms">
             <action
                     android:id="@+id/action_chatRoomsFragment_to_conversationFragment"
                     app:destination="@id/conversationFragment" />
+            <action
+                    android:id="@+id/action_chatRoomsFragment_to_newChatFragment"
+                    app:destination="@id/newChatFragment"
+                    app:popUpToInclusive="true" />
         </fragment>
         <action
                 android:id="@+id/action_global_chatRoomsFragment"
                 app:destination="@id/chatRoomsFragment" />
         <fragment
                 android:id="@+id/conversationFragment"
-                android:name="com.example.socialapp.screens.chat.ConversationFragment"
-                tools:layout="@layout/fragment_conversation"
-                android:label="ConversationFragment" />
+                android:name="com.example.socialapp.screens.conversation.ConversationFragment"
+                tools:layout="@layout/fragment_conversation">
+            <argument
+                    android:name="userId"
+                    app:argType="string" />
+        </fragment>
+        <fragment
+                android:id="@+id/newChatFragment"
+                android:name="com.example.socialapp.screens.newchat.NewChatFragment"
+                tools:layout="@layout/fragment_new_chat">
+            <action
+                    android:id="@+id/action_newChatFragment_to_conversationFragment"
+                    app:destination="@id/conversationFragment"
+                    app:popUpToInclusive="true" />
+        </fragment>
     </navigation>
 </navigation>
