@@ -14,7 +14,6 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -88,10 +87,12 @@ class FirestoreRepository {
         return userDocRef.update(data)
     }
 
-    suspend fun changeUserProfilePicture(url: String) {
+    suspend fun changeUserProfilePicture(filePath: String) {
         val userProfileStorageRef = storageReference.child("users/${auth.uid}/")
         val filename = "profile_picture"
-        val urlToUpdate = uploadPhotoAndReturnUrl(url, userProfileStorageRef, filename)
+        // uploads picture and returns new url
+        val urlToUpdate = uploadPhotoAndReturnUrl(filePath, userProfileStorageRef, filename)
+        // Updates url reference to profile picture
         updateProfilePictureUrl(urlToUpdate)
         // Update profile picture url in algolia
         algolia.updateProfilePictureUrl(urlToUpdate)
@@ -99,14 +100,13 @@ class FirestoreRepository {
 
     // Uploads picture to the given location in cloud storage and return
     suspend fun uploadPhotoAndReturnUrl(
-        url: String,
+        filePath: String,
         storageRef: StorageReference,
         name: String
     ): String {
         val fileRef = storageRef.child(name)
-        val uri = Uri.parse(url)
+        val uri = Uri.parse(filePath)
         fileRef.putFile(uri).await()
-        // Return url
         return fileRef.downloadUrl.await().toString()
     }
 
@@ -219,29 +219,6 @@ class FirestoreRepository {
                 commentsCollectionRef.add(data)
             )
         }
-    }
-
-    fun addCommentsListener(
-        postId: String,
-        onListen: (List<Comment>) -> Unit
-    ): ListenerRegistration {
-        val commentsCollectionRef = db.collection("posts/$postId/comments")
-
-        return commentsCollectionRef
-            .orderBy("dateCreated")
-            .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                if (firebaseFirestoreException != null) {
-                    Timber.e(firebaseFirestoreException, "CommentsListener error.")
-                    return@addSnapshotListener
-                }
-
-                val comments = mutableListOf<Comment>()
-                querySnapshot!!.documents.forEach {
-                    comments.add(it.toObject(Comment::class.java)!!)
-                    return@forEach
-                }
-                onListen(comments)
-            }
     }
 
     @ExperimentalCoroutinesApi
@@ -415,12 +392,12 @@ class FirestoreRepository {
         }
     }
 
-// ? -> lets pass scope to run getUser inside passed coroutine scope
-
     /**    Chat related functions   */
 
     suspend fun sendTextMessage(roomId: String, text: String): Result<Exception, Unit> {
-        val docRef = db.collection("chatRooms/${roomId}/messages")
+        val messagesColRef = db.collection("chatRooms/${roomId}/messages")
+        val chatRoomDocRef = db.document("chatRooms/${roomId}")
+        val batch = db.batch()
 
         val data = mapOf(
             "text" to text,
@@ -428,9 +405,12 @@ class FirestoreRepository {
             "createdByUserId" to auth.uid
         )
 
+        batch.set(messagesColRef.document(), data)
+        batch.update(chatRoomDocRef, mapOf("lastUpdated" to FieldValue.serverTimestamp()))
+
         return Result.build {
             awaitTaskCompletable(
-                docRef.add(data)
+                batch.commit()
             )
         }
     }
@@ -447,14 +427,17 @@ class FirestoreRepository {
         else createChatRoom(otherUserId)
     }
 
+    // Nested field / nested object is created in order to support query that contains two specific users
+    // Array is created in order to support compose index in order to query for user chatrooms ordered by "lastUpdated" timestamp field
     suspend fun createChatRoom(otherUserId: String): String {
         val createRoomTask =
             db.collection("chatRooms").add(
                 mapOf(
                     "members" to mapOf(
                         otherUserId to true,
-                        auth.uid!! to true
-                    )
+                        auth.uid to true
+                    ),
+                "membersArray" to listOf(otherUserId,auth.uid)
                 )
             ).await()
         return createRoomTask.id
@@ -469,6 +452,49 @@ class FirestoreRepository {
                 it.toObject(Message::class.java)!!
             } ?: emptyList()
         }
+    }
+
+    suspend fun getChatRooms(
+        pageSize: Int,
+        loadBefore: String? = null,
+        loadAfter: String? = null
+    ): List<LastMessage> {
+        val colRef = db.collection("chatRooms")
+        var query = colRef
+            //Cannot create index for an object key it would require creating index for every user for member.$uid
+//            .whereEqualTo("members.${auth.uid}", true)
+            .whereArrayContains("membersArray", auth.uid as String)
+            .orderBy("lastUpdated", Query.Direction.DESCENDING)
+            .limit(pageSize.toLong())
+
+        loadBefore?.let {
+            val item = colRef.document(it).get().await()
+            query = query.endBefore(item)
+        }
+
+        loadAfter?.let {
+            val item = colRef.document(it).get().await()
+            query = query.startAfter(item)
+        }
+
+        return query.get().await().map {
+            val message = getLastMessage(it.id)
+            val members= it.data["members"] as Map<*,*>
+            val uid = members.keys.first { uid -> uid!=auth.uid } as String
+            val user = getUser(uid)
+            LastMessage(it.id, user, message)
+        }
+    }
+
+    private suspend fun getLastMessage(chatRoomId: String): Message {
+        val colRef = db.collection("chatRooms/$chatRoomId/messages")
+        val querySnap = colRef
+            .orderBy("dateCreated", Query.Direction.DESCENDING)
+            .limit(1)
+            .get()
+            .await()
+        return querySnap.documents[0].toObject(Message::class.java) ?: Message()
+
     }
 
 }

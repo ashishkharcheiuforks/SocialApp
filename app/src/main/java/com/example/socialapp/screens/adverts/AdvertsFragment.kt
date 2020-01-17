@@ -94,7 +94,7 @@ class AdvertsFragment : Fragment(),
     }
 
     override fun onRespond(userId: String) {
-        showToast("TODO: Implement")
+        navigateToConversationScreen(userId)
     }
 
     override fun onProfilePictureClicked(userId: String) {
@@ -103,6 +103,11 @@ class AdvertsFragment : Fragment(),
 
     private fun navigateToUserProfile(userId: String) {
         val action = MainScreenFragmentDirections.actionGlobalProfileFragment(userId)
+        findNavController().navigate(action)
+    }
+
+    private fun navigateToConversationScreen(userId: String){
+        val action = MainScreenFragmentDirections.actionGlobalConversationFragment(userId)
         findNavController().navigate(action)
     }
 

@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.socialapp.GlideApp
 import com.example.socialapp.R
 import com.example.socialapp.databinding.ItemPostBinding
 import com.example.socialapp.model.Post
+import com.example.socialapp.module.GlideApp
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy

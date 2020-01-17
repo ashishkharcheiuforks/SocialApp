@@ -24,6 +24,7 @@ class ConversationFragment : Fragment() {
 
     private val args: ConversationFragmentArgs by navArgs()
 
+    @ExperimentalCoroutinesApi
     private val viewModel: ConversationViewModel by lazy {
         ViewModelProviders.of(this, ConversationViewModelFactory(args.userId))
             .get(ConversationViewModel::class.java)

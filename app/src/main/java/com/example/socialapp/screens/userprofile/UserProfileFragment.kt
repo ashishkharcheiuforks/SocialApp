@@ -73,6 +73,8 @@ class UserProfileFragment : Fragment(),
 
         binding.swipeRefreshLayout.setOnRefreshListener { userProfileViewModel.refreshPosts() }
 
+        binding.btnMessage.setOnClickListener { navigateToChatScreen() }
+
     }
 
     override fun onDestroy() {
@@ -120,25 +122,28 @@ class UserProfileFragment : Fragment(),
                     binding.btnFriendshipStatus.apply {
                         when (result.data().get("status")) {
                             null -> {
+                                icon = context.getDrawable(R.drawable.ic_add_black_24dp)
                                 text = FriendshipStatus.NO_STATUS.status
                                 setOnClickListener { userProfileViewModel.inviteToFriends() }
                             }
                             FriendshipStatus.ACCEPTED.status -> {
+                                icon = context.getDrawable(R.drawable.ic_groups_black_24dp)
                                 text = FriendshipStatus.ACCEPTED.status
                                 setOnClickListener { openDeleteFromFriendsDialog() }
                             }
                             FriendshipStatus.INVITATION_SENT.status -> {
+                                icon = context.getDrawable(R.drawable.ic_close_black_24dp)
                                 text = FriendshipStatus.INVITATION_SENT.status
                                 setOnClickListener { openCancelFriendInviteDialog() }
                             }
                             FriendshipStatus.INVITATION_RECEIVED.status -> {
+                                icon = context.getDrawable(R.drawable.ic_add_black_24dp)
                                 text = FriendshipStatus.INVITATION_RECEIVED.status
                                 setOnClickListener { openAcceptOrCancelInviteDialog() }
                             }
                         }
-                        visibility = View.VISIBLE
-                        binding.btnMessage.visibility = View.VISIBLE
                     }
+                    binding.linearLayoutButtons.visibility = View.VISIBLE
                 })
         }
     }
@@ -162,6 +167,11 @@ class UserProfileFragment : Fragment(),
         findNavController().navigate(action)
     }
 
+    private fun navigateToChatScreen(){
+        val action = UserProfileFragmentDirections.actionGlobalConversationFragment(args.uid)
+        findNavController().navigate(action)
+    }
+
     private fun setupToolbar() {
         val navController = findNavController()
         val appBarConfiguration = AppBarConfiguration(navController.graph)
@@ -169,13 +179,15 @@ class UserProfileFragment : Fragment(),
 
         // Shows edit button on toolbar when inside logged in user profile
         if (isAuthenticatedUserProfile()) {
-            binding.toolbar.inflateMenu(R.menu.menu_user_profile)
-            binding.toolbar.setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.action_edit_profile ->
-                        navigateToEditUserProfileScreen()
+            binding.toolbar.apply {
+                inflateMenu(R.menu.menu_user_profile)
+                setOnMenuItemClickListener {
+                    when (it.itemId) {
+                        R.id.action_edit_profile ->
+                            navigateToEditUserProfileScreen()
+                    }
+                    true
                 }
-                true
             }
         }
     }

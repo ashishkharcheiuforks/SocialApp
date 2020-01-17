@@ -1,4 +1,4 @@
-package com.example.socialapp
+package com.example.socialapp.module
 
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule

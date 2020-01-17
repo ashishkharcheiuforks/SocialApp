@@ -74,7 +74,7 @@
                     android:ems="10"
                     android:inputType="textPersonName"
                     android:text="@={vm.message}"
-                    android:hint="@string/hint_comment"
+                    android:hint="@string/hint_message"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_profile_pic"
                     app:layout_constraintEnd_toStartOf="@+id/btn_send"
                     app:layout_constraintHorizontal_bias="0.5"

@@ -32,7 +32,6 @@ class FriendsAdapter(private val listener: ViewHolder.OnFriendItemClickListener)
         }
     }
 
-
     class ViewHolder(private val binding: ItemFriendBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(user: User, listener: OnFriendItemClickListener) {
             binding.user = user

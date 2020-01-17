@@ -24,6 +24,8 @@
     <string name="label_show_less">Show less…</string>
     <string name="players_number">%d Player</string>
 
+    <string name="about_me">My names is Adam,\nI\'m originally from a New York where i grew up and gained great passion for computer games.\nI\'m a huge fun of Counter Strike 1.6 and Mortal Kombat.\nIf you want to play a matchmaking together feel free to invite me to friends and send a private message!</string>
+
     <string-array name="games">
         <item>Counter Strike: Global Offensive</item>
         <item>Counter Strike: 1.6</item>
@@ -58,6 +60,8 @@
     <string name="description_like_button">Like button</string>
     <string name="label_filter">Filters</string>
     <string name="icon_overflow">⋮</string>
+    <string name="label_message">Message</string>
+    <string name="hint_message">Type your message...</string>
 
     <string-array name="playersNumber">
         <item>@string/any_players_number</item>

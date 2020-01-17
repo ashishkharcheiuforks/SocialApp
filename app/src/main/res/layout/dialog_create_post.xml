@@ -99,32 +99,34 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <ImageButton
-                        android:id="@+id/btn_add_picture"
-                        android:background="@android:color/background_dark"
-                        android:tint="@color/solid_white"
-                        android:padding="12dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginTop="16dp"
-                        android:contentDescription="@string/description_add_picture_from_gallery"
-                        android:textColor="@color/solid_black"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:src="@drawable/ic_image_black_24dp" />
-
                     <ImageView
                             android:id="@+id/iv_loaded_picture"
                             android:layout_width="100dp"
+                            android:layout_height="100dp"
                             android:layout_marginTop="16dp"
                             android:layout_marginBottom="16dp"
-                            android:layout_marginEnd="24dp"
-                            android:layout_height="100dp"
+                            android:layout_marginStart="24dp"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:srcCompat="@drawable/profilepic" />
+
+                    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                            android:id="@+id/btn_add_picture"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="24dp"
+                            android:backgroundTint="@color/colorPrimaryDark"
+                            android:drawableLeft="@drawable/ic_image_black_24dp"
+                            android:text="load image"
+                            android:padding="6dp"
+                            android:drawableTint="@color/solid_white"
+                            app:iconPadding="8dp"
+                            android:textColor="@color/solid_white"
+                            app:iconTint="@color/solid_white"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>

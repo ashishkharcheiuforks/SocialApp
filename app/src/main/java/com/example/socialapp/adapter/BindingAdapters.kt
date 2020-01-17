@@ -4,8 +4,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
-import com.example.socialapp.GlideApp
 import com.example.socialapp.R
+import com.example.socialapp.module.GlideApp
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
