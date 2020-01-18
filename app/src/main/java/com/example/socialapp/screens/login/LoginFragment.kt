@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.example.socialapp.common.hideKeyboard
 import com.example.socialapp.common.showSnack
@@ -35,22 +35,23 @@ class LoginFragment : Fragment() {
         binding.lifecycleOwner = this
         binding.viewModel = viewmodel
 
-        viewmodel.isLoading.observe(viewLifecycleOwner, Observer { isLoading ->
-            if (isLoading) {
-                showProgressBar()
-            } else {
-                hideProgressBar()
+        viewmodel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            when (isLoading) {
+                true -> showProgressBar()
+                else -> hideProgressBar()
             }
-        })
+        }
 
-        viewmodel.isOnLoginSuccessful.observe(viewLifecycleOwner, Observer {
+        viewmodel.errorMessage.observe(viewLifecycleOwner) {
+            showSnack(it)
+        }
+
+        viewmodel.isOnLoginSuccessful.observe(viewLifecycleOwner) {
             when (it) {
                 //Login success - navigate to main screen
                 true -> navigateToMainScreen()
-                //Login failed - show error message
-                false -> showSnack("Failed to sign in")
             }
-        })
+        }
 
         binding.tvCreateAccountRedirect.setOnClickListener {
             navigateToRegisterScreen()

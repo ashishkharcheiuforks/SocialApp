@@ -69,6 +69,17 @@ class FirestoreRepository {
         }
     }
 
+    suspend fun signIn(
+        email: String,
+        password: String
+    ): Result<Exception, AuthResult> {
+        return Result.build {
+            awaitTaskResult(
+                auth.signInWithEmailAndPassword(email, password)
+            )
+        }
+    }
+
 
     suspend fun insertUserDataOnRegistration(
         firstName: String,

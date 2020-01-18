@@ -1,17 +1,18 @@
 package com.example.socialapp.screens.login
 
 import android.text.TextUtils
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import com.example.socialapp.common.Result
 import com.example.socialapp.livedata.SingleLiveEvent
-import com.google.firebase.auth.FirebaseAuth
+import com.example.socialapp.repository.FirestoreRepository
+import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class LoginViewModel : ViewModel() {
 
-    private val auth = FirebaseAuth.getInstance()
+    private val repo = FirestoreRepository()
 
     private val _isOnLoginSuccessful = SingleLiveEvent<Boolean>()
     val isOnLoginSuccessful: LiveData<Boolean>
@@ -21,6 +22,10 @@ class LoginViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean>
         get() = _isLoading
+
+    private val _errorMessage = SingleLiveEvent<String>()
+    val errorMessage: LiveData<String>
+        get() = _errorMessage
 
     // Two way data binding variables that store input of user credentials
     val email = MutableLiveData<String>("")
@@ -48,18 +53,29 @@ class LoginViewModel : ViewModel() {
     }
 
     fun login() {
-        loadingStarted()
-        auth.signInWithEmailAndPassword(email.value!!, password.value!!)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    _isOnLoginSuccessful.value = true
-                } else {
-                    // Sign in fail
-                    Timber.d("Sign in failed: ${task.exception?.message}")
-                    _isOnLoginSuccessful.value = false
+        viewModelScope.launch {
+            loadingStarted()
+            val signInTaskResult = repo.signIn(email.value!!, password.value!!)
+            when (signInTaskResult) {
+                is Result.Error -> {
+                    when (signInTaskResult.error) {
+                        is FirebaseAuthInvalidCredentialsException -> {
+                            displayErrorMessage("Wrong password")
+                        }
+                        is FirebaseTooManyRequestsException -> {
+                            displayErrorMessage("Too many failed login attempts. Try again later")
+                        }
+                        else -> {
+                            signInTaskResult.error.message?.let { displayErrorMessage(it) }
+                        }
+                    }
                 }
-                loadingFinished()
+                is Result.Value -> {
+                    loginSuccessful()
+                }
             }
+            loadingFinished()
+        }
     }
 
     // Checks if email structure is proper and if password is at least 6 characters
@@ -72,6 +88,9 @@ class LoginViewModel : ViewModel() {
                 && android.util.Patterns.EMAIL_ADDRESS.matcher(email.value!!).matches()
     }
 
+    private fun loginSuccessful() {
+        _isOnLoginSuccessful.value = true
+    }
 
     private fun loadingStarted() {
         _isLoading.value = true
@@ -81,4 +100,7 @@ class LoginViewModel : ViewModel() {
         _isLoading.value = false
     }
 
+    private fun displayErrorMessage(message: String) {
+        _errorMessage.value = message
+    }
 }
