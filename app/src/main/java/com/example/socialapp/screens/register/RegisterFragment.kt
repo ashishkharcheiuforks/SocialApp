@@ -45,7 +45,7 @@ class RegisterFragment : Fragment() {
             if (it) navigateToMainScreen()
         })
 
-        viewModel.displayErrorMessage.observe(viewLifecycleOwner, Observer {
+        viewModel.errorMessage.observe(viewLifecycleOwner, Observer {
             showSnack(it)
         })
 
@@ -102,7 +102,7 @@ class RegisterFragment : Fragment() {
                 c.set(Calendar.SECOND, 0)
                 val date = c.time
                 val timestamp = Timestamp(date)
-                viewModel.setDate(timestamp)
+                viewModel.dateOfBirth.value = timestamp
             }, year, month, dayOfMonth
         )
         dpd.datePicker.maxDate = Calendar.getInstance().timeInMillis

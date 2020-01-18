@@ -4,6 +4,12 @@ import com.algolia.search.saas.Client
 import com.google.firebase.auth.FirebaseAuth
 import org.json.JSONObject
 
+/*
+* This layer is only for project purpose
+* In real life case all the integration with Algolia 3rd party service
+* should be done from the cloud functions side
+* */
+
 class AlgoliaRepository {
 
     private val apiKey = "02097ce2016d6a6f130949f04093678d"
@@ -28,6 +34,23 @@ class AlgoliaRepository {
             .put("nickname", nickname)
 
         index.partialUpdateObjectAsync(jsonObject, FirebaseAuth.getInstance().uid.toString(), null)
+    }
+
+    fun insertUser(firstName: String, nickname: String, profilePictureUrl: String){
+        val jsonObject =
+            JSONObject()
+                .put("first_name", firstName)
+                .put("nickname", nickname)
+                .put("profile_picture_url", profilePictureUrl)
+
+        val client = Client(applicationID, apiKey)
+        val index = client.getIndex("users")
+
+        index.addObjectAsync(
+            jsonObject,
+            auth.currentUser?.uid.toString(),
+            null
+        )
     }
 
 

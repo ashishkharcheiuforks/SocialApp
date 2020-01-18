@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import com.example.socialapp.common.Result
 import com.example.socialapp.common.awaitTaskCompletable
+import com.example.socialapp.common.awaitTaskResult
 import com.example.socialapp.common.getDataFlow
 import com.example.socialapp.livedata.DocumentSnapshotLiveData
 import com.example.socialapp.livedata.UserLiveData
@@ -11,6 +12,7 @@ import com.example.socialapp.model.*
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,22 +36,58 @@ class FirestoreRepository {
     private val algolia = AlgoliaRepository()
 
 
-    fun insertUserDataOnRegistration(
+    val defaultProfilePictureUrl =
+        "https://firebasestorage.googleapis.com/v0/b/social-app-a3759.appspot.com/o/pr" +
+                "ofilepic.jpg?alt=media&token=ad32501b-383e-4a25-b1d2-b3586ee338bd"
+
+    suspend fun createAccount(
+        email: String,
+        password: String,
         firstName: String,
         nickname: String,
         dateOfBirth: Timestamp
-    ): Task<Void> {
-        val defaultProfilePictureUrl =
-            "https://firebasestorage.googleapis.com/v0/b/social-app-a3759.appspot.com/o/pr" +
-                    "ofilepic.jpg?alt=media&token=ad32501b-383e-4a25-b1d2-b3586ee338bd"
+    ): Result<Exception, AuthResult> {
+
+        val createAccountTaskResult = Result.build {
+            awaitTaskResult(
+                auth.createUserWithEmailAndPassword(email, password)
+            )
+        }
+
+        return when (createAccountTaskResult) {
+            is Result.Error -> {
+                createAccountTaskResult
+            }
+            is Result.Value -> {
+
+                insertUserDataOnRegistration(firstName, nickname, dateOfBirth)
+
+                algolia.insertUser(firstName, nickname, defaultProfilePictureUrl)
+
+                createAccountTaskResult
+            }
+        }
+    }
+
+
+    suspend fun insertUserDataOnRegistration(
+        firstName: String,
+        nickname: String,
+        dateOfBirth: Timestamp
+    ): Result<Exception, Unit> {
+
         val userProfileInfo = hashMapOf(
             "firstName" to firstName,
             "nickname" to nickname,
             "dateOfBirth" to dateOfBirth,
             "profilePictureUrl" to defaultProfilePictureUrl
         )
+
         val userDocRef = db.document("users/${auth.uid}")
-        return userDocRef.set(userProfileInfo)
+
+        return Result.build {
+            awaitTaskCompletable(userDocRef.set(userProfileInfo))
+        }
     }
 
     fun getUserLiveData(userId: String): LiveData<User> {
@@ -437,7 +475,7 @@ class FirestoreRepository {
                         otherUserId to true,
                         auth.uid to true
                     ),
-                "membersArray" to listOf(otherUserId,auth.uid)
+                    "membersArray" to listOf(otherUserId, auth.uid)
                 )
             ).await()
         return createRoomTask.id
@@ -479,8 +517,8 @@ class FirestoreRepository {
 
         return query.get().await().map {
             val message = getLastMessage(it.id)
-            val members= it.data["members"] as Map<*,*>
-            val uid = members.keys.first { uid -> uid!=auth.uid } as String
+            val members = it.data["members"] as Map<*, *>
+            val uid = members.keys.first { uid -> uid != auth.uid } as String
             val user = getUser(uid)
             LastMessage(it.id, user, message)
         }
