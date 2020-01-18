@@ -3,11 +3,12 @@ package com.example.socialapp.screens.register
 import android.text.TextUtils
 import androidx.lifecycle.*
 import com.example.socialapp.common.Result
+import com.example.socialapp.common.addSources
+import com.example.socialapp.common.removeSources
 import com.example.socialapp.livedata.SingleLiveEvent
 import com.example.socialapp.repository.FirestoreRepository
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import kotlinx.coroutines.launch
@@ -44,14 +45,18 @@ class RegisterViewModel : ViewModel() {
     val nickname = MutableLiveData<String>("")
     val dateOfBirth = MutableLiveData<Timestamp>()
 
+    private val mediatorLiveDataSources = listOf(
+        email, password, confirmPassword, firstName, nickname, dateOfBirth
+    )
+
     init {
         Timber.i("Init called")
-        addSourcesToSignUpButtonEnabledMediatorLiveData()
+        _signUpButtonEnabled.addSources(mediatorLiveDataSources) { validate() }
     }
 
     override fun onCleared() {
         Timber.i("onCleared() called")
-        removeSourcesFromSignUpButtonEnabledMediatorLiveData()
+        _signUpButtonEnabled.removeSources(mediatorLiveDataSources)
         super.onCleared()
     }
 
@@ -64,26 +69,6 @@ class RegisterViewModel : ViewModel() {
                     && nickname.value!!.trim().isNotEmpty()
                     && isEmailValid()
                     && dateOfBirth.value != null
-    }
-
-    private fun addSourcesToSignUpButtonEnabledMediatorLiveData() {
-        // Add Sources to Mediator Live Data
-        _signUpButtonEnabled.addSource(email) { validate() }
-        _signUpButtonEnabled.addSource(password) { validate() }
-        _signUpButtonEnabled.addSource(confirmPassword) { validate() }
-        _signUpButtonEnabled.addSource(firstName) { validate() }
-        _signUpButtonEnabled.addSource(nickname) { validate() }
-        _signUpButtonEnabled.addSource(dateOfBirth) { validate() }
-    }
-
-    private fun removeSourcesFromSignUpButtonEnabledMediatorLiveData() {
-        // Remove Sources of Mediator Live Data
-        _signUpButtonEnabled.removeSource(email)
-        _signUpButtonEnabled.removeSource(password)
-        _signUpButtonEnabled.removeSource(confirmPassword)
-        _signUpButtonEnabled.removeSource(firstName)
-        _signUpButtonEnabled.removeSource(nickname)
-        _signUpButtonEnabled.removeSource(dateOfBirth)
     }
 
     // Checks if email matches the common pattern
@@ -110,10 +95,10 @@ class RegisterViewModel : ViewModel() {
                 nickname.value!!,
                 dateOfBirth.value!!
             )
-            when(createAccountTaskResult){
+            when (createAccountTaskResult) {
                 is Result.Error -> {
                     registerFailed()
-                    when(createAccountTaskResult.error){
+                    when (createAccountTaskResult.error) {
                         is FirebaseAuthWeakPasswordException -> {
                             displayErrorMessage("Password too weak")
                         }
@@ -133,7 +118,7 @@ class RegisterViewModel : ViewModel() {
         }
     }
 
-    private fun displayErrorMessage(message: String){
+    private fun displayErrorMessage(message: String) {
         _errorMessage.value = message
     }
 
