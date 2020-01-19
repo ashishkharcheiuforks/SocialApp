@@ -82,10 +82,6 @@ class RegisterViewModel : ViewModel() {
         _isRegisterSuccessful.value = true
     }
 
-    private fun registerFailed() {
-        _isRegisterSuccessful.value = false
-    }
-
     fun createAccount() {
         viewModelScope.launch {
             val createAccountTaskResult = repo.createAccount(
@@ -97,7 +93,6 @@ class RegisterViewModel : ViewModel() {
             )
             when (createAccountTaskResult) {
                 is Result.Error -> {
-                    registerFailed()
                     when (createAccountTaskResult.error) {
                         is FirebaseAuthWeakPasswordException -> {
                             displayErrorMessage("Password too weak")

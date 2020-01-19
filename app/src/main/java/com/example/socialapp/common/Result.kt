@@ -1,6 +1,5 @@
 package com.example.socialapp.common
 
-
 /**
  * Result Wrapper <Left = Exception, Right = Value/Success>
  */

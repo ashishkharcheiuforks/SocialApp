@@ -54,6 +54,12 @@
                     app:exitAnim="@anim/nav_default_exit_anim"
                     app:popEnterAnim="@anim/nav_default_pop_enter_anim"
                     app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            <action
+                    android:id="@+id/action_mainFragment_to_chatRoomsFragment"
+                    app:destination="@id/chatRoomsFragment" />
+            <action
+                    android:id="@+id/action_mainFragment_to_friendsFragment"
+                    app:destination="@id/friendsFragment" />
         </fragment>
         <fragment
                 android:id="@+id/profileFragment"
@@ -94,13 +100,6 @@
                 android:id="@+id/friendsFragment"
                 android:name="com.example.socialapp.screens.friends.FriendsFragment"
                 tools:layout="@layout/fragment_friends" />
-        <action
-                android:id="@+id/action_global_friendsFragment"
-                app:destination="@id/friendsFragment"
-                app:enterAnim="@anim/nav_default_enter_anim"
-                app:exitAnim="@anim/nav_default_exit_anim"
-                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-                app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <fragment
                 android:id="@+id/chatRoomsFragment"
                 android:name="com.example.socialapp.screens.chat.ChatRoomsFragment"

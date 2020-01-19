@@ -1,5 +1,7 @@
 package com.example.socialapp.common
 
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
@@ -63,4 +65,22 @@ fun <T> Query.getDataFlow(mapper: (QuerySnapshot?) -> T): Flow<T> {
         .map {
             return@map mapper(it)
         }
+}
+
+// Extension for adding list of sources that triggers the same function in "onchange"
+internal fun <T> MediatorLiveData<T>.addSources(
+    sources: List<MutableLiveData<*>>,
+    onChanged: () -> Unit
+) {
+    val md = this
+    sources.forEach {
+        md.addSource(it) { onChanged() }
+    }
+}
+
+internal fun <T> MediatorLiveData<T>.removeSources(sources: List<MutableLiveData<*>>) {
+    val md = this
+    sources.forEach {
+        md.removeSource(it)
+    }
 }

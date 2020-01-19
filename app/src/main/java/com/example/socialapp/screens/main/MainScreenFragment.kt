@@ -131,7 +131,7 @@ class MainScreenFragment : Fragment() {
     }
 
     private fun navigateToFriendsScreen() {
-        val action = MainScreenFragmentDirections.actionGlobalFriendsFragment()
+        val action = MainScreenFragmentDirections.actionMainFragmentToFriendsFragment()
         findNavController().navigate(action)
     }
 
@@ -142,7 +142,7 @@ class MainScreenFragment : Fragment() {
     }
 
     private fun navigateToChatRoomsScreen() {
-        val action = MainScreenFragmentDirections.actionGlobalChatRoomsFragment()
+        val action = MainScreenFragmentDirections.actionMainFragmentToChatRoomsFragment()
         findNavController().navigate(action)
     }
 

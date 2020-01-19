@@ -18,7 +18,7 @@ class LoginFragment : Fragment() {
 
     private lateinit var binding: FragmentLoginBinding
 
-    private val viewmodel: LoginViewModel by viewModels()
+    private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,20 +33,20 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.lifecycleOwner = this
-        binding.viewModel = viewmodel
+        binding.viewModel = viewModel
 
-        viewmodel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             when (isLoading) {
                 true -> showProgressBar()
                 else -> hideProgressBar()
             }
         }
 
-        viewmodel.errorMessage.observe(viewLifecycleOwner) {
+        viewModel.errorMessage.observe(viewLifecycleOwner) {
             showSnack(it)
         }
 
-        viewmodel.isOnLoginSuccessful.observe(viewLifecycleOwner) {
+        viewModel.isOnLoginSuccessful.observe(viewLifecycleOwner) {
             when (it) {
                 //Login success - navigate to main screen
                 true -> navigateToMainScreen()
@@ -59,7 +59,7 @@ class LoginFragment : Fragment() {
 
         binding.btnLogin.setOnClickListener {
             hideKeyboard()
-            viewmodel.login()
+            viewModel.login()
         }
 
     }
