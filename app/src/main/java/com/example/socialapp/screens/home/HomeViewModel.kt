@@ -5,20 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.example.socialapp.repository.FirestoreRepository
+import com.example.socialapp.common.Result
 import com.example.socialapp.model.Post
+import com.example.socialapp.repository.FirestoreRepository
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import com.example.socialapp.common.Result
 
 class HomeViewModel : ViewModel() {
-
-    private val viewModelJob = SupervisorJob()
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     private val auth = FirebaseAuth.getInstance()
     private val repo = FirestoreRepository()
@@ -36,7 +30,7 @@ class HomeViewModel : ViewModel() {
 
     // Data source for loading paged posts
     private val dataSource =
-        TimelinePostsDataSource.Factory(uiScope, auth.uid!!)
+        TimelinePostsDataSource.Factory(viewModelScope, auth.uid!!)
 
     // PagedList of posts as LiveData
     val posts: LiveData<PagedList<Post>> =
@@ -66,8 +60,7 @@ class HomeViewModel : ViewModel() {
     }
 
     override fun onCleared() {
-        super.onCleared()
-        viewModelJob.cancel()
         Timber.i("onCleared() called")
+        super.onCleared()
     }
 }

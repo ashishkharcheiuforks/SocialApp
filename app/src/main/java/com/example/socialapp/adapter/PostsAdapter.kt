@@ -54,7 +54,6 @@ class PostsAdapter(private val listener: OnPostClickListener) :
             binding.post = post
             binding.user = post.user
 
-
             if(post.postImage != null){
                 binding.postItemPostImage.visibility = View.VISIBLE
                 GlideApp.with(binding.root.context).load(post.postImage).into(binding.postItemPostImage)
@@ -66,10 +65,10 @@ class PostsAdapter(private val listener: OnPostClickListener) :
                 // Set suitable image drawable and onClickListener for like button
                 binding.buttonPostItemLike.apply {
                     if (isPostLiked) {
-                        setImageResource(R.drawable.ic_favorite_black_24dp)
+                        setImageResource(R.drawable.ic_favorite_color_primary_24dp)
                         setOnClickListener { listener.onUnlikeButtonClicked(post.postId) }
                     } else {
-                        setImageResource(R.drawable.ic_favorite_border_black_24dp)
+                        setImageResource(R.drawable.ic_favorite_border_color_primary_24dp)
                         setOnClickListener { listener.onLikeButtonClicked(post.postId) }
                     }
                 }

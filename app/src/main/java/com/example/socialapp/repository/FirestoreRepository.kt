@@ -35,8 +35,7 @@ class FirestoreRepository {
     private val storageReference = storage.reference
     private val algolia = AlgoliaRepository()
 
-
-    val defaultProfilePictureUrl =
+    private val defaultProfilePictureUrl =
         "https://firebasestorage.googleapis.com/v0/b/social-app-a3759.appspot.com/o/pr" +
                 "ofilepic.jpg?alt=media&token=ad32501b-383e-4a25-b1d2-b3586ee338bd"
 
@@ -478,7 +477,7 @@ class FirestoreRepository {
 
     // Nested field / nested object is created in order to support query that contains two specific users
     // Array is created in order to support compose index in order to query for user chatrooms ordered by "lastUpdated" timestamp field
-    suspend fun createChatRoom(otherUserId: String): String {
+    private suspend fun createChatRoom(otherUserId: String): String {
         val createRoomTask =
             db.collection("chatRooms").add(
                 mapOf(

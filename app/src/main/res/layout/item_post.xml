@@ -117,7 +117,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/linearLayout_post_content"
                     app:layout_constraintTop_toBottomOf="@+id/linearLayout_post_content"
-                    tools:src="@drawable/ic_favorite_border_black_24dp" />
+                    tools:src="@drawable/ic_favorite_border_color_primary_24dp" />
 
             <TextView
                     android:id="@+id/button_post__item_comment"

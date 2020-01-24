@@ -23,6 +23,35 @@ class CreateAdvertisementDialogFragment : DialogFragment() {
     private lateinit var binding: DialogCreateAdvertisementBinding
     private lateinit var listener: NewAdvertisementListener
 
+    private var description: String? = null
+        get() {
+            return if (!binding.etDescription.text.isNullOrEmpty()) {
+                binding.etDescription.text.toString()
+            } else {
+                null
+            }
+        }
+
+    private var playersNumber: Long? = null
+        get() {
+            val selected = binding.spinnerPlayersNumber.selectedItem.toString()
+            return if (selected.contentEquals(getString(R.string.any_players_number))) {
+                null
+            } else {
+                selected.toLong()
+            }
+        }
+
+    private var communicationLanguage: String? = null
+        get() {
+            val selected = binding.spinnerLanguage.selectedItem.toString()
+            return if (selected.contentEquals("Any")) {
+                null
+            } else {
+                selected
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.AppTheme_FullScreenDialog)
@@ -53,12 +82,12 @@ class CreateAdvertisementDialogFragment : DialogFragment() {
                 createdByUserUid = null,
                 dateCreated = null,
                 filters = Filters(
-                    playersNumber = getPlayersNumber(),
+                    playersNumber = playersNumber,
                     game = binding.spinnerGame.selectedItem.toString(),
-                    communicationLanguage = getCommunicationLanguage()
+                    communicationLanguage = communicationLanguage
                 ),
                 user = null,
-                description = getDescription()
+                description = description
             )
         listener.onCreateNewAdvertisement(newAdvert)
         dismiss()
@@ -85,29 +114,5 @@ class CreateAdvertisementDialogFragment : DialogFragment() {
         }
     }
 
-    private fun getPlayersNumber(): Long?{
-        val selected = binding.spinnerPlayersNumber.selectedItem.toString()
-        return if (selected.contentEquals(getString(R.string.any_players_number))) {
-            null
-        } else {
-            selected.toLong()
-        }
-    }
 
-    private fun getCommunicationLanguage(): String?{
-        val selected = binding.spinnerLanguage.selectedItem.toString()
-        return if(selected.contentEquals("Any")){
-            null
-        }else{
-            selected
-        }
-    }
-
-    private fun getDescription(): String?{
-        return if (!binding.etDescription.text.isNullOrEmpty()) {
-            binding.etDescription.text.toString()
-        } else {
-            null
-        }
-    }
 }

@@ -12,7 +12,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.socialapp.adapter.ChatRoomsAdapter
 import com.example.socialapp.databinding.FragmentChatRoomsBinding
-import timber.log.Timber
 
 class ChatRoomsFragment : Fragment(), ChatRoomsAdapter.OnChatItemClickListener {
 
@@ -39,7 +38,6 @@ class ChatRoomsFragment : Fragment(), ChatRoomsAdapter.OnChatItemClickListener {
 
         viewModel.chatRooms.observe(this){
             adapter.submitList(it)
-            Timber.d("size of list -> " + it.size)
         }
 
         binding.fabNewChat.setOnClickListener {

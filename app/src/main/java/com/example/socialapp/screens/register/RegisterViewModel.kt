@@ -52,10 +52,16 @@ class RegisterViewModel : ViewModel() {
     init {
         Timber.i("Init called")
         _signUpButtonEnabled.addSources(mediatorLiveDataSources) { validate() }
+        mediatorLiveDataSources.forEach {
+            _signUpButtonEnabled.addSource(it) { validate() }
+        }
     }
 
     override fun onCleared() {
         Timber.i("onCleared() called")
+        mediatorLiveDataSources.forEach {
+            _signUpButtonEnabled.removeSource(it)
+        }
         _signUpButtonEnabled.removeSources(mediatorLiveDataSources)
         super.onCleared()
     }
@@ -80,6 +86,10 @@ class RegisterViewModel : ViewModel() {
 
     private fun registerSuccess() {
         _isRegisterSuccessful.value = true
+    }
+
+    private fun displayErrorMessage(message: String) {
+        _errorMessage.value = message
     }
 
     fun createAccount() {
@@ -111,10 +121,6 @@ class RegisterViewModel : ViewModel() {
             }
 
         }
-    }
-
-    private fun displayErrorMessage(message: String) {
-        _errorMessage.value = message
     }
 
 }

@@ -29,14 +29,16 @@ class TimelinePostsDataSource(private val scope: CoroutineScope, private val use
 
     override fun loadAfter(params: LoadParams<String>, callback: LoadCallback<Post>) {
         scope.launch {
-            val items = repo.getUserTimeline(userUid, params.requestedLoadSize, loadAfter = params.key)
+            val items =
+                repo.getUserTimeline(userUid, params.requestedLoadSize, loadAfter = params.key)
             callback.onResult(items)
         }
     }
 
     override fun loadBefore(params: LoadParams<String>, callback: LoadCallback<Post>) {
         scope.launch {
-            val items = repo.getUserTimeline(userUid, params.requestedLoadSize, loadBefore = params.key)
+            val items =
+                repo.getUserTimeline(userUid, params.requestedLoadSize, loadBefore = params.key)
             callback.onResult(items)
         }
     }

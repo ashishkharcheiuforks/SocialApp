@@ -5,9 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import com.example.socialapp.common.Result
+import com.example.socialapp.livedata.DocumentSnapshotLiveData
 import com.example.socialapp.model.Post
 import com.example.socialapp.repository.FirestoreRepository
-import com.example.socialapp.common.Result
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -15,15 +16,15 @@ class UserProfileViewModel(private val uid: String) : ViewModel() {
 
     private val repo = FirestoreRepository()
 
-    init {
-        Timber.i("init called")
-    }
-
     val user =
         repo.getUserLiveData(uid)
 
-    val friendshipStatus = repo.getFriendshipStatus(uid)
+    val friendshipStatus: DocumentSnapshotLiveData
 
+    init {
+        Timber.i("init called")
+        friendshipStatus = repo.getFriendshipStatus(uid)
+    }
 
     private val config = PagedList.Config.Builder()
         .setEnablePlaceholders(false)
