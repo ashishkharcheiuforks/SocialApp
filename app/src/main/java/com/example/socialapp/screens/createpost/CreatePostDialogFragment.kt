@@ -16,7 +16,6 @@ import com.example.socialapp.R
 import com.example.socialapp.databinding.DialogCreatePostBinding
 import timber.log.Timber
 
-//class CreatePostDialogFragment : DialogFragment(), Toolbar.OnMenuItemClickListener {
 class CreatePostDialogFragment : DialogFragment() {
 
     private lateinit var binding: DialogCreatePostBinding
@@ -29,10 +28,8 @@ class CreatePostDialogFragment : DialogFragment() {
 
     private val REQUEST_PICK_IMAGE = 71
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setStyle(STYLE_NORMAL, R.style.AppTheme_FullScreenDialog)
         setStyle(STYLE_NORMAL, R.style.AppTheme_FullScreenDialog)
     }
 
@@ -53,23 +50,10 @@ class CreatePostDialogFragment : DialogFragment() {
 
         setupToolbar()
 
-        viewModel.postImage.observe(this@CreatePostDialogFragment, Observer {
-            if (it != null) { showImagePreview() } else { hideImagePreview() }
-        })
-
         nestedGraphViewModel.user.observe(viewLifecycleOwner, Observer { binding.user = it })
 
         binding.btnAddPicture.setOnClickListener { openGallery() }
 
-    }
-
-    private fun showImagePreview(){
-        binding.ivLoadedPicture.setImageURI(viewModel.postImage.value)
-        binding.ivLoadedPicture.visibility = View.VISIBLE
-    }
-
-    private fun hideImagePreview(){
-        binding.ivLoadedPicture.visibility = View.GONE
     }
 
     override fun onStart() {
@@ -92,7 +76,7 @@ class CreatePostDialogFragment : DialogFragment() {
                 return
             }
             val pictureUri = data.data
-            viewModel.postImage.value = pictureUri!!
+            viewModel.postImage.value = pictureUri.toString()
         }
     }
 

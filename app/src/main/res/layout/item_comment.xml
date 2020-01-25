@@ -33,7 +33,7 @@
                     android:layout_height="35dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    imageResourceUri="@{user.profilePictureUrl}"
+                    imageCircular="@{user.profilePictureUrl}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:src="@drawable/profilepic" />

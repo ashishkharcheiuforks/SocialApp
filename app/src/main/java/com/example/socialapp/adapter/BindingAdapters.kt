@@ -3,7 +3,6 @@ package com.example.socialapp.adapter
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.example.socialapp.R
 import com.example.socialapp.module.GlideApp
 import com.google.firebase.Timestamp
@@ -12,21 +11,22 @@ import java.util.*
 
 object BindingAdapters {
 
-    // Used for setting image with given uri */
-    @BindingAdapter("imageResourceUri")
+    @BindingAdapter("imageCircular")
     @JvmStatic
-    fun setImageResource(imageView: ImageView, url: String?) {
-
-        val circularProgressDrawable = CircularProgressDrawable(imageView.context)
-        circularProgressDrawable.strokeWidth = 5f
-        circularProgressDrawable.centerRadius = 30f
-        circularProgressDrawable.start()
-
+    fun setImageCircular(imageView: ImageView, url: String?) {
         GlideApp.with(imageView.context)
             .load(url)
-//            .placeholder(circularProgressDrawable)
             .placeholder(R.drawable.ic_account_circle_black_24dp)
             .circleCrop()
+            .into(imageView)
+    }
+
+    // Used for setting image with given uri */
+    @BindingAdapter("imageRectangle")
+    @JvmStatic
+    fun setImageRectangle(imageView: ImageView, url: String?) {
+        GlideApp.with(imageView.context)
+            .load(url)
             .into(imageView)
     }
 

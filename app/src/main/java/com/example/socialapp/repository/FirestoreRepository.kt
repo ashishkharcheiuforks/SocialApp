@@ -9,8 +9,6 @@ import com.example.socialapp.common.getDataFlow
 import com.example.socialapp.livedata.DocumentSnapshotLiveData
 import com.example.socialapp.livedata.UserLiveData
 import com.example.socialapp.model.*
-import com.google.android.gms.tasks.Continuation
-import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -19,12 +17,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.UploadTask
 import io.reactivex.Observable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
-import timber.log.Timber
 
 
 class FirestoreRepository {
@@ -58,17 +54,15 @@ class FirestoreRepository {
                 createAccountTaskResult
             }
             is Result.Value -> {
-
                 insertUserDataOnRegistration(firstName, nickname, dateOfBirth)
-
+                // In real case this would be trigged by cloud functions
                 algolia.insertUser(firstName, nickname, defaultProfilePictureUrl)
-
                 createAccountTaskResult
             }
         }
     }
 
-    suspend fun signIn(
+    suspend fun signInWithEmailAndPassword(
         email: String,
         password: String
     ): Result<Exception, AuthResult> {
@@ -80,7 +74,7 @@ class FirestoreRepository {
     }
 
 
-    suspend fun insertUserDataOnRegistration(
+    private suspend fun insertUserDataOnRegistration(
         firstName: String,
         nickname: String,
         dateOfBirth: Timestamp
@@ -107,35 +101,36 @@ class FirestoreRepository {
 
     // Updates user profile with provided non-null values
     suspend fun updateUserProfileInfo(
-        firstName: String?,
-        nickname: String?,
-        dateOfBirth: Timestamp?,
-        profilePictureUrl: String?
-    ): Task<Void> {
+        firstName: String? = null,
+        nickname: String? = null,
+        dateOfBirth: Timestamp? = null,
+        profilePictureUrl: String? = null,
+        aboutMe: String? = null
+    ): Result<Exception, Unit> {
         val userDocRef = db.document("users/${auth.uid}")
 
-        val data = mutableMapOf<String, Any>()
-        // If value exists add it to update data set
-        firstName?.let {
-            data.put("firstName", it)
-        }
-        nickname?.let {
-            data.put("nickname", it)
-        }
-        dateOfBirth?.let {
-            data.put("dateOfBirth", it)
+        val data = mutableMapOf<String, Any>().apply {
+            firstName?.let { put("firstName", it) }
+            nickname?.let { put("nickname", it) }
+            dateOfBirth?.let { put("dateOfBirth", it) }
+            aboutMe?.let { put("aboutMe", it) }
         }
 
         profilePictureUrl?.let {
             changeUserProfilePicture(profilePictureUrl)
         }
-
-        algolia.updateNameAndNickname(firstName!!, nickname!!)
-
-        return userDocRef.update(data)
+        // In real case it should be triggered by cloud functions on each update of this fields
+        if (firstName != null || nickname != null) {
+            algolia.updateNameAndNickname(firstName, nickname)
+        }
+        return Result.build {
+            awaitTaskCompletable(
+                userDocRef.update(data)
+            )
+        }
     }
 
-    suspend fun changeUserProfilePicture(filePath: String) {
+    private suspend fun changeUserProfilePicture(filePath: String) {
         val userProfileStorageRef = storageReference.child("users/${auth.uid}/")
         val filename = "profile_picture"
         // uploads picture and returns new url
@@ -147,7 +142,7 @@ class FirestoreRepository {
     }
 
     // Uploads picture to the given location in cloud storage and return
-    suspend fun uploadPhotoAndReturnUrl(
+    private suspend fun uploadPhotoAndReturnUrl(
         filePath: String,
         storageRef: StorageReference,
         name: String
@@ -159,9 +154,13 @@ class FirestoreRepository {
     }
 
     // Updates reference link to the user profile picture in firestore database
-    fun updateProfilePictureUrl(url: String) {
+    private suspend fun updateProfilePictureUrl(url: String): Result<Exception, Unit> {
         val userDocRef = db.document("users/${auth.uid}")
-        userDocRef.update(mapOf("profilePictureUrl" to url))
+        return Result.build {
+            awaitTaskCompletable(
+                userDocRef.update(mapOf("profilePictureUrl" to url))
+            )
+        }
     }
 
     /**    Friend Request related functions    **/
@@ -190,37 +189,50 @@ class FirestoreRepository {
 
     /**    Posts and comments related functions    **/
 
-    fun addPost(postContent: String?, postImage: Uri?) {
+    suspend fun addPost(
+        postContent: String? = null,
+        postImage: String? = null
+    ): Result<Exception, Unit> {
         val newPostDocRef = db.collection("posts").document()
         val newPostId = newPostDocRef.id
 
-        // New post document fields
         val data = HashMap<String, Any>()
-
-        data["createdByUserUid"] = auth.uid!!
-        // Server Timestamp for date and time of post creation
-        data["dateCreated"] = FieldValue.serverTimestamp()
-        // Initial value for number of likes
-        data["likesNumber"] = 0
-        // Initial value for number of comments
-        data["commentsNumber"] = 0
+        if (postContent != null || postImage != null) {
+            data.apply {
+                // Author of the post
+                put("createdByUserUid", auth.uid!!)
+                // Server Timestamp for date and time of post creation
+                put("dateCreated", FieldValue.serverTimestamp())
+                // Initial value for number of likes
+                put("likesNumber", 0)
+                // Initial value for number of comments
+                put("commentsNumber", 0)
+                // Post text content if exists
+                if (!postContent.isNullOrEmpty()) put("postContent", postContent)
+            }
+        }
 
         // If post text content exists add it to the document
         postContent?.let { data.put("postContent", it) }
 
+        //TODO(DEV): Fix post picture upload
+
         // If image was passed to add to the document
         // it will be uploaded
-        postImage?.let {
-            val postImagesReference = storageReference.child("posts/$newPostId/images/image.jpeg")
+//        postImage?.let {
+//        val postImagesReference = storageReference.child("posts/$newPostId/images/image.jpeg")
+//            uploadPictureAndReturnUrl(it, postImagesReference).addOnCompleteListener { task ->
+//                if (task.isSuccessful)
+//                    Timber.d("Uploaded and returned new picture url: ${task.result}")
+//                updatePostImageUrl(newPostId, task.result!!)
+//            }
+//        }
 
-            uploadPictureAndReturnUrl(it, postImagesReference).addOnCompleteListener { task ->
-                if (task.isSuccessful)
-                    Timber.d("Uploaded and returned new picture url: ${task.result}")
-                updatePostImageUrl(newPostId, task.result!!)
-            }
+        return Result.build {
+            awaitTaskCompletable(
+                newPostDocRef.set(data)
+            )
         }
-
-        newPostDocRef.set(data)
     }
 
     private suspend fun getPost(postId: String, userId: String): Post {
@@ -280,9 +292,16 @@ class FirestoreRepository {
     }
 
 
-    fun updatePostImageUrl(postId: String, imageUrl: Uri) {
+    private suspend fun updatePostImageUrl(
+        postId: String,
+        imageUrl: String
+    ): Result<Exception, Unit> {
         val postDocRef = db.document("posts/$postId")
-        postDocRef.update(mapOf("postImage" to imageUrl))
+        return Result.build {
+            awaitTaskCompletable(
+                postDocRef.update(mapOf("postImage" to imageUrl))
+            )
+        }
     }
 
     suspend fun getUserTimeline(
@@ -317,7 +336,8 @@ class FirestoreRepository {
         loadBefore: String? = null,
         loadAfter: String? = null
     ): List<User> {
-        val friendsCollectionRef = db.collection("users").document(userUid).collection("friends")
+        val friendsCollectionRef =
+            db.collection("users").document(userUid).collection("friends")
         var query = friendsCollectionRef
             .whereEqualTo("status", FriendshipStatus.ACCEPTED.status)
             .limit(pageSize.toLong())
@@ -373,17 +393,6 @@ class FirestoreRepository {
         }
     }
 
-    fun uploadPictureAndReturnUrl(pictureToUpload: Uri, path: StorageReference): Task<Uri> {
-        val uploadTask = path.putFile(pictureToUpload)
-
-        return uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
-            if (!task.isSuccessful) {
-                task.exception?.let { throw it }
-            }
-            return@Continuation path.downloadUrl
-        })
-    }
-
     suspend fun getUser(userId: String): User {
         val userDocSnap = db.document("users/${userId}").get().await()
         return userDocSnap.toObject(User::class.java)!!
@@ -412,13 +421,16 @@ class FirestoreRepository {
 
     suspend fun addNewAdvertisement(advertisement: Advertisement): Result<Exception, Unit> {
         val data = hashMapOf<String, Any>()
-
-        data["dateCreated"] = FieldValue.serverTimestamp()
+        data.apply {
+            // Author of advertisement
+            put("createdByUserUid", auth.uid!!)
+            // Server Timestamp for date and time of advertisement creation
+            put("dateCreated", FieldValue.serverTimestamp())
+        }
         advertisement.filters.playersNumber?.let { data["playersNumber"] = it }
         advertisement.filters.game?.let { data["game"] = it }
         advertisement.filters.communicationLanguage?.let { data["communicationLanguage"] = it }
         advertisement.description?.let { data["description"] = it }
-        data["createdByUserUid"] = auth.uid!!
 
         return Result.build {
             awaitTaskCompletable(

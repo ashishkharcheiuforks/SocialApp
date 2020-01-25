@@ -24,7 +24,7 @@
 
         <ImageView
                 android:id="@+id/imageView"
-                imageResourceUri="@{user.profilePictureUrl}"
+                imageCircular="@{user.profilePictureUrl}"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 app:layout_constraintBottom_toBottomOf="parent"

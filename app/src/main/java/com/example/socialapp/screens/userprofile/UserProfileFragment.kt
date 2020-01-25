@@ -21,9 +21,11 @@ import com.example.socialapp.model.FriendshipStatus
 import com.example.socialapp.model.User
 import com.example.socialapp.screens.comments.CommentsFragment
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import timber.log.Timber
 
 
+@ExperimentalCoroutinesApi
 class UserProfileFragment : Fragment(),
     ModalBottomSheetListener,
     PostsAdapter.OnPostClickListener {
@@ -31,6 +33,7 @@ class UserProfileFragment : Fragment(),
     private lateinit var binding: FragmentUserProfileBinding
 
     private val nestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(R.id.authenticated_graph)
+
     private val userProfileViewModel: UserProfileViewModel by lazy {
         ViewModelProviders.of(this, UserProfileViewModelFactory(args.uid))
             .get(UserProfileViewModel::class.java)
@@ -114,33 +117,47 @@ class UserProfileFragment : Fragment(),
         bottomSheetDialogFragment.show(childFragmentManager, "CancelSentInviteDialog")
     }
 
+    private fun buttonInviteToFriends() = binding.btnFriendshipStatus.apply {
+        icon = context.getDrawable(R.drawable.ic_add_black_24dp)
+        text = FriendshipStatus.NO_STATUS.status
+        setOnClickListener { userProfileViewModel.inviteToFriends() }
+    }
+
+    private fun buttonInvitationReceived() = binding.btnFriendshipStatus.apply {
+        icon = context.getDrawable(R.drawable.ic_add_black_24dp)
+        text = FriendshipStatus.INVITATION_RECEIVED.status
+        setOnClickListener { openAcceptOrCancelInviteDialog() }
+    }
+
+    private fun buttonInvitationSent() = binding.btnFriendshipStatus.apply {
+        icon = context.getDrawable(R.drawable.ic_close_black_24dp)
+        text = FriendshipStatus.INVITATION_SENT.status
+        setOnClickListener { openCancelFriendInviteDialog() }
+    }
+
+    private fun buttonFriends() = binding.btnFriendshipStatus.apply {
+        icon = context.getDrawable(R.drawable.ic_groups_black_24dp)
+        text = FriendshipStatus.ACCEPTED.status
+        setOnClickListener { openDeleteFromFriendsDialog() }
+    }
+
     // Shows and handles behaviour of friendship status button on other users profiles
     private fun setupFriendshipStatusButton() {
         if (!isAuthenticatedUserProfile()) {
             userProfileViewModel.friendshipStatus
                 .observe(viewLifecycleOwner, Observer { result ->
-                    binding.btnFriendshipStatus.apply {
-                        when (result.data().get("status")) {
-                            null -> {
-                                icon = context.getDrawable(R.drawable.ic_add_black_24dp)
-                                text = FriendshipStatus.NO_STATUS.status
-                                setOnClickListener { userProfileViewModel.inviteToFriends() }
-                            }
-                            FriendshipStatus.ACCEPTED.status -> {
-                                icon = context.getDrawable(R.drawable.ic_groups_black_24dp)
-                                text = FriendshipStatus.ACCEPTED.status
-                                setOnClickListener { openDeleteFromFriendsDialog() }
-                            }
-                            FriendshipStatus.INVITATION_SENT.status -> {
-                                icon = context.getDrawable(R.drawable.ic_close_black_24dp)
-                                text = FriendshipStatus.INVITATION_SENT.status
-                                setOnClickListener { openCancelFriendInviteDialog() }
-                            }
-                            FriendshipStatus.INVITATION_RECEIVED.status -> {
-                                icon = context.getDrawable(R.drawable.ic_add_black_24dp)
-                                text = FriendshipStatus.INVITATION_RECEIVED.status
-                                setOnClickListener { openAcceptOrCancelInviteDialog() }
-                            }
+                    when (result.data().get("status")) {
+                        null -> {
+                            buttonInviteToFriends()
+                        }
+                        FriendshipStatus.ACCEPTED.status -> {
+                            buttonFriends()
+                        }
+                        FriendshipStatus.INVITATION_SENT.status -> {
+                            buttonInvitationSent()
+                        }
+                        FriendshipStatus.INVITATION_RECEIVED.status -> {
+                            buttonInvitationReceived()
                         }
                     }
                     binding.linearLayoutButtons.visibility = View.VISIBLE
@@ -167,7 +184,7 @@ class UserProfileFragment : Fragment(),
         findNavController().navigate(action)
     }
 
-    private fun navigateToChatScreen(){
+    private fun navigateToChatScreen() {
         val action = UserProfileFragmentDirections.actionGlobalConversationFragment(args.uid)
         findNavController().navigate(action)
     }

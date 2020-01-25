@@ -54,7 +54,7 @@
 
             <ImageView
                     android:id="@+id/iv_profile_pic"
-                    imageResourceUri="@{graphvm.user.profilePictureUrl}"
+                    imageCircular="@{graphvm.user.profilePictureUrl}"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:layout_marginStart="16dp"

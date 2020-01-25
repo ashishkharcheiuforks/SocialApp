@@ -31,7 +31,7 @@
 
             <ImageView
                     android:id="@+id/image_post_item_user_profile_picture"
-                    imageResourceUri="@{user.profilePictureUrl}"
+                    imageCircular="@{user.profilePictureUrl}"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginStart="16dp"

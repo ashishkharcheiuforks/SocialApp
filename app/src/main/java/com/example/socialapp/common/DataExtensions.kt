@@ -3,6 +3,8 @@ package com.example.socialapp.common
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -62,6 +64,35 @@ fun Query.getQuerySnapshotFlow(): Flow<QuerySnapshot?> {
 @ExperimentalCoroutinesApi
 fun <T> Query.getDataFlow(mapper: (QuerySnapshot?) -> T): Flow<T> {
     return getQuerySnapshotFlow()
+        .map {
+            return@map mapper(it)
+        }
+}
+
+@ExperimentalCoroutinesApi
+fun DocumentReference.getDocumentSnapshotFlow(): Flow<DocumentSnapshot?> {
+    return callbackFlow {
+        val listenerRegistration =
+            addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                if (firebaseFirestoreException != null) {
+                    cancel(
+                        message = "error fetching collection data",
+                        cause = firebaseFirestoreException
+                    )
+                    return@addSnapshotListener
+                }
+                offer(querySnapshot)
+            }
+        awaitClose {
+            Timber.d("cancelling the listener on collection")
+            listenerRegistration.remove()
+        }
+    }
+}
+
+@ExperimentalCoroutinesApi
+fun <T> DocumentReference.getDataFlow(mapper: (DocumentSnapshot?) -> T): Flow<T> {
+    return getDocumentSnapshotFlow()
         .map {
             return@map mapper(it)
         }

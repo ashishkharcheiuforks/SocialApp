@@ -3,12 +3,11 @@ package com.example.socialapp.screens.editprofile
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.socialapp.common.Result
 import com.example.socialapp.repository.FirestoreRepository
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class EditProfileViewModel : ViewModel() {
@@ -16,10 +15,10 @@ class EditProfileViewModel : ViewModel() {
     private val repo = FirestoreRepository()
     private val auth = FirebaseAuth.getInstance()
 
-    val firstName = MutableLiveData<String>()
-    val nickname = MutableLiveData<String>()
+    val firstName = MutableLiveData<String>("")
+    val nickname = MutableLiveData<String>("")
     val dateOfBirth = MutableLiveData<Timestamp>()
-    val loadedImageUri = MutableLiveData<String?>()
+    val loadedImageUri = MutableLiveData<String?>("")
 
 
     init {
@@ -35,17 +34,21 @@ class EditProfileViewModel : ViewModel() {
 
     fun updateUserProfileInfo() {
         viewModelScope.launch {
-            withContext(IO) {
-                repo.updateUserProfileInfo(
-                    firstName.value,
-                    nickname.value,
-                    dateOfBirth.value,
-                    loadedImageUri.value
-                )
+            val updateTaskResult = repo.updateUserProfileInfo(
+                firstName.value,
+                nickname.value,
+                dateOfBirth.value,
+                loadedImageUri.value
+            )
+            when (updateTaskResult) {
+                is Result.Error -> {
+                }
+                is Result.Value -> {
+                }
             }
-            loadedImageUri.value = null
-        }
 
+        }
+        loadedImageUri.value = null
     }
 
     override fun onCleared() {

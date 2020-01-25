@@ -55,7 +55,7 @@ class LoginViewModel : ViewModel() {
     fun login() {
         viewModelScope.launch {
             loadingStarted()
-            val signInTaskResult = repo.signIn(email.value!!, password.value!!)
+            val signInTaskResult = repo.signInWithEmailAndPassword(email.value!!, password.value!!)
             when (signInTaskResult) {
                 is Result.Error -> {
                     when (signInTaskResult.error) {

@@ -47,43 +47,53 @@ class UserProfileViewModel(private val uid: String) : ViewModel() {
         super.onCleared()
     }
 
-    fun likePost(postId: String) = viewModelScope.launch{
+    fun likePost(postId: String) = viewModelScope.launch {
         val likeResult = repo.likePost(postId)
-        when(likeResult){
-            is Result.Error -> {  }
-            is Result.Value -> { }
+        when (likeResult) {
+            is Result.Error -> {
+            }
+            is Result.Value -> {
+            }
         }
     }
 
-    fun unlikePost(postId: String) = viewModelScope.launch{
+    fun unlikePost(postId: String) = viewModelScope.launch {
         val unlikeResult = repo.unlikePost(postId)
-        when(unlikeResult){
-            is Result.Error -> { }
-            is Result.Value -> { }
+        when (unlikeResult) {
+            is Result.Error -> {
+            }
+            is Result.Value -> {
+            }
         }
     }
 
-    fun inviteToFriends() = viewModelScope.launch{
+    fun inviteToFriends() = viewModelScope.launch {
         val inviteTask = repo.inviteToFriends(uid)
-        when(inviteTask){
-            is Result.Error -> { }
-            is Result.Value -> { }
+        when (inviteTask) {
+            is Result.Error -> {
+            }
+            is Result.Value -> {
+            }
         }
     }
 
     fun acceptFriendRequest() = viewModelScope.launch {
         val acceptTask = repo.acceptFriendRequest(uid)
-        when(acceptTask){
-            is Result.Error -> { }
-            is Result.Value -> { }
+        when (acceptTask) {
+            is Result.Error -> {
+            }
+            is Result.Value -> {
+            }
         }
     }
 
     fun cancelFriendRequest() = viewModelScope.launch {
         val deleteTask = repo.deleteFriendRequest(uid)
-        when(deleteTask){
-            is Result.Error -> { }
-            is Result.Value -> { }
+        when (deleteTask) {
+            is Result.Error -> {
+            }
+            is Result.Value -> {
+            }
         }
     }
 

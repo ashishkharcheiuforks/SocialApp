@@ -60,7 +60,7 @@
 
             <ImageView
                     android:id="@+id/auth_user_profile_pic"
-                    imageResourceUri="@{user.profilePictureUrl}"
+                    imageCircular="@{user.profilePictureUrl}"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:layout_marginStart="16dp"

@@ -24,7 +24,6 @@
         <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 style="@style/ToolbarTheme"
-                android:background="@drawable/background_tab_layout"
                 app:title="Create post"
                 app:titleTextColor="#FFFFFF"
                 app:navigationIcon="@drawable/ic_close_white_24px">
@@ -56,7 +55,7 @@
 
                     <ImageView
                             android:id="@+id/user_profile_picture"
-                            imageResourceUri="@{user.profilePictureUrl}"
+                            imageRectangle="@{user.profilePictureUrl}"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:layout_marginStart="16dp"
@@ -106,6 +105,7 @@
                             android:layout_marginTop="16dp"
                             android:layout_marginBottom="16dp"
                             android:layout_marginStart="24dp"
+                            imageRectangle="@{viewmodel.postImage}"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
