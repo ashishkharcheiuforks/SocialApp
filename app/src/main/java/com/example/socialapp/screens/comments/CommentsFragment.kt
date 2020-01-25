@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
@@ -17,7 +17,6 @@ import com.example.socialapp.adapter.CommentsAdapter
 import com.example.socialapp.databinding.FragmentCommentsBinding
 import com.example.socialapp.model.Comment
 import com.example.socialapp.screens.main.MainScreenFragmentDirections
-import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import timber.log.Timber
 
@@ -25,7 +24,7 @@ class CommentsFragment : DialogFragment(), CommentsAdapter.onCommentClickListene
 
     private lateinit var binding: FragmentCommentsBinding
     private val viewModel by lazy {
-        ViewModelProviders.of(this, CommentsViewModelFactory(postId))
+        ViewModelProvider(this, CommentsViewModelFactory(postId))
             .get(CommentsViewModel::class.java)
     }
     private lateinit var postId: String
@@ -70,7 +69,7 @@ class CommentsFragment : DialogFragment(), CommentsAdapter.onCommentClickListene
             binding.user = it
         })
 
-        viewModel.comments.observe(this@CommentsFragment){
+        viewModel.comments.observe(this@CommentsFragment) {
             updateRecyclerView(it)
         }
 

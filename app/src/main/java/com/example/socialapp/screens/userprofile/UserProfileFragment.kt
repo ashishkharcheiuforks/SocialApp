@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.navGraphViewModels
@@ -35,7 +35,7 @@ class UserProfileFragment : Fragment(),
     private val nestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(R.id.authenticated_graph)
 
     private val userProfileViewModel: UserProfileViewModel by lazy {
-        ViewModelProviders.of(this, UserProfileViewModelFactory(args.uid))
+        ViewModelProvider(this, UserProfileViewModelFactory(args.uid))
             .get(UserProfileViewModel::class.java)
     }
 

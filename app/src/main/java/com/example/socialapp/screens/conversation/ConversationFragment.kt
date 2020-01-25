@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -26,7 +26,7 @@ class ConversationFragment : Fragment() {
 
     @ExperimentalCoroutinesApi
     private val viewModel: ConversationViewModel by lazy {
-        ViewModelProviders.of(this, ConversationViewModelFactory(args.userId))
+        ViewModelProvider(this, ConversationViewModelFactory(args.userId))
             .get(ConversationViewModel::class.java)
     }
 
