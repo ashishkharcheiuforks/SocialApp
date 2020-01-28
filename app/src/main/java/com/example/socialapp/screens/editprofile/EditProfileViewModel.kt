@@ -38,7 +38,8 @@ class EditProfileViewModel : ViewModel() {
                 firstName.value,
                 nickname.value,
                 dateOfBirth.value,
-                loadedImageUri.value
+                loadedImageUri.value,
+                null
             )
             when (updateTaskResult) {
                 is Result.Error -> {

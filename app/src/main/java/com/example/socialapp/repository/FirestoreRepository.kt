@@ -120,9 +120,8 @@ class FirestoreRepository {
             changeUserProfilePicture(profilePictureUrl)
         }
         // In real case it should be triggered by cloud functions on each update of this fields
-        if (firstName != null || nickname != null) {
-            algolia.updateNameAndNickname(firstName, nickname)
-        }
+        algolia.updateNameAndNickname(firstName, nickname)
+
         return Result.build {
             awaitTaskCompletable(
                 userDocRef.update(data)
@@ -539,8 +538,8 @@ class FirestoreRepository {
 
         return query.get().await().map {
             val message = getLastMessage(it.id)
-            val members = it.data["members"] as Map<*, *>
-            val uid = members.keys.first { uid -> uid != auth.uid } as String
+            val members = it.data["membersArray"] as List<String>
+            val uid = members.first { uid -> uid != auth.uid }
             val user = getUser(uid)
             LastMessage(it.id, user, message)
         }

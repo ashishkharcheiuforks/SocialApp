@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.navGraphViewModels
@@ -18,7 +18,6 @@ import com.example.socialapp.R
 import com.example.socialapp.adapter.PostsAdapter
 import com.example.socialapp.databinding.FragmentUserProfileBinding
 import com.example.socialapp.model.FriendshipStatus
-import com.example.socialapp.model.User
 import com.example.socialapp.screens.comments.CommentsFragment
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -69,10 +68,10 @@ class UserProfileFragment : Fragment(),
         // Set adapter for recyclerview that displays user posts
         binding.recyclerview.adapter = adapter
 
-        userProfileViewModel.posts.observe(viewLifecycleOwner, Observer {
+        userProfileViewModel.posts.observe(viewLifecycleOwner) {
             binding.swipeRefreshLayout.isRefreshing = false
             adapter.submitList(it)
-        })
+        }
 
         binding.swipeRefreshLayout.setOnRefreshListener { userProfileViewModel.refreshPosts() }
 
@@ -144,36 +143,35 @@ class UserProfileFragment : Fragment(),
     // Shows and handles behaviour of friendship status button on other users profiles
     private fun setupFriendshipStatusButton() {
         if (!isAuthenticatedUserProfile()) {
-            userProfileViewModel.friendshipStatus
-                .observe(viewLifecycleOwner, Observer { result ->
-                    when (result.data().get("status")) {
-                        null -> {
-                            buttonInviteToFriends()
-                        }
-                        FriendshipStatus.ACCEPTED.status -> {
-                            buttonFriends()
-                        }
-                        FriendshipStatus.INVITATION_SENT.status -> {
-                            buttonInvitationSent()
-                        }
-                        FriendshipStatus.INVITATION_RECEIVED.status -> {
-                            buttonInvitationReceived()
-                        }
+            userProfileViewModel.friendshipStatus.observe(viewLifecycleOwner) { result ->
+                when (result.data().get("status")) {
+                    null -> {
+                        buttonInviteToFriends()
                     }
-                    binding.linearLayoutButtons.visibility = View.VISIBLE
-                })
+                    FriendshipStatus.ACCEPTED.status -> {
+                        buttonFriends()
+                    }
+                    FriendshipStatus.INVITATION_SENT.status -> {
+                        buttonInvitationSent()
+                    }
+                    FriendshipStatus.INVITATION_RECEIVED.status -> {
+                        buttonInvitationReceived()
+                    }
+                }
+            }
+            binding.linearLayoutButtons.visibility = View.VISIBLE
         }
     }
 
     private fun bindUser() {
         if (isAuthenticatedUserProfile()) {
             nestedGraphViewModel.user.observe(
-                viewLifecycleOwner,
-                Observer<User> { binding.user = it })
+                viewLifecycleOwner
+            ) { binding.user = it }
         } else {
             userProfileViewModel.user.observe(
-                viewLifecycleOwner,
-                Observer<User> { binding.user = it })
+                viewLifecycleOwner
+            ) { binding.user = it }
         }
     }
 
