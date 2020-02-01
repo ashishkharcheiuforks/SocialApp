@@ -1,20 +1,34 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.3.61'
     repositories {
         google()
         jcenter()
-        
     }
+
+    ext {
+        kotlinVersion = '1.3.61'
+        lifecycleVersion = "2.2.0"
+        coroutinesVersion = "1.3.2"
+        navigationVersion = "2.2.0"
+        glideVersion = "4.9.0"
+        materialVersion = "1.2.0-alpha03"
+        rxKotlinVersion = "2.4.0"
+        //Firebase
+        firebaseCoreVersion = "17.2.1"
+        firebaseAuthVersion = "19.2.0"
+        firebaseStorageVersion = "19.1.0"
+        firestoreVersion = "21.3.1"
+    }
+
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.3'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
 
         // SafeArgs
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.2.0"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
 
         // Google Services plugin
         classpath 'com.google.gms:google-services:4.2.0'
