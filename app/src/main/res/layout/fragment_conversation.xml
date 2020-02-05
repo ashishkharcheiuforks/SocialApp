@@ -8,9 +8,11 @@
         <variable
                 name="vm"
                 type="com.example.socialapp.screens.conversation.ConversationViewModel" />
+
         <variable
                 name="graphvm"
                 type="com.example.socialapp.AuthenticatedNestedGraphViewModel" />
+
         <variable
                 name="user"
                 type="com.example.socialapp.model.User" />
@@ -37,11 +39,11 @@
                 android:layout_height="0dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-                tools:listitem="@layout/item_text_message"
-                tools:itemCount="2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                tools:itemCount="2"
+                tools:listitem="@layout/item_text_message" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout"
@@ -50,7 +52,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:layout_height="80dp" >
+                tools:layout_height="80dp">
 
             <ImageView
                     android:id="@+id/iv_profile_pic"
@@ -72,9 +74,9 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:ems="10"
+                    android:hint="@string/hint_message"
                     android:inputType="textPersonName"
                     android:text="@={vm.message}"
-                    android:hint="@string/hint_message"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_profile_pic"
                     app:layout_constraintEnd_toStartOf="@+id/btn_send"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -85,11 +87,11 @@
                     android:id="@+id/btn_send"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
                     android:layout_marginEnd="8dp"
+                    android:onClick="@{() -> vm.sendMessage()}"
+                    android:padding="8dp"
                     android:src="@drawable/ic_send_black_24dp"
                     android:tint="@android:color/white"
-                    android:onClick="@{() -> vm.sendMessage()}"
                     app:layout_constraintBottom_toBottomOf="@+id/et_message"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/et_message" />
