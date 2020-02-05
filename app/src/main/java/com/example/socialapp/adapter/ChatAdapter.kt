@@ -4,14 +4,27 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.socialapp.databinding.ItemTextMessageBinding
+import com.example.socialapp.diffutil.MessagesDiffUtil
 import com.example.socialapp.model.Message
 import com.google.firebase.auth.FirebaseAuth
 
-class ChatAdapter(
-    private val messagesList: List<Message>
-) : RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
+class ChatAdapter : RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
+
+    private var messagesList: MutableList<Message> = mutableListOf()
+
+    fun submitList(messagesUpdatedList: List<Message>) {
+        val diffCallback = MessagesDiffUtil(
+            messagesList,
+            messagesUpdatedList
+        )
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        messagesList.clear()
+        messagesList.addAll(messagesUpdatedList)
+        diffResult.dispatchUpdatesTo(this@ChatAdapter)
+    }
 
     val authenticatedUserId = FirebaseAuth.getInstance().uid
 

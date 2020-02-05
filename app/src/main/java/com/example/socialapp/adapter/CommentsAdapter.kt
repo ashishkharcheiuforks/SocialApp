@@ -1,6 +1,5 @@
 package com.example.socialapp.adapter
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class CommentsAdapter(
     private val comments: List<Comment>,
-    private val listener: onCommentClickListener
+    private val listener: OnCommentClickListener
 ) : RecyclerView.Adapter<CommentsAdapter.CommentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
@@ -27,7 +26,7 @@ class CommentsAdapter(
 
     class CommentViewHolder(
         private val binding: ItemCommentBinding,
-        private val listener: onCommentClickListener
+        private val listener: OnCommentClickListener
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(comment: Comment) {
@@ -47,7 +46,7 @@ class CommentsAdapter(
         }
     }
 
-    interface onCommentClickListener {
+    interface OnCommentClickListener {
         fun openUserProfile(uid: String)
     }
 

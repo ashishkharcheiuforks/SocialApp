@@ -20,7 +20,7 @@ import com.example.socialapp.screens.main.MainScreenFragmentDirections
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import timber.log.Timber
 
-class CommentsFragment : DialogFragment(), CommentsAdapter.onCommentClickListener {
+class CommentsFragment : DialogFragment(), CommentsAdapter.OnCommentClickListener {
 
     private lateinit var binding: FragmentCommentsBinding
     private val viewModel by lazy {

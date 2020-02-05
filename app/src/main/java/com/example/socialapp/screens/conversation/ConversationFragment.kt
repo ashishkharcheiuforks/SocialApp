@@ -24,6 +24,8 @@ class ConversationFragment : Fragment() {
 
     private val args: ConversationFragmentArgs by navArgs()
 
+    private val adapter by lazy { ChatAdapter() }
+
     @ExperimentalCoroutinesApi
     private val viewModel: ConversationViewModel by lazy {
         ViewModelProvider(this, ConversationViewModelFactory(args.userId))
@@ -46,14 +48,17 @@ class ConversationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupToolbar()
-
-        binding.lifecycleOwner = this
-        binding.vm = viewModel
-        binding.graphvm = authGraphViewModel
+        binding.apply {
+            lifecycleOwner = this@ConversationFragment
+            vm = viewModel
+            graphvm = authGraphViewModel
+            recyclerview.adapter = adapter
+        }
 
         viewModel.messagesList.observe(viewLifecycleOwner) {
-            binding.recyclerview.adapter = ChatAdapter(it)
-            binding.recyclerview.scrollToPosition(it.lastIndex - 1)
+            adapter.submitList(it)
+            // Assures displaying from the bottom
+            binding.recyclerview.post { binding.recyclerview.scrollToPosition(it.lastIndex) }
         }
 
     }

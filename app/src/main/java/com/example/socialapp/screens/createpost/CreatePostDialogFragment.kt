@@ -9,12 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.navigation.navGraphViewModels
 import com.example.socialapp.AuthenticatedNestedGraphViewModel
 import com.example.socialapp.R
+import com.example.socialapp.common.REQUEST_PICK_IMAGE
 import com.example.socialapp.databinding.DialogCreatePostBinding
-import timber.log.Timber
 
 class CreatePostDialogFragment : DialogFragment() {
 
@@ -25,8 +25,6 @@ class CreatePostDialogFragment : DialogFragment() {
     private val nestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(
         R.id.authenticated_graph
     )
-
-    private val REQUEST_PICK_IMAGE = 71
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,12 +43,14 @@ class CreatePostDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.lifecycleOwner = this
-        binding.viewmodel = viewModel
+        binding.apply {
+            lifecycleOwner = this@CreatePostDialogFragment
+            viewmodel = viewModel
+        }
 
         setupToolbar()
 
-        nestedGraphViewModel.user.observe(viewLifecycleOwner, Observer { binding.user = it })
+        nestedGraphViewModel.user.observe(viewLifecycleOwner) { binding.user = it }
 
         binding.btnAddPicture.setOnClickListener { openGallery() }
 
@@ -69,12 +69,12 @@ class CreatePostDialogFragment : DialogFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Timber.d("resultcode: $resultCode, requestCode: $requestCode")
+        // Check if picture was successfully retrieved from the gallery
+        if (data == null || data.data == null) {
+            return
+        }
+        // Image from gallery
         if (requestCode == REQUEST_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
-            //Check if picture was successfully given back from the gallery
-            if (data == null || data.data == null) {
-                return
-            }
             val pictureUri = data.data
             viewModel.postImage.value = pictureUri.toString()
         }

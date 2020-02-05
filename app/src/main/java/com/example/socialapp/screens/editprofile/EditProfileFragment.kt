@@ -14,17 +14,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.socialapp.AuthenticatedNestedGraphViewModel
 import com.example.socialapp.R
-import com.example.socialapp.common.hideKeyboard
-import com.example.socialapp.common.showToast
+import com.example.socialapp.common.*
 import com.example.socialapp.databinding.FragmentEditProfileBinding
-import com.example.socialapp.model.User
 import com.google.firebase.Timestamp
 import timber.log.Timber
 import java.util.*
@@ -36,12 +34,6 @@ class EditProfileFragment : Fragment() {
 
     private val viewModel: EditProfileViewModel by viewModels()
     private val nestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(R.id.authenticated_graph)
-
-    companion object {
-        private const val REQUEST_PICK_IMAGE = 71
-        private const val REQUEST_IMAGE_CAPTURE = 666
-        private const val PERMISSION_CODE = 1000
-    }
 
     private lateinit var dpd: DatePickerDialog
 
@@ -59,15 +51,20 @@ class EditProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.lifecycleOwner = this
-        binding.vm = viewModel
+        binding.apply {
+            lifecycleOwner = this@EditProfileFragment
+            vm = viewModel
+        }
 
         setupToolbar()
 
         //Set Observers to the observables
-        nestedGraphViewModel.user.observe(viewLifecycleOwner, Observer<User> { binding.user = it })
+        nestedGraphViewModel.user.observe(viewLifecycleOwner) { binding.user = it }
 
-        //Setting OnClick Listeners
+        // Shows message indicating update result
+        viewModel.updateFinishedMessage.observe(viewLifecycleOwner) { showToast(it) }
+
+        // Setting On click listeners
         binding.btnChooseImageGallery.setOnClickListener { launchGallery() }
         binding.btnChooseImageCamera.setOnClickListener { checkPermissionAndOpenCamera() }
         binding.etEditProfileDateOfBirth.setOnClickListener { showDatePickerDialog() }
@@ -88,16 +85,17 @@ class EditProfileFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        //Check if picture was successfully retrieved from the gallery
+        if (data == null || data.data == null) {
+            return
+        }
+        // Image from gallery
         if (requestCode == REQUEST_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
-            //Check if picture was successfully given back from the gallery
-            if (data == null || data.data == null) {
-                return
-            }
             val pictureUri = data.data
             viewModel.loadedImageUri.value = pictureUri.toString()
         }
-
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_IMAGE_CAPTURE) {
+        // Image from camera
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             imageUri?.let { viewModel.loadedImageUri.value = it.toString() }
         }
 
@@ -110,12 +108,16 @@ class EditProfileFragment : Fragment() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            PERMISSION_CODE -> {
+            CAMERA_PERMISSION_CODE -> {
+                // Not all permissions granted
                 if (grantResults.isEmpty()
                     || grantResults[0] != PackageManager.PERMISSION_GRANTED
                     || grantResults[1] != PackageManager.PERMISSION_GRANTED
                 ) {
                     showToast("Unsufficient Permissions")
+                } else {
+                    // All permissions granted
+                    openCamera()
                 }
             }
         }
@@ -182,28 +184,24 @@ class EditProfileFragment : Fragment() {
     }
 
     private fun checkPermissionAndOpenCamera() {
-        if (activity!!.checkSelfPermission(android.Manifest.permission.CAMERA)
-            == PackageManager.PERMISSION_DENIED ||
-            activity!!.checkSelfPermission(
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_DENIED
+        val permission = arrayOf(
+            android.Manifest.permission.CAMERA,
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        if (activity!!.checkSelfPermission(permission[0]) == PackageManager.PERMISSION_DENIED ||
+            activity!!.checkSelfPermission(permission[1]) == PackageManager.PERMISSION_DENIED
         ) {
-            //permission was not enabled
-            val permission = arrayOf(
-                android.Manifest.permission.CAMERA,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-            // show popup to request permission
-            requestPermissions(permission, PERMISSION_CODE)
+            // permissions not sufficient - request permissions
+            requestPermissions(permission, CAMERA_PERMISSION_CODE)
         } else {
             openCamera()
         }
     }
 
     private fun openCamera() {
-        val values = ContentValues().also {
-            it.put(MediaStore.Images.Media.TITLE, "New Picture")
-            it.put(MediaStore.Images.Media.DESCRIPTION, "From the camera")
+        val values = ContentValues().apply {
+            put(MediaStore.Images.Media.TITLE, "New Picture")
+            put(MediaStore.Images.Media.DESCRIPTION, "From the camera")
         }
 
         imageUri =
