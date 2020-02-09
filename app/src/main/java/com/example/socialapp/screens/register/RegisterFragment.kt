@@ -7,16 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.socialapp.common.hideKeyboard
 import com.example.socialapp.common.showSnack
 import com.example.socialapp.databinding.FragmentRegisterBinding
 import com.google.firebase.Timestamp
+import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import java.util.*
-
 
 class RegisterFragment : Fragment() {
 
@@ -24,7 +23,7 @@ class RegisterFragment : Fragment() {
 
     private lateinit var dpd: DatePickerDialog
 
-    private val viewModel: RegisterViewModel by viewModels()
+    private val viewModel: RegisterViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

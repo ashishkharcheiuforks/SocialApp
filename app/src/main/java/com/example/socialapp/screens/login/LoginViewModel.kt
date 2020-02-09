@@ -10,9 +10,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class LoginViewModel : ViewModel() {
-
-    private val repo = FirestoreRepository()
+class LoginViewModel(val repo: FirestoreRepository) : ViewModel() {
 
     private val _isOnLoginSuccessful = SingleLiveEvent<Boolean>()
     val isOnLoginSuccessful: LiveData<Boolean>

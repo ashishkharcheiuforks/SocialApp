@@ -8,19 +8,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.navGraphViewModels
 import com.example.socialapp.AuthenticatedNestedGraphViewModel
 import com.example.socialapp.R
 import com.example.socialapp.common.REQUEST_PICK_IMAGE
 import com.example.socialapp.databinding.DialogCreatePostBinding
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class CreatePostDialogFragment : DialogFragment() {
 
     private lateinit var binding: DialogCreatePostBinding
 
-    private val viewModel: CreatePostViewModel by viewModels()
+    private val viewModel: CreatePostViewModel by viewModel()
 
     private val nestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(
         R.id.authenticated_graph
@@ -45,7 +45,7 @@ class CreatePostDialogFragment : DialogFragment() {
 
         binding.apply {
             lifecycleOwner = this@CreatePostDialogFragment
-            viewmodel = viewModel
+            vm = viewModel
         }
 
         setupToolbar()

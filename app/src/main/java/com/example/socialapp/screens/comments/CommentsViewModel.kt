@@ -1,17 +1,15 @@
 package com.example.socialapp.screens.comments
 
 import androidx.lifecycle.*
-import com.example.socialapp.repository.FirestoreRepository
 import com.example.socialapp.common.Result
 import com.example.socialapp.model.Comment
+import com.example.socialapp.repository.FirestoreRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class CommentsViewModel(private val postId: String) : ViewModel() {
-
-    private val repo = FirestoreRepository()
+class CommentsViewModel(val repo: FirestoreRepository, private val postId: String) : ViewModel() {
 
     init {
         Timber.i("init called")

@@ -4,18 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import com.example.socialapp.repository.FirestoreRepository
 import com.example.socialapp.common.Result
 import com.example.socialapp.model.User
+import com.example.socialapp.repository.FirestoreRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
-class InvitesViewModel : ViewModel() {
-
-    private val repo = FirestoreRepository()
+class InvitesViewModel(val repo: FirestoreRepository) : ViewModel() {
 
     init {
         Timber.i("init called")

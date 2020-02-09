@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -21,6 +20,8 @@ import com.example.socialapp.model.FriendshipStatus
 import com.example.socialapp.screens.comments.CommentsFragment
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 
 
@@ -33,10 +34,7 @@ class UserProfileFragment : Fragment(),
 
     private val nestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(R.id.authenticated_graph)
 
-    private val userProfileViewModel: UserProfileViewModel by lazy {
-        ViewModelProvider(this, UserProfileViewModelFactory(args.uid))
-            .get(UserProfileViewModel::class.java)
-    }
+    private val userProfileViewModel: UserProfileViewModel by viewModel { parametersOf(args.uid) }
 
     private val adapter by lazy { PostsAdapter(this) }
     private val args: UserProfileFragmentArgs by navArgs()

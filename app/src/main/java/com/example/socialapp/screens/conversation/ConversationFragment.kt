@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -17,6 +16,9 @@ import com.example.socialapp.R
 import com.example.socialapp.adapter.ChatAdapter
 import com.example.socialapp.databinding.FragmentConversationBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
+
 
 class ConversationFragment : Fragment() {
 
@@ -27,10 +29,7 @@ class ConversationFragment : Fragment() {
     private val adapter by lazy { ChatAdapter() }
 
     @ExperimentalCoroutinesApi
-    private val viewModel: ConversationViewModel by lazy {
-        ViewModelProvider(this, ConversationViewModelFactory(args.userId))
-            .get(ConversationViewModel::class.java)
-    }
+    private val viewModel: ConversationViewModel by viewModel { parametersOf(args.userId) }
 
     private val authGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(R.id.authenticated_graph)
 

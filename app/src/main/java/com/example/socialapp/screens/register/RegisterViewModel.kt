@@ -15,9 +15,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
-class RegisterViewModel : ViewModel() {
-
-    private val repo = FirestoreRepository()
+class RegisterViewModel(val repo: FirestoreRepository) : ViewModel() {
 
     // Event triggered after successful register
     private val _isRegisterSuccessful = SingleLiveEvent<Boolean>()

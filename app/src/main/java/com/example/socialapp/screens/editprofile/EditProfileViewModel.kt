@@ -12,9 +12,8 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class EditProfileViewModel : ViewModel() {
+class EditProfileViewModel(val repo: FirestoreRepository) : ViewModel() {
 
-    private val repo = FirestoreRepository()
     private val auth = FirebaseAuth.getInstance()
 
     val firstName = MutableLiveData<String>("")

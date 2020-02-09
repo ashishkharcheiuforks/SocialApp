@@ -9,7 +9,7 @@ import com.example.socialapp.repository.FirestoreRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class CreatePostViewModel : ViewModel() {
+class CreatePostViewModel(val repo: FirestoreRepository) : ViewModel() {
 
     // Two-way data binding variables holding input fields of 'create new post' dialog
     // Text to be added in the post
@@ -17,7 +17,6 @@ class CreatePostViewModel : ViewModel() {
     val postImage = MutableLiveData<String?>(null)
     val publishButtonEnabled = MediatorLiveData<Boolean>()
 
-    private val repo = FirestoreRepository()
 
     init {
         Timber.i("Init called")

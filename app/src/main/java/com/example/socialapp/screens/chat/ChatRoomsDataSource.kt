@@ -6,11 +6,13 @@ import com.example.socialapp.model.LastMessage
 import com.example.socialapp.repository.FirestoreRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 class ChatRoomsDataSource(private val scope: CoroutineScope) :
-    ItemKeyedDataSource<String, LastMessage>() {
+    ItemKeyedDataSource<String, LastMessage>(), KoinComponent {
 
-    val repo = FirestoreRepository()
+    val repo: FirestoreRepository by inject()
 
     class Factory(private val scope: CoroutineScope) :
         DataSource.Factory<String, LastMessage>() {

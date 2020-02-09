@@ -6,11 +6,13 @@ import com.example.socialapp.model.Post
 import com.example.socialapp.repository.FirestoreRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 class UserPostsDataSource(private val scope: CoroutineScope, private val userUid: String) :
-    ItemKeyedDataSource<String, Post>() {
+    ItemKeyedDataSource<String, Post>(), KoinComponent {
 
-    private val repo = FirestoreRepository()
+    private val repo: FirestoreRepository by inject()
 
     class Factory(private val scope: CoroutineScope, private val userUid: String) :
         DataSource.Factory<String, Post>() {

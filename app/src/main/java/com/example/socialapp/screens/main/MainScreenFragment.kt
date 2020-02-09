@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.main.fragment_main_screen.view.*
 class MainScreenFragment : Fragment() {
 
     private val nestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(R.id.authenticated_graph)
+//    private val nestedGraphViewModel: AuthenticatedNestedGraphViewModel by sharedViewModel()
 
     private lateinit var binding: FragmentMainScreenBinding
     private lateinit var navHeaderMainBinding: NavHeaderMainBinding

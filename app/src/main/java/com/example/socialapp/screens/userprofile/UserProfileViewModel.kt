@@ -12,9 +12,7 @@ import com.example.socialapp.repository.FirestoreRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class UserProfileViewModel(private val uid: String) : ViewModel() {
-
-    private val repo = FirestoreRepository()
+class UserProfileViewModel(val repo: FirestoreRepository, private val uid: String) : ViewModel() {
 
     val user =
         repo.getUserLiveData(uid)

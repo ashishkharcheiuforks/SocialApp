@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
@@ -20,6 +19,7 @@ import com.example.socialapp.screens.comments.CommentsFragment
 import com.example.socialapp.screens.createpost.CreatePostDialogFragment
 import com.example.socialapp.screens.main.MainScreenFragmentDirections
 import com.google.firebase.auth.FirebaseAuth
+import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 
@@ -29,7 +29,7 @@ class HomeFragment : Fragment(), PostsAdapter.OnPostClickListener {
 
     private val adapter by lazy { PostsAdapter(this) }
 
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by viewModel()
 
     private val authenticatedNestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(
         R.id.authenticated_graph

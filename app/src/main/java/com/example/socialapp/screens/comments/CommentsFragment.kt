@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
@@ -18,15 +17,14 @@ import com.example.socialapp.databinding.FragmentCommentsBinding
 import com.example.socialapp.model.Comment
 import com.example.socialapp.screens.main.MainScreenFragmentDirections
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 
 class CommentsFragment : DialogFragment(), CommentsAdapter.OnCommentClickListener {
 
     private lateinit var binding: FragmentCommentsBinding
-    private val viewModel by lazy {
-        ViewModelProvider(this, CommentsViewModelFactory(postId))
-            .get(CommentsViewModel::class.java)
-    }
+
     private lateinit var postId: String
 
     private val authenticatedNestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(
@@ -61,6 +59,8 @@ class CommentsFragment : DialogFragment(), CommentsAdapter.OnCommentClickListene
             postId = it.getString("postId")!!
             Timber.i("Passed postId: $postId")
         }
+
+        val viewModel: CommentsViewModel by viewModel { parametersOf(postId) }
 
         binding.lifecycleOwner = this@CommentsFragment
         binding.viewModel = viewModel

@@ -12,10 +12,9 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(val repo: FirestoreRepository) : ViewModel() {
 
     private val auth = FirebaseAuth.getInstance()
-    private val repo = FirestoreRepository()
 
     init {
         Timber.i("Init called")

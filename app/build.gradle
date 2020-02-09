@@ -96,6 +96,11 @@ dependencies {
 
     // RxJava 
     implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
+
+    //Koin
+    implementation "org.koin:koin-android:$koinVersion"
+    implementation "org.koin:koin-android-viewmodel:$koinVersion"
+    implementation "org.koin:koin-androidx-scope:$koinVersion"
 }
 
 // Google Play services Gradle plugin

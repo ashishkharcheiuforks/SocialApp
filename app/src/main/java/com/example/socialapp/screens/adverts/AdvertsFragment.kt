@@ -8,12 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.PagedList
 import com.example.socialapp.R
 import com.example.socialapp.adapter.AdsAdapter
-import com.example.socialapp.common.showToast
 import com.example.socialapp.databinding.FragmentAdvertsBinding
 import com.example.socialapp.model.Advertisement
 import com.example.socialapp.model.Filters
@@ -21,6 +19,7 @@ import com.example.socialapp.screens.main.MainScreenFragmentDirections
 import com.firebase.ui.firestore.paging.FirestorePagingOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import org.koin.android.viewmodel.ext.android.viewModel
 
 
 class AdvertsFragment : Fragment(),
@@ -32,7 +31,7 @@ class AdvertsFragment : Fragment(),
 
     private lateinit var adapter: AdsAdapter
 
-    private val viewModel: AdvertsViewModel by viewModels()
+    private val viewModel: AdvertsViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -23,13 +23,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 
 
-class FirestoreRepository {
+class FirestoreRepository(val algolia: AlgoliaRepository) {
 
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
     private val storageReference = storage.reference
-    private val algolia = AlgoliaRepository()
 
     private val defaultProfilePictureUrl =
         "https://firebasestorage.googleapis.com/v0/b/social-app-a3759.appspot.com/o/pr" +

@@ -23,7 +23,7 @@ class CreateAdvertisementDialogFragment : DialogFragment() {
     private lateinit var binding: DialogCreateAdvertisementBinding
     private lateinit var listener: NewAdvertisementListener
 
-    private var description: String? = null
+    private val description: String?
         get() {
             return if (!binding.etDescription.text.isNullOrEmpty()) {
                 binding.etDescription.text.toString()
@@ -32,7 +32,7 @@ class CreateAdvertisementDialogFragment : DialogFragment() {
             }
         }
 
-    private var playersNumber: Long? = null
+    private val playersNumber: Long?
         get() {
             val selected = binding.spinnerPlayersNumber.selectedItem.toString()
             return if (selected.contentEquals(getString(R.string.any_players_number))) {
@@ -42,7 +42,7 @@ class CreateAdvertisementDialogFragment : DialogFragment() {
             }
         }
 
-    private var communicationLanguage: String? = null
+    private val communicationLanguage: String?
         get() {
             val selected = binding.spinnerLanguage.selectedItem.toString()
             return if (selected.contentEquals("Any")) {

@@ -8,23 +8,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.example.socialapp.R
 import com.example.socialapp.adapter.InvitesAdapter
 import com.example.socialapp.databinding.FragmentInvitesBinding
 import com.example.socialapp.screens.userprofile.UserProfileFragmentDirections
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.koin.android.viewmodel.ext.android.viewModel
+
 
 class InvitesFragment : Fragment(), InvitesAdapter.onInviteItemClickListener {
 
     private lateinit var binding: FragmentInvitesBinding
 
-    private val viewModel: InvitesViewModel by viewModels()
-
-    private val db = FirebaseFirestore.getInstance()
+    private val viewModel: InvitesViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

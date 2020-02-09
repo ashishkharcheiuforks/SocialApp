@@ -13,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
@@ -24,6 +23,7 @@ import com.example.socialapp.R
 import com.example.socialapp.common.*
 import com.example.socialapp.databinding.FragmentEditProfileBinding
 import com.google.firebase.Timestamp
+import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import java.util.*
 
@@ -32,7 +32,7 @@ class EditProfileFragment : Fragment() {
 
     private lateinit var binding: FragmentEditProfileBinding
 
-    private val viewModel: EditProfileViewModel by viewModels()
+    private val viewModel: EditProfileViewModel by viewModel()
     private val nestedGraphViewModel: AuthenticatedNestedGraphViewModel by navGraphViewModels(R.id.authenticated_graph)
 
     private lateinit var dpd: DatePickerDialog

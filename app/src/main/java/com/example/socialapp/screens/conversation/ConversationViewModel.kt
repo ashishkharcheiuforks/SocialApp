@@ -1,18 +1,17 @@
 package com.example.socialapp.screens.conversation
 
 import androidx.lifecycle.*
-import com.example.socialapp.repository.FirestoreRepository
 import com.example.socialapp.common.Result
 import com.example.socialapp.model.Message
+import com.example.socialapp.repository.FirestoreRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @ExperimentalCoroutinesApi
-class ConversationViewModel(private val otherUserId: String) : ViewModel() {
-
-    val repo = FirestoreRepository()
+class ConversationViewModel(val repo: FirestoreRepository, private val otherUserId: String) :
+    ViewModel() {
 
     // Two-way data binding variables
     val message = MutableLiveData<String>("")
